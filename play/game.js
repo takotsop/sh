@@ -101,7 +101,7 @@ var Game = function(size) {
 		}
 		if (secret) {
 			var target = Player.get(secret.target);
-			target.emitOthers('game action', data);
+			target.emitToOthers('game action', data);
 			data.secret = secret;
 			target.emit('game action', data);
 		} else {
@@ -156,6 +156,8 @@ var Game = function(size) {
 				game.start();
 			}, startDelay * 1000);
 		}
+
+		this.emit('lobby game data', this.gameData());
 	};
 
 	this.cancelAutostart = function() {
@@ -198,7 +200,7 @@ var Game = function(size) {
 		// Emit
 		this.players.forEach(function(puid) {
 			var player = Player.get(puid);
-			player.emitStart();
+			player.emitStartPerspective();
 		});
 	};
 
@@ -313,10 +315,14 @@ var Game = function(size) {
 		player.game = this;
 		player.disconnected = false;
 
-		if (!this.playerState[player.uid]) {
+		var playerState = this.playerState[player.uid];
+		console.log('add', player.uid, playerState);
+		if (!playerState) {
 			var index = this.players.length;
 			this.players[index] = player.uid;
 			this.playerState[player.uid] = {index: index};
+		} else {
+			playerState.left = false;
 		}
 
 		if (this.started) {
@@ -325,18 +331,17 @@ var Game = function(size) {
 			this.start();
 		} else {
 			this.resetAutostart();
-			this.emit('lobby game', this.gameData());
 		}
 	};
 
 	this.kill = function(player, quitting) {
-		var killState = player.gameState();
-		if (!killState.killed) {
+		var playerState = player.gameState();
+		if (!playerState.killed) {
 			if (quitting) {
-				killState.quit = true;
+				playerState.quit = true;
 				DB.updatePlayers([player.uid], 'quit');
 			}
-			killState.killed = true;
+			playerState.killed = true;
 			this.currentCount -= 1;
 
 			if (player.isHitler()) {
@@ -363,19 +368,15 @@ var Game = function(size) {
 	this.disconnect = function(socket) {
 		if (!this.started || this.finished) {
 			this.remove(socket);
-			return;
-		}
-		var player = socket.player;
-		if (player) {
-			player.disconnected = true;
+		} else {
+			var player = socket.player;
+			if (player) {
+				player.disconnected = true;
+			}
 		}
 	};
 
 	this.remove = function(socket) {
-		if (!this.started) {
-			this.resetAutostart();
-		}
-
 		socket.leave(this.gid);
 
 		var player = socket.player;
@@ -390,11 +391,16 @@ var Game = function(size) {
 			this.players = this.players.filter(function(puid) {
 				return puid != player.uid;
 			});
+			delete this.playerState[player.uid];
 			if (this.players.length == 0) {
 				this.removeSelf();
 			}
 		}
 		player.game = null;
+
+		if (!this.started) {
+			this.resetAutostart();
+		}
 		return true;
 	};
 

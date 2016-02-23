@@ -248,7 +248,7 @@ module.exports = function(socket) {
 
 	socket.on('typing', function(data) {
 		var player = socket.player;
-		player.emitOthers('typing', {uid: player.uid, on: data.on});
+		player.emitToOthers('typing', {uid: player.uid, on: data.on});
 	});
 
 };

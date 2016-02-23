@@ -86,11 +86,19 @@
 </section>
 
 <section id="s-lobby" style="display:none;">
-	<h1>Waiting for players</h1>
-	<h2><span id="lobby-player-summary">? of ?</span> max players</h2>
-	<h3 id="lobby-countdown"></h3>
-	<hr>
-	<div id="lobby-players"></div>
+	<div id="lobby-start" style="display:none;">
+		<button id="lobby-quickstart" class="large">Quick play</button>
+		<button id="lobby-create" class="large">Create game</button>
+		<ul id="lobby-gamelist"></ul>
+	</div>
+	<div id="lobby-wait" style="display:none;">
+		<h1>Waiting for players</h1>
+		<button class="lobby-leave large">Leave game</button>
+		<h2><span id="lobby-player-summary">? of ?</span> max players</h2>
+		<h3 id="lobby-countdown"></h3>
+		<hr>
+		<div id="lobby-players"></div>
+	</div>
 </section>
 
 <section id="s-game" style="display:none;">

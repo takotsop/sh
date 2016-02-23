@@ -12,23 +12,25 @@ var Player = function(socket, uid, name, oldPlayer) {
 
 	allPlayers[uid] = this;
 
-	// Public
+	// Emit
 
 	this.emit = function(name, data) {
 		socket.emit(name, data);
 	};
 
-	this.emitStart = function() {
-		socket.emit('lobby game', this.game.gameData(this.uid));
+	this.emitStartPerspective = function() {
+		socket.emit('lobby game data', this.game.gameData(this.uid));
 	};
 
-	this.emitOthers = function(name, data) {
+	this.emitToOthers = function(name, data) {
 		socket.broadcast.to(this.game.gid).emit(name, data);
 	};
 
 	this.emitAction = function(name, data) {
 		return this.game.emitAction(name, data);
 	};
+
+	// Helpers
 
 	this.equals = function(data) {
 		return this.uid == data.uid;
@@ -60,6 +62,12 @@ var Player = function(socket, uid, name, oldPlayer) {
 
 	this.gameState = function() {
 		return this.game ? this.game.playerState[this.uid] : {};
+	};
+
+	this.leaveCurrentGame = function() {
+		if (this.game) {
+			return this.game.disconnect(socket);
+		}
 	};
 
 	return this;

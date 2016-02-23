@@ -21,6 +21,8 @@ var updateLobby = function(data) {
 		startGame(data);
 		return;
 	}
+	showLobbySection('wait');
+
 	clearCountdown();
 
 	var playerCount = data.players.length;
@@ -42,6 +44,17 @@ var updateLobby = function(data) {
 	$('#lobby-players').html(nameList);
 };
 
+var showLobbySection = function(subsection) {
+	$('#s-lobby > *').hide();
+	$('#lobby-'+subsection).show();
+};
+
+var connectToLobby = function() {
+	showLobbySection('start');
+
+	socket.emit('lobby join');
+};
+
 var showLobby = function() {
 	gameOver = true;
 	if (webrtc) {
@@ -50,8 +63,7 @@ var showLobby = function() {
 	}
 
 	showAppSection('lobby');
-
-	socket.emit('join room');
+	connectToLobby();
 };
 
 var quitGame = function() {
@@ -60,7 +72,21 @@ var quitGame = function() {
 
 //EVENTS
 
-socket.on('lobby game', updateLobby);
+$('.lobby-leave').on('click', connectToLobby);
+
+$('#lobby-quickstart').on('click', function() {
+	showLobbySection('');
+	socket.emit('room quickjoin', null, function(response) {
+		showLobbySection(response.success ? 'wait' : 'start');
+	});
+});
+
+$('#lobby-create').on('click', function() {
+	// showLobbySection('create');
+	window.alert('Creating custom games is not yet supported, sorry!');
+});
+
+socket.on('lobby game data', updateLobby);
 
 window.onbeforeunload = function() {
 	if (!TESTING && !gameOver) {
