@@ -92,6 +92,8 @@
 		<br>
 		<button id="lobby-button-create" class="large">Create game</button>
 		<br>
+		<button id="lobby-button-join-private" class="large">Join a private game</button>
+		<br>
 		<ul id="lobby-gamelist"></ul>
 	</div>
 	<div id="lobby-create">
@@ -114,8 +116,20 @@
 		</div>
 		<button id="lobby-create-confirm" class="large">Submit</button>
 	</div>
+	<div id="lobby-join-private">
+		<h1>Join a Private Game</h1>
+		<h2>Enter a private code you recieved from another player</h2>
+		<input id="join-private-code" class="full input-signin" placeholder="Private game code">
+		<button id="lobby-submit-private" class="large">Submit</button>
+	</div>
 	<div id="lobby-wait">
 		<h1>Waiting for players</h1>
+		<div id="lobby-privacy">
+			<h2>Private game</h2>
+			<div id="lobby-private-code"></div>
+			<div class="detail">Send this code to your friends so they can join</div>
+			<br>
+		</div>
 		<button class="lobby-leave large">Leave game</button>
 		<h2><span id="lobby-player-summary">? of ?</span> max players</h2>
 		<h3 id="lobby-countdown"></h3>

@@ -60,6 +60,18 @@ section {
 
 /* FORMS */
 
+input.full {
+	display: block;
+	font-family: inherit;
+	text-align: center;
+	font-size: 2em;
+	font-weight: 300;
+	padding: 8px 4px;
+	margin: auto;
+	width: 480px;
+	max-width: 100%;
+}
+
 button.large {
 	height: 44px;
 	width: 480px;

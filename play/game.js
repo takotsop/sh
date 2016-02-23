@@ -15,18 +15,21 @@ var LIBERAL_POLICIES_REQUIRED = 5;
 
 var games = [];
 
-var Game = function(size) {
+var Game = function(size, private) {
 	this.gid = Utils.uid();
 	this.maxSize = size;
+	this.private = private;
+
 	this.players = [];
 	this.playerState = {};
 	this.history = [];
-	this.startIndex;
 
 	this.generator = SeedRandom(this.gid);
 	this.turn = {};
 	this.enactedLiberal = 0;
 	this.enactedFascist = 0;
+
+	this.startIndex;
 	this.playerCount;
 	this.currentCount;
 	this.policyDeck;
@@ -142,6 +145,7 @@ var Game = function(size) {
 
 			players: sendPlayers,
 			history: sendHistory,
+			private: this.private,
 		};
 	};
 

@@ -42,6 +42,12 @@ var updateLobby = function(data) {
 		nameList += '<div class="player-slot '+floatClass+'"><h2>' + player.name + '</h2></div>';
 	});
 	$('#lobby-players').html(nameList);
+
+	var privateGame = data.private == true;
+	$('#lobby-privacy').toggle(privateGame);
+	if (privateGame) {
+		$('#lobby-private-code').text(data.gid);
+	}
 };
 
 var showLobbySection = function(subsection) {
@@ -85,6 +91,10 @@ $('#lobby-button-create').on('click', function() {
 	showLobbySection('create');
 });
 
+$('#lobby-button-join-private').on('click', function() {
+	showLobbySection('join-private');
+});
+
 $('#lobby-create-confirm').on('click', function() {
 	var createData = {
 		size: $('#create-game-size').val(),
@@ -92,6 +102,23 @@ $('#lobby-create-confirm').on('click', function() {
 	};
 	socket.emit('room create', createData, function(response) {
 		showLobbySection(response.success ? 'wait' : 'start');
+	});
+});
+
+$('#lobby-submit-private').on('click', function() {
+	var gid = $('#join-private-code').val();
+	if (!gid) {
+		window.alert('Please enter a valid private game code');
+		return;
+	}
+
+	$('#join-private-code').val('');
+	showLobbySection('');
+	socket.emit('room join private', {gid: gid}, function(response) {
+		if (response.error) {
+			window.alert('Unable to join game: ' + response.error);
+		}
+		showLobbySection(response.success ? 'wait' : 'join-private');
 	});
 });
 

@@ -5,16 +5,6 @@
 	-webkit-overflow-scrolling: touch;
 }
 
-#s-welcome input {
-	font-family: inherit;
-	text-align: center;
-	font-size: 2em;
-	font-weight: 300;
-	padding: 8px 4px;
-	width: 480px;
-	max-width: 100%;
-}
-
 #s-welcome h2 {
 	font-weight: 400;
 	font-size: 1.5em;
