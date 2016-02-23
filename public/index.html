@@ -98,6 +98,8 @@
 	</div>
 	<div id="lobby-create">
 		<h1>Host a custom game</h1>
+		<button class="lobby-leave large">cancel</button>
+		<hr>
 		<div>
 			<label>Game size:
 				<select id="create-game-size">
@@ -114,13 +116,15 @@
 			<label>Private: <input id="create-game-privacy" type="checkbox"></label>
 			<span class="detail">Only people you give the invite code to can join</span>
 		</div>
-		<button id="lobby-create-confirm" class="large">Submit</button>
+		<button id="lobby-create-confirm" class="large">submit</button>
 	</div>
 	<div id="lobby-join-private">
 		<h1>Join a Private Game</h1>
+		<button class="lobby-leave large">cancel</button>
+		<hr>
 		<h2>Enter a private code you recieved from another player</h2>
 		<input id="join-private-code" class="full input-signin" placeholder="Private game code">
-		<button id="lobby-submit-private" class="large">Submit</button>
+		<button id="lobby-submit-private" class="large">submit</button>
 	</div>
 	<div id="lobby-wait">
 		<h1>Waiting for players</h1>
@@ -130,7 +134,7 @@
 			<div class="detail">Send this code to your friends so they can join</div>
 			<br>
 		</div>
-		<button class="lobby-leave large">Leave game</button>
+		<button class="lobby-leave large">leave game</button>
 		<h2><span id="lobby-player-summary">? of ?</span> max players</h2>
 		<h3 id="lobby-countdown"></h3>
 		<hr>
