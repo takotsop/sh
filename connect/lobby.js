@@ -39,10 +39,16 @@ module.exports = function(socket) {
 		socket.join('lobby');
 	});
 
+	socket.on('room create', function(data, callback) {
+		var player = socket.player;
+		player.leaveCurrentGame();
+		joiningGame = new Game(data.size || 10, data.private);
+		joiningGame.addPlayer(socket, player);
+	});
+
 	socket.on('room quickjoin', function(data, callback) {
 		var response = {};
 		if (joinAvailableGame(socket)) {
-			socket.leave('lobby');
 			response.success = true;
 		}
 		callback(response);

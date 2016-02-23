@@ -74,16 +74,25 @@ var quitGame = function() {
 
 $('.lobby-leave').on('click', connectToLobby);
 
-$('#lobby-quickstart').on('click', function() {
+$('#lobby-button-quickstart').on('click', function() {
 	showLobbySection('');
 	socket.emit('room quickjoin', null, function(response) {
 		showLobbySection(response.success ? 'wait' : 'start');
 	});
 });
 
-$('#lobby-create').on('click', function() {
-	// showLobbySection('create');
-	window.alert('Creating custom games is not yet supported, sorry!');
+$('#lobby-button-create').on('click', function() {
+	showLobbySection('create');
+});
+
+$('#lobby-create-confirm').on('click', function() {
+	var createData = {
+		size: $('#create-game-size').val(),
+		private: $('#create-game-privacy').prop('checked'),
+	};
+	socket.emit('room create', createData, function(response) {
+		showLobbySection(response.success ? 'wait' : 'start');
+	});
 });
 
 socket.on('lobby game data', updateLobby);

@@ -86,12 +86,35 @@
 </section>
 
 <section id="s-lobby" style="display:none;">
-	<div id="lobby-start" style="display:none;">
-		<button id="lobby-quickstart" class="large">Quick play</button>
-		<button id="lobby-create" class="large">Create game</button>
+	<div id="lobby-start">
+		<h1>Choose a gameplay option</h1>
+		<button id="lobby-button-quickstart" class="large">Quick play</button>
+		<br>
+		<button id="lobby-button-create" class="large">Create game</button>
+		<br>
 		<ul id="lobby-gamelist"></ul>
 	</div>
-	<div id="lobby-wait" style="display:none;">
+	<div id="lobby-create">
+		<h1>Host a custom game</h1>
+		<div>
+			<label>Game size:
+				<select id="create-game-size">
+					<option>5</option>
+					<option>6</option>
+					<option>7</option>
+					<option>8</option>
+					<option>9</option>
+					<option selected="true">10</option>
+				</select>
+			</label>
+		</div>
+		<div>
+			<label>Private: <input id="create-game-privacy" type="checkbox"></label>
+			<span class="detail">Only people you give the invite code to can join</span>
+		</div>
+		<button id="lobby-create-confirm" class="large">Submit</button>
+	</div>
+	<div id="lobby-wait">
 		<h1>Waiting for players</h1>
 		<button class="lobby-leave large">Leave game</button>
 		<h2><span id="lobby-player-summary">? of ?</span> max players</h2>

@@ -309,6 +309,7 @@ var Game = function(size) {
 //PLAYERS
 
 	this.addPlayer = function(socket) {
+		socket.leave('lobby');
 		socket.join(this.gid);
 
 		var player = socket.player;
@@ -316,7 +317,6 @@ var Game = function(size) {
 		player.disconnected = false;
 
 		var playerState = this.playerState[player.uid];
-		console.log('add', player.uid, playerState);
 		if (!playerState) {
 			var index = this.players.length;
 			this.players[index] = player.uid;
