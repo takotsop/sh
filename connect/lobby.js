@@ -30,28 +30,29 @@ var joinGameById = function(socket, gid) {
 	return false;
 };
 
-var joinAvailableGame = function(socket) {
-	var joiningGame;
+var joinOngoingGame = function(socket) {
 	var player = socket.player;
-
 	var oldGame = player.game;
 	if (oldGame && !oldGame.finished) {
-		joiningGame = oldGame;
-	} else {
-		var games = Game.games();
-		for (var gidx in games) {
-			var game = games[gidx];
-			if (!game.private && game.isOpen()) {
-				joiningGame = game;
-				break;
-			}
+		oldGame.addPlayer(socket, player);
+		return true;
+	}
+};
+
+var joinAvailableGame = function(socket) {
+	var joiningGame;
+	var games = Game.games();
+	for (var gidx in games) {
+		var game = games[gidx];
+		if (!game.private && game.isOpen()) {
+			joiningGame = game;
+			break;
 		}
 	}
-
 	if (!joiningGame) {
 		joiningGame = new Game(10);
 	}
-	joiningGame.addPlayer(socket, player);
+	joiningGame.addPlayer(socket, socket.player);
 	return true;
 };
 
@@ -61,7 +62,9 @@ module.exports = function(socket) {
 
 	socket.on('lobby join', function(data, callback) {
 		socket.player.leaveCurrentGame();
-		socket.join('lobby');
+		if (!joinOngoingGame(socket)) {
+			socket.join('lobby');
+		}
 	});
 
 	socket.on('room create', function(data, callback) {
@@ -72,11 +75,13 @@ module.exports = function(socket) {
 	});
 
 	socket.on('room quickjoin', function(data, callback) {
-		var response = {};
-		if (joinAvailableGame(socket)) {
-			response.success = true;
+		if (!joinOngoingGame(socket)) {
+			var response = {};
+			if (joinAvailableGame(socket)) {
+				response.success = true;
+			}
+			callback(response);
 		}
-		callback(response);
 	});
 
 	socket.on('room join private', function(data, callback) {
