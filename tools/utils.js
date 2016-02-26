@@ -18,6 +18,19 @@ module.exports = {
 		return Math.floor(Math.random() * 900000) + 100000;
 	},
 
+	rangeCheck: function(number, min, max, defaultValue) {
+		if (!number) {
+			return defaultValue;
+		}
+		if (number < min) {
+			return min;
+		}
+		if (number > max) {
+			return max;
+		}
+		return number;
+	},
+
 //RANDOM
 
 	rngInt: function(generator, max) {

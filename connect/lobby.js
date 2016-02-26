@@ -70,7 +70,8 @@ module.exports = function(socket) {
 	socket.on('room create', function(data, callback) {
 		var player = socket.player;
 		player.leaveCurrentGame();
-		joiningGame = new Game(data.size || 10, data.private);
+		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
+		joiningGame = new Game(gameMaxSize, data.private);
 		joiningGame.addPlayer(socket, player);
 	});
 
