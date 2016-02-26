@@ -330,7 +330,7 @@ var Game = function(size, private) {
 		}
 
 		if (this.started) {
-			player.emitStart();
+			player.emitStartPerspective();
 		} else if (this.isFull()) {
 			this.start();
 		} else {
@@ -385,7 +385,7 @@ var Game = function(size, private) {
 
 		var player = socket.player;
 		var playerState = player.gameState();
-		if (playerState.left) {
+		if (!playerState || playerState.left) {
 			return false;
 		}
 		if (this.started) {
