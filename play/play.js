@@ -112,7 +112,12 @@ var policyAction = function(data, player, game) {
 					} else {
 						var forcedIndex = game.turn.presidentDiscard == 0 ? 1 : 0;
 						data.policy = game.turn.policies[forcedIndex];
-						game.enact(data.policy);
+						var fascistPower = game.enactPolicy(data.policy);
+						if (fascistPower) {
+							game.power = fascistPower;
+						} else {
+							game.advanceTurn();
+						}
 						data = game.emitAction('veto overridden', data);
 					}
 					return data;
