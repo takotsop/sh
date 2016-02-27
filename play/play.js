@@ -228,7 +228,7 @@ module.exports = function(socket) {
 		if (action == 'quit') {
 			recording = quitAction(data, player, game, socket);
 		} else if (action == 'chat') {
-			data.msg = rawData.msg;
+			data.msg = rawData.msg.substr(0, 255);
 			recording = chatAction(data, player);
 		} else if (action == 'chancellor') {
 			data.uid = rawData.uid;
