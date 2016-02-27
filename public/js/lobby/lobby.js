@@ -95,6 +95,14 @@ $('#lobby-button-join-private').on('click', function() {
 	showLobbySection('join-private');
 });
 
+$('#lobby-button-signout').on('click', function() {
+	var confirmed = window.confirm('Are you sure you want to sign out of your account?');
+	if (confirmed) {
+		hideWelcomeSplash();
+		showSignin();
+	}
+});
+
 $('#lobby-create-confirm').on('click', function() {
 	var createData = {
 		size: $('#create-game-size').val(),
@@ -121,6 +129,8 @@ $('#lobby-submit-private').on('click', function() {
 		showLobbySection(response.success ? 'wait' : 'join-private');
 	});
 });
+
+//SOCKET
 
 socket.on('lobby game data', updateLobby);
 

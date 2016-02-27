@@ -2,7 +2,14 @@ var submittedEmail;
 
 //PUBLIC
 
+var hideWelcomeSplash = function() {
+	$('#welcome-splash').hide();
+	$('#welcome-signin').show();
+};
+
 var showSignin = function() {
+	uid = null;
+	auth = null;
 	localStorage.removeItem('uid');
 	localStorage.removeItem('auth');
 
@@ -103,8 +110,7 @@ var signinRegister = function(username) {
 //EVENTS
 
 $('#start-playing').on('click', function() {
-	$('#welcome-splash').hide();
-	$('#welcome-signin').show();
+	hideWelcomeSplash();
 });
 
 $('.signin-restart').on('click', function() {
