@@ -10,10 +10,25 @@
 	-webkit-overflow-scrolling: touch;
 }
 
+/* PLAYERS */
+
 .player-slot {
+	display: flex;
 	box-sizing: border-box;
 	width: 50%;
 	padding: 16px;
+	height: 104px;
+}
+
+.player-slot.left {
+	float: left;
+	text-align: left;
+}
+
+.player-slot.right {
+	float: right;
+	flex-direction: row-reverse;
+	text-align: right;
 }
 
 .player-slot.choose {
@@ -30,18 +45,36 @@
 	box-shadow: 0 0 32px #FFD556;
 }
 
+.player-slot .avatar {
+	flex-shrink: 0;
+}
+.player-slot .contents {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
 .player-slot .details {
+	flex-shrink: 0;
 	float: inherit;
+}
+.player-slot .chat {
+	margin: 4px 8px;
+	font-style: italic;
+
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: break-word;
 }
 
 .player-slot h2 {
 	font-weight: 300;
 	margin: 0 8px;
 	display: inline;
-}
-.player-slot .chat {
-	margin: 4px 8px;
-	font-style: italic;
+	font-size: 1.4em;
 }
 
 .player-slot.killed {
