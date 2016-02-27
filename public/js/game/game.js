@@ -114,7 +114,7 @@ var voteCompleted = function(data) {
 	var directive, cards = null;
 	var voteDivs = $('.player-slot .vote');
 	data.supporters.forEach(function(support, index) {
-		voteDivs.eq(index).show().text(support ? 'Ja!' : 'Nein!');		
+		voteDivs.eq(index).show().text(support ? 'Ja!' : 'Nein!');
 	});
 
 	if (data.hitler) {

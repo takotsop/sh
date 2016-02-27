@@ -1,6 +1,6 @@
 var hideOverlay = function() {
 	$('#game-mat').removeClass('overlay');
-	$('#overlay').fadeOut();	
+	$('#overlay').fadeOut();
 	hideCards('role');
 };
 

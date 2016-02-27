@@ -22,7 +22,7 @@
 	height: 192px;
 
 	margin: 0 4px;
-	border: 1px dashed rgba(0,0,0, 0.1);	
+	border: 1px dashed rgba(0,0,0, 0.1);
 
 	max-width: 45%;
 	background-color: #F7E2C0;
@@ -43,7 +43,7 @@ div.policy {
 }
 
 #cards-vote .card, #player-cards .policy {
-	cursor: pointer;	
+	cursor: pointer;
 }
 
 .card.selected {

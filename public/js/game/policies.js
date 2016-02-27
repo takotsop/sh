@@ -93,7 +93,7 @@ var policyEnacted = function(data) {
 			enablePlayerSelection(presidentPower);
 		}
 	} else {
-		advanceTurn();	
+		advanceTurn();
 	}
 };
 
@@ -118,7 +118,7 @@ var getFascistPowers = function() {
 	} else {
 		fascistPowers[3] = 'bullet';
 	}
-// 	fascistPowers[0] = 'bullet'; //SAMPLE
+	// fascistPowers[0] = 'bullet'; //SAMPLE
 	return fascistPowers;
 };
 

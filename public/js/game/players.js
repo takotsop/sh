@@ -91,7 +91,7 @@ var killPlayer = function(player, hitler, quit) {
 		$('.player-slot').removeClass('choose');
 		playerDiv(player).addClass('killed');
 		currentCount -= 1;
-	
+
 		if (hitler) {
 			endGame(true, quit ? 'hitler quit' : 'hitler');
 		} else if (currentCount <= 2) {
