@@ -80,7 +80,7 @@ var quitGame = function() {
 
 $('.lobby-leave').on('click', connectToLobby);
 
-$('#lobby-button-quickstart').on('click', function() {
+$('#lobby-button-quick-play').on('click', function() {
 	showLobbySection('');
 	socket.emit('room quickjoin', null, function(response) {
 		showLobbySection(response.success ? 'wait' : 'start');
