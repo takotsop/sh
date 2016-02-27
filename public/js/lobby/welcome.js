@@ -119,6 +119,13 @@ $('.signin-restart').on('click', function() {
 	$('#i-signin-email').focus();
 });
 
+$('#signin-start-form').on('submit', function(event) {
+	event.preventDefault();
+
+	var submitted = $('#i-signin-email').val();
+	signinEmail(submitted);
+});
+
 $('input.input-signin').on('keypress', function(event) {
 	var keyPressed = event.which || event.keyCode;
 	if (keyPressed != 13) {

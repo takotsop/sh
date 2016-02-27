@@ -63,9 +63,13 @@
 	<div id="welcome-signin" style="display:none;">
 		<h1>Secret&nbsp;Hitler Online</h1>
 		<div id="signin-start" class="sd-signin">
-			<button id="guest-login" class="large">Login as Guest</button>
-			<h3>or enter your email to begin</h3>
-			<input class="full input-signin" id="i-signin-email" type="email" placeholder="example@email.com" /> <div class="input-error mini"></div>
+			<form id="signin-start-form">
+				<h2>Enter your email to begin:</h2>
+				<input class="full input-signin" id="i-signin-email" type="email" placeholder="example@email.com" /> <div class="input-error mini"></div>
+				<button type="submit" class="large">submit</button>
+			</form>
+			<p>(or use a guest account to try it out)</p>
+			<button id="guest-login" class="large">login as guest</button>
 		</div>
 		<div id="signin-confirm" class="sd-signin">
 			<h2>Welcome back, <span class="signin-email-address">a@a.a</span>!</h2>
