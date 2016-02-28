@@ -58,7 +58,7 @@ var showOverlay = function(type, data) {
 				if (liberalVictory) {
 					inner += 'The Liberals successfully found and killed Hitler';
 				} else {
-					inner += 'The Fascists elected Hitler as Chancellor after the '+enactedFascist+' policy';
+					inner += 'The Fascists successfully elected Hitler as Chancellor after the third Fascist policy';
 				}
 			} else if (data.method == 'hitler quit') {
 				inner += 'The Liberals successfully scared Hitler out of his Thumb Bunker (quit the game)';
