@@ -32,9 +32,8 @@ var showSignin = function() {
 };
 
 var finishSignin = function(response) {
-	$('input-signin').blur();
-	$('#home-signin').hide();
-	$('#home-content').show();
+	$('.input-signin').blur();
+	$('#welcome-signin').hide();
 
 	uid = response.id;
 	auth = response.auth_key;
