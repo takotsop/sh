@@ -147,9 +147,14 @@ var policyAction = function(data, player, game) {
 			game.turn.presidentDiscard = null;
 
 			var policy = game.turn.policies[data.policyIndex];
-			var power = game.enact(policy);
+			var fascistPower = game.enactPolicy(policy);
+			if (fascistPower) {
+				data.power = fascistPower;
+			} else {
+				game.advanceTurn();
+			}
 			var secret;
-			if (power == 'peek') {
+			if (fascistPower == 'peek') {
 				secret = {target: game.presidentElect, peek: game.peekPolicies()};
 			}
 			data.policy = policy;
