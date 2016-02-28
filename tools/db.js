@@ -99,6 +99,8 @@ var insert = function(table, columnsValues, returning, callback) {
 
 module.exports = {
 
+	exists: dbConfigured,
+
 	query: query,
 
 	queryOne: queryOne,

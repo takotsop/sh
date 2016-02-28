@@ -7,18 +7,22 @@ var Player = require.main.require('./play/player');
 
 //LOCAL
 
+var setSocket = function(socket, response, uid, auth) {
+	socket.uid = uid;
+	DB.query('UPDATE users SET online_at = '+Utils.now()+', online_count = online_count + 1 WHERE id = '+uid, null);
+
+	var oldPlayer = Player.get(uid);
+	var player = new Player(socket, uid, response.name, oldPlayer);
+	socket.player = player;
+	socket.emit('auth', response);
+
+	Lobby(socket);
+};
+
 var authenticate = function(socket, uid, auth) {
 	DB.fetch('name, email', 'users', 'id = $1 AND auth_key = $2', [uid, auth], function(response) {
 		if (response) {
-			socket.uid = uid;
-			DB.query('UPDATE users SET online_at = '+Utils.now()+', online_count = online_count + 1 WHERE id = '+uid, null);
-
-			var oldPlayer = Player.get(uid);
-			var player = new Player(socket, uid, response.name, oldPlayer);
-			socket.player = player;
-			socket.emit('auth', response);
-
-			Lobby(socket);
+			setSocket(socket, response, uid, auth);
 		} else {
 			socket.emit('auth', {invalid: true});
 		}
@@ -35,6 +39,16 @@ module.exports = function(socket, uid, auth) {
 	var returnForSignin = 'id, auth_key';
 
 	socket.on('guest login', function(data, callback) {
+		if (!DB.exists) {
+			var uid = Utils.code();
+			var auth = Utils.uid();
+			var response = {id: uid, auth_key: auth};
+			callback(response);
+			response.name = 'Guest' + uid;
+			response.email = response.name + '@secrethitler.com';
+			setSocket(socket, response, uid, auth);
+			return;
+		}
 		DB.fetch('id, auth_key', 'users', 'online_count = $1 AND guest = $2', [0, true], function(userData) {
 			var insertCallback = function(response) {
 				authenticate(socket, response.id, response.auth_key);
