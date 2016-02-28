@@ -133,9 +133,9 @@ var voteCompleted = function(data) {
 		} else {
 			directive = 'Wait for the president to discard a policy';
 		}
+		setDirective(directive);
 	} else {
 		failedGovernment(data.forced, 'Election does not pass');
 	}
-	setDirective(directive);
 	showCards(cards);
 };
