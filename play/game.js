@@ -258,16 +258,16 @@ var Game = function(size, private) {
 
 	this.failedElection = function() {
 		++this.electionTracker;
-		var forced;
+		var forcedPolicy;
 		if (this.electionTracker >= 3) {
 			this.electionTracker = 0;
 			this.presidentElect = null;
 			this.chancellorElect = null;
-			forced = this.getTopPolicy();
-			this.enactPolicy(forced);
+			forcedPolicy = this.getTopPolicy();
+			this.enactPolicy(forcedPolicy, false);
 		}
 		this.advanceTurn();
-		return forced;
+		return forcedPolicy;
 	};
 
 	this.finish = function(liberals, method) {
@@ -288,7 +288,7 @@ var Game = function(size, private) {
 		}
 	};
 
-	this.enactPolicy = function(policy) {
+	this.enactPolicy = function(policy, byVote) {
 		var fascistPower;
 		this.electionTracker = 0;
 		if (policy == LIBERAL) {
@@ -304,6 +304,13 @@ var Game = function(size, private) {
 				return;
 			}
 			fascistPower = this.getFascistPower();
+		}
+		if (byVote) {
+			if (fascistPower) {
+				this.power = fascistPower;
+			} else {
+				this.advanceTurn();
+			}
 		}
 		return fascistPower;
 	};

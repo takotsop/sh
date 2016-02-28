@@ -112,12 +112,7 @@ var policyAction = function(data, player, game) {
 					} else {
 						var forcedIndex = game.turn.presidentDiscard == 0 ? 1 : 0;
 						data.policy = game.turn.policies[forcedIndex];
-						var fascistPower = game.enactPolicy(data.policy);
-						if (fascistPower) {
-							game.power = fascistPower;
-						} else {
-							game.advanceTurn();
-						}
+						game.enactPolicy(data.policy, true);
 						data = game.emitAction('veto overridden', data);
 					}
 					return data;
@@ -146,14 +141,9 @@ var policyAction = function(data, player, game) {
 			game.turn.chancellorAction = true;
 			game.turn.presidentDiscard = null;
 
-			var policy = game.turn.policies[data.policyIndex];
-			var fascistPower = game.enactPolicy(policy);
-			if (fascistPower) {
-				data.power = fascistPower;
-			} else {
-				game.advanceTurn();
-			}
 			var secret;
+			var policy = game.turn.policies[data.policyIndex];
+			var fascistPower = game.enactPolicy(policy, true);
 			if (fascistPower == 'peek') {
 				secret = {target: game.presidentElect, peek: game.peekPolicies()};
 			}
