@@ -153,7 +153,7 @@ var Game = function(size, private) {
 		this.cancelAutostart();
 
 		if (this.enoughToStart()) {
-			var startDelay = Utils.TESTING ? 6 : 30;
+			var startDelay = Utils.TESTING ? 3 : 30;
 			this.scheduledStart = Utils.now() + startDelay;
 
 			this.autoTimer = setTimeout(function() {
