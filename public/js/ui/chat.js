@@ -99,9 +99,9 @@ $('#voice-button').on('click', function() {
 
 $('#menu-button').on('click', function() {
 	if ($('#overlay').css('display') == 'none') {
-		require('game/overlay').show('menu');
+		require('ui/overlay').show('menu');
 	} else {
-		require('game/overlay').hide();
+		require('ui/overlay').hide();
 	}
 });
 

@@ -1,10 +1,10 @@
-var Cards = require('game/cards');
-var Chat = require('game/chat');
-var Overlay = require('game/overlay');
+var App = require('ui/app');
+var Cards = require('ui/cards');
+var Chat = require('ui/chat');
+var Overlay = require('ui/overlay');
+
 var State = require('game/state');
 var Policies = require('game/policies');
-
-var App = require('ui/app');
 
 //FINISH
 

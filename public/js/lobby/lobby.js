@@ -1,15 +1,16 @@
-var Chat = require('game/chat');
-var Start = require('game/start');
+var Config = require('util/config');
+var Util = require('util/util');
 
-var Welcome = require('lobby/welcome');
+var Chat = require('ui/chat');
 
 var App = require('ui/app');
 
 var Action = require('socket/action');
 var Socket = require('socket/socket');
 
-var Config = require('util/config');
-var Util = require('util/util');
+var Welcome = require('lobby/welcome');
+
+var Start = require('game/start');
 
 //LOCAL
 

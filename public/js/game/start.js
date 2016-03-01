@@ -1,13 +1,13 @@
 var Data = require('util/data');
 
 var App = require('ui/app');
+var Cards = require('ui/cards');
+var Chat = require('ui/chat');
+var Overlay = require('ui/overlay');
 
 var Process = require('socket/process');
 
-var Cards = require('game/cards');
-var Chat = require('game/chat');
 var Game = require('game/game');
-var Overlay = require('game/overlay');
 var Players = require('game/players');
 var Policies = require('game/policies');
 var State = require('game/state');

@@ -2,10 +2,9 @@ var Config = require('util/config');
 var Data = require('util/data');
 
 var App = require('ui/app');
+var Chat = require('ui/chat');
 
 var Socket = require('socket/socket');
-
-var Chat = require('game/chat');
 
 //LOCAL
 

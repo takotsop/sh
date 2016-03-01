@@ -1,7 +1,8 @@
 var Socket = require('socket/socket');
 
-var Cards = require('game/cards');
-var Chat = require('game/chat');
+var Cards = require('ui/cards');
+var Chat = require('ui/chat');
+
 var Game = require('game/game');
 var Players = require('game/players');
 var Policies = require('game/policies');
