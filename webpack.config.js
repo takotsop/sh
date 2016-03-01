@@ -23,7 +23,8 @@ module.exports = {
 
 	externals: {
 		"jquery": "jQuery",
-		"webrtc": "webrtc",
+		"simplewebrtc": "SimpleWebRTC",
+		"socket.io": "io",
 	},
 
 };

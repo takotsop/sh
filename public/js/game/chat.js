@@ -1,3 +1,5 @@
+var SimpleWebRTC = require("simplewebrtc");
+
 var Data = require('util/data');
 
 var App = require('ui/app');

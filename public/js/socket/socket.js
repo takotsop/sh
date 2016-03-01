@@ -1,3 +1,5 @@
+var IO = require('socket.io');
+
 var Config = require('util/config');
 var Data = require('util/data');
 
@@ -8,7 +10,7 @@ if (Data.uid && Data.auth) {
 	params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
 }
 
-var socket = io(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
+var socket = IO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
 
 //PUBLIC
 
