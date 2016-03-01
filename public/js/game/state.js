@@ -1,4 +1,4 @@
-var Data = require('util/data');
+var CommonGame = require('common/game');
 
 //PUBLIC
 
@@ -21,7 +21,7 @@ module.exports = {
 	},
 
 	canVeto: function() {
-		return this.enactedFascist >= Data. FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : Data.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
+		return this.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : CommonGame.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
 	},
 
 	localRole: function() {

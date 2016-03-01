@@ -6,14 +6,9 @@ var SeedRandom = require('seedrandom');
 
 var Player = require.main.require('./server/play/player');
 
+//LOCAL
+
 var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
-
-var LIBERAL = 'liberal';
-var FASCIST = 'fascist';
-var NONE = 'none';
-
-var FASCIST_POLICIES_REQUIRED = 6;
-var LIBERAL_POLICIES_REQUIRED = 5;
 
 var games = [];
 
@@ -63,7 +58,7 @@ var Game = function(size, private) {
 		var cardsRemaining = 17 - this.enactedFascist - this.enactedLiberal;
 		var liberalsRemaining = 6 - this.enactedLiberal;
 		for (var i = 0; i < cardsRemaining; ++i) {
-			this.policyDeck[i] = i < liberalsRemaining ? LIBERAL : FASCIST;
+			this.policyDeck[i] = i < liberalsRemaining ? CommonGame.LIBERAL : CommonGame.FASCIST;
 		}
 		this.policyDeck = this.shuffle(this.policyDeck);
 	};
@@ -275,15 +270,15 @@ var Game = function(size, private) {
 	this.enactPolicy = function(policy, byVote) {
 		var fascistPower;
 		this.electionTracker = 0;
-		if (policy == LIBERAL) {
+		if (policy == CommonGame.LIBERAL) {
 			++this.enactedLiberal;
-			if (this.enactedLiberal >= LIBERAL_POLICIES_REQUIRED) {
+			if (this.enactedLiberal >= CommonGame.LIBERAL_POLICIES_REQUIRED) {
 				this.finish(true, 'policy');
 				return;
 			}
 		} else {
 			++this.enactedFascist;
-			if (this.enactedFascist >= FASCIST_POLICIES_REQUIRED) {
+			if (this.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED) {
 				this.finish(false, 'policy');
 				return;
 			}
@@ -435,7 +430,7 @@ var Game = function(size, private) {
 	};
 
 	this.canVeto = function() {
-		return this.enactedFascist >= (Utils.TESTING ? 1 : FASCIST_POLICIES_REQUIRED - 1);
+		return this.enactedFascist >= (Utils.TESTING ? 1 : CommonGame.FASCIST_POLICIES_REQUIRED - 1);
 	};
 
 	return this;

@@ -1,4 +1,4 @@
-var Data = require('util/data');
+var CommonGame = require('common/game');
 
 var App = require('ui/app');
 var Cards = require('ui/cards');
@@ -7,7 +7,6 @@ var Chat = require('ui/chat');
 var Action = require('socket/action');
 
 var State = require('game/state');
-
 
 //HELPERS
 
@@ -23,9 +22,9 @@ var getPlayer = function(uid) {
 var allegianceClass = function(allegiance) {
 	var ac;
 	if (allegiance == 0) {
-		ac = Data.LIBERAL;
+		ac = CommonGame.LIBERAL;
 	} else {
-		ac = Data.FASCIST;
+		ac = CommonGame.FASCIST;
 		if (allegiance == 2) {
 			ac += ' hitler';
 		}

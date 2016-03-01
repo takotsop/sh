@@ -1,4 +1,4 @@
-var Data = require('util/data');
+var CommonGame = require('common/game');
 
 var App = require('ui/app');
 var Cards = require('ui/cards');
@@ -10,14 +10,14 @@ var State = require('game/state');
 
 var enactPolicy = function(type) {
 	var enacted;
-	if (type == Data.LIBERAL) {
+	if (type == CommonGame.LIBERAL) {
 		enacted = ++State.enactedLiberal;
-		if (State.enactedLiberal >= Data.LIBERAL_POLICIES_REQUIRED) {
+		if (State.enactedLiberal >= CommonGame.LIBERAL_POLICIES_REQUIRED) {
 			require('game/game').end(true, 'policies');
 		}
 	} else {
 		enacted = ++State.enactedFascist;
-		if (State.enactedFascist >= Data.FASCIST_POLICIES_REQUIRED) {
+		if (State.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED) {
 			require('game/game').end(false, 'policies');
 		}
 	}
@@ -33,8 +33,8 @@ var updatePolicyChoices = function(policies) {
 		var hasPolicy = policyType != null;
 		$(this).toggle(hasPolicy);
 		if (hasPolicy) {
-			$(this).toggleClass(Data.LIBERAL, policyType == Data.LIBERAL);
-			$(this).toggleClass(Data.FASCIST, policyType == Data.FASCIST);
+			$(this).toggleClass(CommonGame.LIBERAL, policyType == CommonGame.LIBERAL);
+			$(this).toggleClass(CommonGame.FASCIST, policyType == CommonGame.FASCIST);
 		}
 	});
 };

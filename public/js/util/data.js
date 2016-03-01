@@ -6,16 +6,4 @@ module.exports = {
 
 	username: null,
 
-	// CONSTANTS
-
-	FASCIST_POLICIES_REQUIRED: 6,
-
-	LIBERAL_POLICIES_REQUIRED: 5,
-
-	LIBERAL: 'liberal',
-
-	FASCIST: 'fascist',
-
-	NONE: 'none',
-
 };
