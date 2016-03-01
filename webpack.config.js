@@ -10,7 +10,7 @@ module.exports = {
 	},
 
 	resolve: {
-		root: [path.resolve('./public'), path.resolve('./public/js')],
+		root: [path.resolve('./'), path.resolve('./public'), path.resolve('./public/js')],
 		extensions: ['', '.js', '.css'],
 	},
 
