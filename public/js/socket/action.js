@@ -1,4 +1,4 @@
-var Socket = require('util/socket');
+var Socket = require('socket/socket');
 
 //LOCAL
 

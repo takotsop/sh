@@ -1,3 +1,3 @@
 require('lobby/connect');
 
-require('game/process');
+require('socket/process');

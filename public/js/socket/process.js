@@ -1,11 +1,11 @@
+var Socket = require('socket/socket');
+
 var Cards = require('game/cards');
 var Chat = require('game/chat');
 var Game = require('game/game');
 var Players = require('game/players');
 var Policies = require('game/policies');
 var State = require('game/state');
-
-var Socket = require('util/socket');
 
 //LOCAL
 

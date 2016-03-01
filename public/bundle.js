@@ -46,7 +46,7 @@
 
 	__webpack_require__(1);
 
-	__webpack_require__(16);
+	__webpack_require__(21);
 
 
 /***/ },
@@ -54,7 +54,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Data = __webpack_require__(2);
-	var Socket = __webpack_require__(3);
+
+	var Socket = __webpack_require__(19);
 
 	var Lobby = __webpack_require__(5);
 	var Welcome = __webpack_require__(17);
@@ -106,27 +107,7 @@
 
 
 /***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Config = __webpack_require__(4);
-	var Data = __webpack_require__(2);
-
-	//LOCAL
-
-	var params;
-	if (Data.uid && Data.auth) {
-		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
-	}
-
-	var socket = io(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
-
-	//PUBLIC
-
-	module.exports = socket;
-
-
-/***/ },
+/* 3 */,
 /* 4 */
 /***/ function(module, exports) {
 
@@ -141,7 +122,6 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Action = __webpack_require__(6);
 	var Chat = __webpack_require__(7);
 	var Start = __webpack_require__(14);
 
@@ -149,8 +129,10 @@
 
 	var App = __webpack_require__(8);
 
+	var Action = __webpack_require__(20);
+	var Socket = __webpack_require__(19);
+
 	var Config = __webpack_require__(4);
-	var Socket = __webpack_require__(3);
 	var Util = __webpack_require__(18);
 
 	//LOCAL
@@ -306,38 +288,15 @@
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Socket = __webpack_require__(3);
-
-	//LOCAL
-
-	var emitAction = function(action, data) {
-		if (!data) {
-			data = {};
-		}
-		data.action = action;
-		Socket.emit('game action', data);
-	};
-
-	//PUBLIC
-
-	module.exports = {
-
-		emit: emitAction,
-
-	};
-
-
-/***/ },
+/* 6 */,
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Data = __webpack_require__(2);
-	var Socket = __webpack_require__(3);
 
 	var App = __webpack_require__(8);
+
+	var Socket = __webpack_require__(19);
 
 	//LOCAL
 
@@ -379,7 +338,7 @@
 	$('#i-chat').on('keydown', function(event) {
 		var key = event.which || event.keyCode || event.charCode;
 		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(6).emit('chat', {msg: this.value});
+			__webpack_require__(20).emit('chat', {msg: this.value});
 			this.value = '';
 			setChatState(false);
 		}
@@ -577,12 +536,13 @@
 
 	var Data = __webpack_require__(2);
 
-	var Action = __webpack_require__(6);
+	var App = __webpack_require__(8);
+
 	var Cards = __webpack_require__(11);
 	var Chat = __webpack_require__(7);
 	var State = __webpack_require__(9);
 
-	var App = __webpack_require__(8);
+	var Action = __webpack_require__(20);
 
 	//HELPERS
 
@@ -708,7 +668,8 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Action = __webpack_require__(6);
+	var Action = __webpack_require__(20);
+
 	var State = __webpack_require__(9);
 
 	//LOCAL
@@ -1137,16 +1098,17 @@
 
 	var Data = __webpack_require__(2);
 
+	var App = __webpack_require__(8);
+
+	var Process = __webpack_require__(21);
+
 	var Cards = __webpack_require__(11);
 	var Chat = __webpack_require__(7);
 	var Game = __webpack_require__(12);
 	var Overlay = __webpack_require__(15);
 	var Players = __webpack_require__(10);
 	var Policies = __webpack_require__(13);
-	var Process = __webpack_require__(16);
 	var State = __webpack_require__(9);
-
-	var App = __webpack_require__(8);
 
 	//LOCAL
 
@@ -1303,7 +1265,7 @@
 	var Players = __webpack_require__(10);
 	var State = __webpack_require__(9);
 
-	var Socket = __webpack_require__(3);
+	var Socket = __webpack_require__(19);
 
 	//LOCAL
 
@@ -1462,94 +1424,18 @@
 
 
 /***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Cards = __webpack_require__(11);
-	var Chat = __webpack_require__(7);
-	var Game = __webpack_require__(12);
-	var Players = __webpack_require__(10);
-	var Policies = __webpack_require__(13);
-	var State = __webpack_require__(9);
-
-	var Socket = __webpack_require__(3);
-
-	//LOCAL
-
-	var processAction = function(data, fastForward) {
-		var action = data.action;
-		if (action == 'abandoned') {
-			Players.abandoned(data);
-		} else if (action == 'chat') {
-			Chat.addMessage(data);
-		} else if (action == 'chancellor chosen') {
-			Players.chancellorChosen(data);
-		} else if (action == 'voted') {
-			Game.voteCompleted(data);
-		} else if (action == 'discarded') {
-			Policies.discarded(data);
-		} else if (action == 'enacted') {
-			Policies.enacted(data);
-		} else if (action == 'veto requested') {
-			vetoRequest(data);
-		} else if (action == 'vetoed') {
-			Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
-		} else if (action == 'veto overridden') {
-			Policies.vetoOverridden(data);
-		} else {
-			if (action == 'peeked') {
-				Policies.returnPreviewed();
-			} else {
-				var target = Players.get(data.uid);
-				if (action == 'investigated') {
-					if (State.isLocalPresident()) {
-						Players.displayAvatar(target, data.secret.party);
-					}
-					Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
-				} else if (action == 'special election') {
-					State.specialPresidentIndex = target.index;
-				} else if (action == 'killed') {
-					Players.kill(target, data.hitler, false);
-				}
-			}
-			Cards.show(null);
-			Game.advanceTurn();
-		}
-		if (data.roles) {
-			Players.revealRoles(data.roles);
-		}
-	};
-
-	var processHistory = function(history) {
-		history.forEach(function(action) {
-			processAction(action, true);
-		});
-	};
-
-	//SOCKET
-
-	Socket.on('game action', processAction);
-
-	//PUBLIC
-
-	module.exports = {
-
-		history: processHistory,
-
-	};
-
-
-/***/ },
+/* 16 */,
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Chat = __webpack_require__(7);
-
 	var Config = __webpack_require__(4);
 	var Data = __webpack_require__(2);
-	var Socket = __webpack_require__(3);
 
 	var App = __webpack_require__(8);
+
+	var Socket = __webpack_require__(19);
+
+	var Chat = __webpack_require__(7);
 
 	//LOCAL
 
@@ -1719,6 +1605,130 @@
 		timestamp: function() {
 			return Math.round(Date.now() * 0.001);
 		},
+
+	};
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Config = __webpack_require__(4);
+	var Data = __webpack_require__(2);
+
+	//LOCAL
+
+	var params;
+	if (Data.uid && Data.auth) {
+		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
+	}
+
+	var socket = io(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
+
+	//PUBLIC
+
+	module.exports = socket;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Socket = __webpack_require__(19);
+
+	//LOCAL
+
+	var emitAction = function(action, data) {
+		if (!data) {
+			data = {};
+		}
+		data.action = action;
+		Socket.emit('game action', data);
+	};
+
+	//PUBLIC
+
+	module.exports = {
+
+		emit: emitAction,
+
+	};
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Socket = __webpack_require__(19);
+
+	var Cards = __webpack_require__(11);
+	var Chat = __webpack_require__(7);
+	var Game = __webpack_require__(12);
+	var Players = __webpack_require__(10);
+	var Policies = __webpack_require__(13);
+	var State = __webpack_require__(9);
+
+	//LOCAL
+
+	var processAction = function(data, fastForward) {
+		var action = data.action;
+		if (action == 'abandoned') {
+			Players.abandoned(data);
+		} else if (action == 'chat') {
+			Chat.addMessage(data);
+		} else if (action == 'chancellor chosen') {
+			Players.chancellorChosen(data);
+		} else if (action == 'voted') {
+			Game.voteCompleted(data);
+		} else if (action == 'discarded') {
+			Policies.discarded(data);
+		} else if (action == 'enacted') {
+			Policies.enacted(data);
+		} else if (action == 'veto requested') {
+			vetoRequest(data);
+		} else if (action == 'vetoed') {
+			Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
+		} else if (action == 'veto overridden') {
+			Policies.vetoOverridden(data);
+		} else {
+			if (action == 'peeked') {
+				Policies.returnPreviewed();
+			} else {
+				var target = Players.get(data.uid);
+				if (action == 'investigated') {
+					if (State.isLocalPresident()) {
+						Players.displayAvatar(target, data.secret.party);
+					}
+					Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
+				} else if (action == 'special election') {
+					State.specialPresidentIndex = target.index;
+				} else if (action == 'killed') {
+					Players.kill(target, data.hitler, false);
+				}
+			}
+			Cards.show(null);
+			Game.advanceTurn();
+		}
+		if (data.roles) {
+			Players.revealRoles(data.roles);
+		}
+	};
+
+	var processHistory = function(history) {
+		history.forEach(function(action) {
+			processAction(action, true);
+		});
+	};
+
+	//SOCKET
+
+	Socket.on('game action', processAction);
+
+	//PUBLIC
+
+	module.exports = {
+
+		history: processHistory,
 
 	};
 

@@ -1,5 +1,6 @@
 var Data = require('util/data');
-var Socket = require('util/socket');
+
+var Socket = require('socket/socket');
 
 var Lobby = require('lobby/lobby');
 var Welcome = require('lobby/welcome');

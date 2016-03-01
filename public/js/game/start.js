@@ -1,15 +1,16 @@
 var Data = require('util/data');
 
+var App = require('ui/app');
+
+var Process = require('socket/process');
+
 var Cards = require('game/cards');
 var Chat = require('game/chat');
 var Game = require('game/game');
 var Overlay = require('game/overlay');
 var Players = require('game/players');
 var Policies = require('game/policies');
-var Process = require('game/process');
 var State = require('game/state');
-
-var App = require('ui/app');
 
 //LOCAL
 

@@ -1,4 +1,3 @@
-var Action = require('game/action');
 var Chat = require('game/chat');
 var Start = require('game/start');
 
@@ -6,8 +5,10 @@ var Welcome = require('lobby/welcome');
 
 var App = require('ui/app');
 
+var Action = require('socket/action');
+var Socket = require('socket/socket');
+
 var Config = require('util/config');
-var Socket = require('util/socket');
 var Util = require('util/util');
 
 //LOCAL

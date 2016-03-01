@@ -1,11 +1,12 @@
 var Data = require('util/data');
 
-var Action = require('game/action');
+var App = require('ui/app');
+
 var Cards = require('game/cards');
 var Chat = require('game/chat');
 var State = require('game/state');
 
-var App = require('ui/app');
+var Action = require('socket/action');
 
 //HELPERS
 

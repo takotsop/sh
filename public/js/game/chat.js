@@ -1,7 +1,8 @@
 var Data = require('util/data');
-var Socket = require('util/socket');
 
 var App = require('ui/app');
+
+var Socket = require('socket/socket');
 
 //LOCAL
 
@@ -43,7 +44,7 @@ $('#i-chat').on('input', function(event) {
 $('#i-chat').on('keydown', function(event) {
 	var key = event.which || event.keyCode || event.charCode;
 	if (key == 13 && this.value.length > 1) {
-		require('game/action').emit('chat', {msg: this.value});
+		require('socket/action').emit('chat', {msg: this.value});
 		this.value = '';
 		setChatState(false);
 	}

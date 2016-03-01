@@ -2,7 +2,7 @@ var Cards = require('game/cards');
 var Players = require('game/players');
 var State = require('game/state');
 
-var Socket = require('util/socket');
+var Socket = require('socket/socket');
 
 //LOCAL
 

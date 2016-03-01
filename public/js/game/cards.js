@@ -1,4 +1,5 @@
-var Action = require('game/action');
+var Action = require('socket/action');
+
 var State = require('game/state');
 
 //LOCAL
