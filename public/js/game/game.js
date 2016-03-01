@@ -1,23 +1,19 @@
-var LIBERAL = 'liberal';
-var FASCIST = 'fascist';
-var NONE = 'none';
+var Cards = require('game/cards');
+var Chat = require('game/chat');
+var Overlay = require('game/overlay');
+var State = require('game/state');
+var Policies = require('game/policies');
 
-//HELPERS
+var App = require('ui/app');
 
-var getPresident = function() {
-	return players[presidentIndex];
-};
+//FINISH
 
-var getChancellor = function() {
-	return players[chancellorIndex];
-};
-
-var localPresident = function() {
-	return presidentIndex == localIndex;
-};
-
-var localChancellor = function() {
-	return chancellorIndex == localIndex;
+var endGame = function(liberalWin, winMethod) {
+	if (!State.gameOver) {
+		State.gameOver = true;
+		Chat.setDirective('GAME OVER');
+		Overlay.show('victory', {liberals: liberalWin, method: winMethod});
+	}
 };
 
 //TURNS
@@ -25,73 +21,69 @@ var localChancellor = function() {
 var playTurn = function() {
 	$('.player-slot').removeClass('elect');
 
-	var president = getPresident();
-	playerDiv(president).addClass('elect');
-	enablePlayerSelection('election');
+	var president = State.getPresident();
+	App.playerDiv(president).addClass('elect');
+	App.enablePlayerSelection('election');
 
 	var directive;
-	if (localPresident()) {
+	if (State.isLocalPresident()) {
 		directive = 'Choose your Chancellor';
 	} else {
 		directive = 'Waiting for '+president.name+' to choose their chancellor';
 	}
-	showCards(null);
-	setDirective(directive);
+	Cards.show(null);
+	Chat.setDirective(directive);
 };
 
 var advanceTurn = function() {
-	if (gameOver) {
+	if (State.gameOver) {
 		return;
 	}
-	if (specialPresidentIndex) {
-		presidentIndex = specialPresidentIndex;
-		specialPresidentIndex = null;
+	if (State.specialPresidentIndex) {
+		State.presidentIndex = State.specialPresidentIndex;
+		State.specialPresidentIndex = null;
 	} else {
-		for (var attempts = 0; attempts < playerCount; ++attempts) {
-			++positionIndex;
-			if (positionIndex >= playerCount) {
-				positionIndex = 0;
+		for (var attempts = 0; attempts < State.playerCount; ++attempts) { //TODO common
+			++State.positionIndex;
+			if (State.positionIndex >= State.playerCount) {
+				State.positionIndex = 0;
 			}
-			var player = players[positionIndex];
+			var player = State.players[State.positionIndex];
 			if (!player.killed) {
 				break;
 			}
 		}
-		presidentIndex = positionIndex;
+		State.presidentIndex = State.positionIndex;
 	}
 
-	presidentPower = null;
-	chancellorIndex = null;
+	State.presidentPower = null;
+	State.chancellorIndex = null;
 
 	playTurn();
-};
-
-var canVeto = function() {
-	return enactedFascist >= FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
 };
 
 //VOTES
 
 var updateElectionTracker = function() {
 	$('.tracker-slot').removeClass('selected');
-	$('.tracker-slot').eq(electionTracker).addClass('selected');
+	$('.tracker-slot').eq(State.electionTracker).addClass('selected');
 };
 
 var resetElectionTracker = function() {
-	electionTracker = 0;
+	State.electionTracker = 0;
 	updateElectionTracker();
 };
 
 var advanceElectionTracker = function(forcedPolicy) {
 	if (forcedPolicy) {
-		presidentElect = 0;
-		chancellorElect = 0;
-		electionTracker = 0;
-		enactPolicy(forcedPolicy);
-		drawPolicyCards(1);
-		checkRemainingPolicies();
+		State.presidentElect = 0;
+		State.chancellorElect = 0;
+		State.electionTracker = 0;
+		Policies.enact(forcedPolicy);
+		Policies.draw(1);
+		Policies.checkRemaining();
 	} else {
-		++electionTracker;
+		++State.electionTracker;
 	}
 	updateElectionTracker();
 };
@@ -99,14 +91,14 @@ var advanceElectionTracker = function(forcedPolicy) {
 var failedGovernment = function(forced, explanation) {
 	advanceElectionTracker(forced);
 	var directive = explanation + ', ';
-	if (electionTracker == 0) {
+	if (State.electionTracker == 0) {
 		directive += '3 failed elections enacts the top policy on the deck D:';
-	} else if (electionTracker == 2) {
+	} else if (State.electionTracker == 2) {
 		directive += 'one more and the top policy on the deck will be enacted!';
 	} else {
 		directive += 'advancing the election tracker and passing on the presidency';
 	}
-	setDirective(directive);
+	Chat.setDirective(directive);
 	advanceTurn();
 };
 
@@ -120,22 +112,42 @@ var voteCompleted = function(data) {
 	if (data.hitler) {
 		endGame(false, 'hitler');
 	} else if (data.elected) {
-		presidentElect = getPresident().uid;
-		chancellorElect = getChancellor().uid;
+		State.presidentElect = State.getPresident().uid;
+		State.chancellorElect = State.getChancellor().uid;
 
-		chatDisabled = true;
-		drawPolicyCards(3);
+		State.chatDisabled = true;
+		Policies.draw(3);
 
-		if (localPresident()) {
-			updatePolicyChoices(data.secret.policies);
+		if (State.isLocalPresident()) {
+			Policies.updateChoices(data.secret.policies);
 			cards = 'policy';
 			directive = 'Choose a policy to <strong>discard</strong>';
 		} else {
 			directive = 'Wait for the president to discard a policy';
 		}
-		setDirective(directive);
+		Chat.setDirective(directive);
 	} else {
 		failedGovernment(data.forced, 'Election does not pass');
 	}
-	showCards(cards);
+	Cards.show(cards);
+};
+
+//PUBLIC
+
+module.exports = {
+
+	end: endGame,
+
+	advanceTurn: advanceTurn,
+
+	playTurn: playTurn,
+
+	failedGovernment: failedGovernment,
+
+	voteCompleted: voteCompleted,
+
+	advanceElectionTracker: advanceElectionTracker,
+
+	resetElectionTracker: resetElectionTracker,
+
 };

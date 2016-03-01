@@ -1,3 +1,8 @@
+var Action = require('game/action');
+var State = require('game/state');
+
+//LOCAL
+
 var hideCards = function(hideName) {
 	$('#cards-'+hideName).hide();
 };
@@ -9,15 +14,7 @@ var showCards = function(showName) {
 	if (showName == 'vote') {
 		$('#cards-vote .card').removeClass('selected');
 	} else if (showName == 'policy') {
-		$('#veto-request').toggle(localChancellor() && canVeto());
-	}
-};
-
-var setPosition = function(position) {
-	$('#cards-position').toggle(position != null);
-	if (position) {
-		$('#cards-position > div').hide();
-		$('#card-'+position).show();
+		$('#veto-request').toggle(State.isLocalChancellor() && State.canVeto());
 	}
 };
 
@@ -27,12 +24,12 @@ $('#cards-vote').on('click', '.card', function() {
 	$('#cards-vote .card').removeClass('selected');
 	$(this).addClass('selected');
 
-	emitAction('vote', {up: this.id == 'card-ja'});
+	Action.emit('vote', {up: this.id == 'card-ja'});
 });
 
 $('#cards-policy').on('click', '.card', function() {
-	if (presidentPower == 'peek') {
-		emitAction('peek');
+	if (State.presidentPower == 'peek') {
+		Action.emit('peek');
 	} else {
 		var data = {};
 		if ($(this).data('veto')) {
@@ -40,10 +37,20 @@ $('#cards-policy').on('click', '.card', function() {
 		} else {
 			data.policyIndex = $(this).data('index');
 		}
-		emitAction('policy', data);
+		Action.emit('policy', data);
 	}
 });
 
 $('#cards-veto').on('click', '.card', function() {
-	emitAction('policy', {veto: $(this).data('veto') == true});
+	Action.emit('policy', {veto: $(this).data('veto') == true});
 });
+
+//PUBLIC
+
+module.exports = {
+
+	hide: hideCards,
+
+	show: showCards,
+
+};

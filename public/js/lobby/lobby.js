@@ -1,3 +1,17 @@
+var Action = require('game/action');
+var Chat = require('game/chat');
+var Start = require('game/start');
+
+var Welcome = require('lobby/welcome');
+
+var App = require('ui/app');
+
+var Config = require('util/config');
+var Socket = require('util/socket');
+var Util = require('util/util');
+
+//LOCAL
+
 var countdownInterval, startTime;
 
 var clearCountdown = function() {
@@ -8,7 +22,7 @@ var clearCountdown = function() {
 };
 
 var updateCountdown = function() {
-	var secondsRemaining = startTime - timestamp();
+	var secondsRemaining = startTime - Util.timestamp();
 	if (secondsRemaining < 0) {
 		clearCountdown();
 	} else {
@@ -18,24 +32,24 @@ var updateCountdown = function() {
 
 var updateLobby = function(data) {
 	if (data.started) {
-		startGame(data);
+		Start.play(data);
 		return;
 	}
 	showLobbySection('wait');
 
 	clearCountdown();
 
-	var playerCount = data.players.length;
+	var lobbyPlayerCount = data.players.length;
 	startTime = data.startTime;
 	if (startTime) {
 		updateCountdown();
 		countdownInterval = setInterval(updateCountdown, 1000);
 	} else {
-		var playersNeeded = 5 - playerCount;
+		var playersNeeded = 5 - lobbyPlayerCount;
 		$('#lobby-countdown').text(playersNeeded + ' more...');
 	}
 
-	$('#lobby-player-summary').text(playerCount + ' of ' + data.maxSize);
+	$('#lobby-player-summary').text(lobbyPlayerCount + ' of ' + data.maxSize);
 	var nameList = '';
 	data.players.forEach(function(player, index) {
 		floatClass = index % 2 == 0 ? 'left' : 'right';
@@ -58,22 +72,19 @@ var showLobbySection = function(subsection) {
 var connectToLobby = function() {
 	showLobbySection('start');
 
-	socket.emit('lobby join');
+	Socket.emit('lobby join');
 };
 
 var showLobby = function() {
 	gameOver = true;
-	if (webrtc) {
-		webrtc.disconnect();
-		webrtc = null;
-	}
-
-	showAppSection('lobby');
+	Chat.voiceDisconnect();
+	App.showSection('lobby');
 	connectToLobby();
 };
 
 var quitGame = function() {
-	emitAction('quit');
+	Action.emit('quit');
+	showLobby();
 };
 
 //EVENTS
@@ -82,7 +93,7 @@ $('.lobby-leave').on('click', connectToLobby);
 
 $('#lobby-button-quick-play').on('click', function() {
 	showLobbySection('');
-	socket.emit('room quickjoin', null, function(response) {
+	Socket.emit('room quickjoin', null, function(response) {
 		showLobbySection(response.success ? 'wait' : 'start');
 	});
 });
@@ -98,8 +109,8 @@ $('#lobby-button-join-private').on('click', function() {
 $('#lobby-button-signout').on('click', function() {
 	var confirmed = window.confirm('Are you sure you want to sign out of your account?');
 	if (confirmed) {
-		hideWelcomeSplash();
-		showSignin();
+		Welcome.hideSplash();
+		Welcome.showSignin();
 	}
 });
 
@@ -108,7 +119,7 @@ $('#lobby-create-confirm').on('click', function() {
 		size: $('#create-game-size').val(),
 		private: $('#create-game-privacy').prop('checked'),
 	};
-	socket.emit('room create', createData, function(response) {
+	Socket.emit('room create', createData, function(response) {
 		showLobbySection(response.success ? 'wait' : 'start');
 	});
 });
@@ -122,7 +133,7 @@ $('#lobby-submit-private').on('click', function() {
 
 	$('#join-private-code').val('');
 	showLobbySection('');
-	socket.emit('room join private', {gid: gid}, function(response) {
+	Socket.emit('room join private', {gid: gid}, function(response) {
 		if (response.error) {
 			window.alert('Unable to join game: ' + response.error);
 		}
@@ -132,10 +143,20 @@ $('#lobby-submit-private').on('click', function() {
 
 //SOCKET
 
-socket.on('lobby game data', updateLobby);
+Socket.on('lobby game data', updateLobby);
 
 window.onbeforeunload = function() {
-	if (!TESTING && !gameOver) {
+	if (!Config.TESTING && !gameOver) {
 		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 	}
+};
+
+//PUBLIC
+
+module.exports = {
+
+	show: showLobby,
+
+	quitToLobby: quitGame,
+
 };

@@ -1,3 +1,13 @@
+var Chat = require('game/chat');
+
+var Config = require('util/config');
+var Data = require('util/data');
+var Socket = require('util/socket');
+
+var App = require('ui/app');
+
+//LOCAL
+
 var submittedEmail;
 
 //PUBLIC
@@ -8,12 +18,12 @@ var hideWelcomeSplash = function() {
 };
 
 var showSignin = function() {
-	uid = null;
-	auth = null;
+	Data.uid = null;
+	Data.auth = null;
 	localStorage.removeItem('uid');
 	localStorage.removeItem('auth');
 
-	showAppSection('welcome');
+	App.showSection('welcome');
 
 	$('#signin-start').show();
 	$('#signin-confirm').hide();
@@ -21,37 +31,37 @@ var showSignin = function() {
 
 	$('#i-signin-email').focus();
 
-	if (TESTING && localStorage.getItem('manual') == null) {
+	if (Config.TESTING && localStorage.getItem('manual') == null) {
 		setTimeout(function() {
 			$('#start-playing').click();
 			$('#guest-login').click();
 		}, 100);
 	}
 
-	$('#voice-unsupported').toggle(!supportsVoiceChat());
+	$('#voice-unsupported').toggle(!Chat.supportsVoice());
 };
 
 var finishSignin = function(response) {
 	$('.input-signin').blur();
 	$('#welcome-signin').hide();
 
-	uid = response.id;
-	auth = response.auth_key;
-	localStorage.setItem('uid', uid);
-	localStorage.setItem('auth', auth);
+	Data.uid = response.id;
+	Data.auth = response.auth_key;
+	localStorage.setItem('uid', Data.uid);
+	localStorage.setItem('auth', Data.auth);
 };
 
 //GUEST
 
 $('#guest-login').on('click', function() {
-	socket.emit('guest login', null, finishSignin);
+	Socket.emit('guest login', null, finishSignin);
 });
 
 //EMAIL
 
 var signinEmail = function(email) {
 	$('.sd-signin').hide();
-	socket.emit('signin email', {email: email}, function(response) {
+	Socket.emit('signin email', {email: email}, function(response) {
 		submittedEmail = response.email;
 		if (submittedEmail) {
 			$('.signin-email-address').text(submittedEmail);
@@ -74,7 +84,7 @@ var signinEmail = function(email) {
 var signinPasskey = function(passkey) {
 	if (passkey.length == 6 && /^[0-9]+$/.test(passkey)) {
 		$('.sd-signin').hide();
-		socket.emit('signin passkey', {email: submittedEmail, pass: passkey}, function(response) {
+		Socket.emit('signin passkey', {email: submittedEmail, pass: passkey}, function(response) {
 			if (response.error) {
 				$('#signin-confirm').show();
 				$('#i-signin-passkey').focus();
@@ -93,7 +103,7 @@ var signinRegister = function(username) {
 	var nameLength = username.length;
 	if (nameLength >= 4 && nameLength <= 12 && /^[a-z0-9]+$/i.test(username)) {
 		$('.sd-signin').hide();
-		socket.emit('signin name', {email: submittedEmail, name: username}, function(response) {
+		Socket.emit('signin name', {email: submittedEmail, name: username}, function(response) {
 			if (response.error) {
 				$('#signin-register').show();
 				$('#i-signin-name').focus();
@@ -142,3 +152,14 @@ $('input.input-signin').on('keypress', function(event) {
 	}
 	return false;
 });
+
+//PUBLIC
+
+module.exports = {
+
+	hideSplash: hideWelcomeSplash,
+
+	showSignin: showSignin,
+
+};
+

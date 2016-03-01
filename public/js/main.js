@@ -1,4 +1,3 @@
-var showAppSection = function(section) {
-	$('body > section').hide();
-	$('#s-' + section).show();
-};
+require('lobby/connect');
+
+require('game/process');

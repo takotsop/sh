@@ -1,26 +1,15 @@
-var uid = localStorage.getItem('uid');
-var auth = localStorage.getItem('auth');
-var username;
+var Config = require('util/config');
+var Data = require('util/data');
+
+//LOCAL
 
 var params;
-if (uid && auth) {
-	params = {query: 'uid=' + uid + '&auth=' + auth};
+if (Data.uid && Data.auth) {
+	params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
 }
 
-var socket = io(TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
+var socket = io(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
 
-socket.on('connect', function(data) {
-	if (!uid || !auth) {
-		showSignin();
-	}
-});
+//PUBLIC
 
-socket.on('auth', function(data) {
-	username = data.name;
-
-	if (data.invalid) {
-		showSignin();
-	} else {
-		showLobby();
-	}
-});
+module.exports = socket;

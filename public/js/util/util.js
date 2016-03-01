@@ -1,3 +1,7 @@
-var timestamp = function() {
-	return Math.round(Date.now() * 0.001);
+module.exports = {
+
+	timestamp: function() {
+		return Math.round(Date.now() * 0.001);
+	},
+
 };

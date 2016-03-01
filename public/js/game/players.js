@@ -1,46 +1,29 @@
+var Data = require('util/data');
+
+var Action = require('game/action');
+var Cards = require('game/cards');
+var Chat = require('game/chat');
+var State = require('game/state');
+
+var App = require('ui/app');
+
 //HELPERS
 
 var getPlayer = function(uid) {
-	for (var pidx in players) {
-		var player = players[pidx];
+	for (var pidx in State.players) {
+		var player = State.players[pidx];
 		if (player.uid == uid) {
 			return player;
 		}
 	}
 };
 
-var uidDiv = function(uid, query) {
-	return $('#ps'+uid + (query ? ' '+query :''));
-};
-
-var dataDiv = function(data, query) {
-	return uidDiv(data.uid, query);
-};
-
-var playerDiv = function(player, query) {
-	return uidDiv(player.uid, query);
-};
-
-var localDiv = function(query) {
-	return playerDiv(localPlayer, query);
-};
-
-var localRole = function() {
-	return localAllegiance == 0 ? 'Liberal' : (localAllegiance == 1 ? 'Fascist' : 'Hitler');
-};
-
-var localParty = function() {
-	return localAllegiance > 0 ? 'Fascist' : 'Liberal';
-};
-
-//SELECTION
-
 var allegianceClass = function(allegiance) {
 	var ac;
 	if (allegiance == 0) {
-		ac = LIBERAL;
+		ac = Data.LIBERAL;
 	} else {
-		ac = FASCIST;
+		ac = Data.FASCIST;
 		if (allegiance == 2) {
 			ac += ' hitler';
 		}
@@ -49,56 +32,26 @@ var allegianceClass = function(allegiance) {
 };
 
 var displayAvatar = function(player, allegiance) {
-	playerDiv(player, '.avatar').addClass(allegianceClass(allegiance));
-};
-
-var revealRoles = function(roles) {
-	roles.forEach(function(allegiance, index) {
-		displayAvatar(players[index], allegiance);
-	});
-};
-
-var enablePlayerSelection = function(purpose) {
-	var isLocalPresident = localPresident();
-	$('#players .player-slot:not(.killed)').toggleClass('choose', isLocalPresident);
-
-	if (isLocalPresident) {
-		uidDiv(uid).removeClass('choose');
-		if (purpose == 'election') {
-			if (playerCount > 5) {
-				uidDiv(presidentElect).removeClass('choose');
-			}
-			uidDiv(chancellorElect).removeClass('choose');
-		} else if (purpose == 'investigate') {
-			players.forEach(function(player) {
-				if (player.investigated) {
-					playerDiv(player).removeClass('choose');
-				}
-			});
-		} else if (purpose == 'bullet') {
-			players.forEach(function(player) {
-				if (player.killed) {
-					playerDiv(player).removeClass('choose');
-				}
-			});
-		}
-	}
+	App.playerDiv(player, '.avatar').addClass(allegianceClass(allegiance));
 };
 
 var killPlayer = function(player, hitler, quit) {
 	if (!player.killed) {
 		player.killed = true;
 		$('.player-slot').removeClass('choose');
-		playerDiv(player).addClass('killed');
-		currentCount -= 1;
+		App.playerDiv(player).addClass(State.gameOver ? 'left' : 'killed');
+		State.currentCount -= 1;
 
-		if (hitler) {
-			endGame(true, quit ? 'hitler quit' : 'hitler');
-		} else if (currentCount <= 2) {
-			if (playerCount <= 3) {
-				endGame(false, quit ? 'quit' : 'killed');
-			} else {
-				endGame(null, 'remaining');
+		if (!State.gameOver) {
+			var Game = require('game/game');
+			if (hitler) {
+				Game.end(true, quit ? 'hitler quit' : 'hitler');
+			} else if (State.currentCount <= 2) {
+				if (State.playerCount <= 3) {
+					Game.end(false, quit ? 'quit' : 'killed');
+				} else {
+					Game.end(null, 'remaining');
+				}
 			}
 		}
 	}
@@ -107,10 +60,10 @@ var killPlayer = function(player, hitler, quit) {
 var abandonedPlayer = function(data) {
 	var player = getPlayer(data.uid);
 	killPlayer(player, data.hitler, true);
-	addChatMessage({msg: 'left the game', uid: data.uid});
+	Chat.addMessage({msg: 'left the game', uid: data.uid});
 
 	if (data.advance) {
-		advanceTurn();
+		require('game/game').advanceTurn();
 	}
 };
 
@@ -118,33 +71,57 @@ var abandonedPlayer = function(data) {
 
 $('#players').on('click', '.player-slot.choose', function() {
 	var targetUid = $(this).data('uid');
-	if (presidentPower) {
-		emitAction(presidentPower, {uid: targetUid});
+	if (State.presidentPower) {
+		Action.emit(State.presidentPower, {uid: targetUid});
 	} else {
-		emitAction('chancellor', {uid: targetUid});
+		Action.emit('chancellor', {uid: targetUid});
 	}
 });
 
 var chancellorChosen = function(data) {
-	initializedPlay = true;
+	State.initializedPlay = true;
 	$('.vote').hide();
 
 	var president = getPlayer(data.president);
 	var chancellor = getPlayer(data.chancellor);
-	chancellorIndex = chancellor.index;
+	State.chancellorIndex = chancellor.index;
 
 	$('.player-slot').removeClass('choose').removeClass('elect');
-	playerDiv(president).addClass('elect');
-	playerDiv(chancellor).addClass('elect');
+	App.playerDiv(president).addClass('elect');
+	App.playerDiv(chancellor).addClass('elect');
 
 	var directive, cards;
-	if (localPlayer.killed) {
+	if (State.localPlayer.killed) {
 		directive = 'Waiting for vote';
 		cards = null;
 	} else {
 		directive = 'Vote';
 		cards = 'vote';
 	}
-	setDirective(directive + ' on President <strong>'+president.name+'</strong> and Chancellor <strong>'+chancellor.name+'</strong>');
-	showCards(cards);
+	Chat.setDirective(directive + ' on President <strong>'+president.name+'</strong> and Chancellor <strong>'+chancellor.name+'</strong>');
+	Cards.show(cards);
+};
+
+//PUBLIC
+
+module.exports = {
+
+	get: getPlayer,
+
+	displayAvatar: displayAvatar,
+
+	allegianceClass: allegianceClass,
+
+	chancellorChosen: chancellorChosen,
+
+	kill: killPlayer,
+
+	abandoned: abandonedPlayer,
+
+	revealRoles: function(roles) {
+		roles.forEach(function(allegiance, index) {
+			displayAvatar(State.players[index], allegiance);
+		});
+	},
+
 };

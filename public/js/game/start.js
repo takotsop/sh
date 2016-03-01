@@ -1,43 +1,67 @@
-var gameOver = true, initializedPlay;
-var players, playerCount, currentCount;
-var presidentIndex, positionIndex, specialPresidentIndex, chancellorIndex;
-var presidentElect, chancellorElect, presidentPower, electionTracker;
-var localPlayer, localIndex;
-var chatDisabled;
-var enactedFascist, enactedLiberal;
+var Data = require('util/data');
 
-var endGame = function(liberalWin, winMethod) {
-	gameOver = true;
-	setDirective('GAME OVER');
-	showOverlay('victory', {liberals: liberalWin, method: winMethod});
+var Cards = require('game/cards');
+var Chat = require('game/chat');
+var Game = require('game/game');
+var Overlay = require('game/overlay');
+var Players = require('game/players');
+var Policies = require('game/policies');
+var Process = require('game/process');
+var State = require('game/state');
+
+var App = require('ui/app');
+
+//LOCAL
+
+var getFascistPowers = function() {
+	var fascistPowers = ['', '', '', '', '', ''];
+	if (State.playerCount >= 7) {
+		if (State.playerCount >= 9) {
+			fascistPowers[0] = 'investigate';
+		}
+		fascistPowers[1] = 'investigate';
+		fascistPowers[2] = 'election';
+	} else {
+		fascistPowers[2] = 'peek';
+	}
+	if (State.playerCount >= 4) {
+		if (State.playerCount >= 5) {
+			fascistPowers[3] = 'bullet';
+		}
+		fascistPowers[4] = State.playerCount >= 5 ? 'bullet veto' : 'veto';
+	} else {
+		fascistPowers[3] = 'bullet';
+	}
+	// fascistPowers[0] = 'bullet'; //SAMPLE
+	return fascistPowers;
 };
 
 var startGame = function(data) {
 	gameId = data.gid;
-	showAppSection('game');
+	App.showSection('game');
 
-	initializedPlay = false;
-	gameOver = false;
-	positionIndex = data.startIndex;
-	presidentIndex = positionIndex;
-	chancellorIndex = null;
-	players = data.players;
-	playerCount = players.length;
-	currentCount = playerCount;
-	chatDisabled = false;
+	State.initializedPlay = false;
+	State.gameOver = false;
+	State.positionIndex = data.startIndex;
+	State.presidentIndex = State.positionIndex;
+	State.chancellorIndex = null;
+	State.players = data.players;
+	State.playerCount = State.players.length;
+	State.currentCount = State.playerCount;
+	State.chatDisabled = false;
 
 	// Election tracker
-	presidentPower = null;
-	specialPresidentIndex = null;
-	presidentElect = 0;
-	chancellorElect = 0;
-	electionTracker = -1;
-	advanceElectionTracker();
+	State.presidentPower = null;
+	State.specialPresidentIndex = null;
+	State.presidentElect = 0;
+	State.chancellorElect = 0;
+	State.electionTracker = -1;
+	Game.advanceElectionTracker();
 
 	// Policy deck
-	enactedFascist = 0;
-	enactedLiberal = 0;
-	shufflePolicyCards();
+	State.enactedFascist = 0;
+	State.enactedLiberal = 0;
+	Policies.shuffle();
 
 	var fascistPlaceholders = $('#board-fascist .policy-placeholder');
 	getFascistPowers().forEach(function(power, index) {
@@ -61,10 +85,10 @@ var startGame = function(data) {
 
 	// Display players
 	var playerString = '<div class="player-section">';
-	var centerIndex = Math.ceil(playerCount / 2);
+	var centerIndex = Math.ceil(State.playerCount / 2);
 
 	var floatIndex = 0;
-	players.forEach(function(player, pidx) {
+	State.players.forEach(function(player, pidx) {
 		player.index = pidx;
 
 		var centerBreak = pidx == centerIndex;
@@ -74,7 +98,7 @@ var startGame = function(data) {
 		var floatingLeft = floatIndex % 2 == 0;
 		var floatClass = floatingLeft ? 'left' : 'right';
 		if (centerBreak) {
-			var evenRemaining = ((playerCount - pidx) % 2) == 0;
+			var evenRemaining = ((State.playerCount - pidx) % 2) == 0;
 			if (floatingLeft) {
 				if (!evenRemaining) {
 					floatClass = 'right clear';
@@ -89,9 +113,9 @@ var startGame = function(data) {
 				}
 			}
 		}
-		if (player.uid == uid) {
-			localPlayer = player;
-			localIndex = pidx;
+		if (player.uid == Data.uid) {
+			State.localPlayer = player;
+			State.localIndex = pidx;
 			floatClass += ' local';
 		}
 		playerString += '<div id="ps'+player.uid+'" class="player-slot '+floatClass+'" data-uid="'+player.uid+'"><div class="avatar image"><div class="vote" style="display:none;"></div></div><div class="contents"><div class="details"><h2>'+player.name+' ['+(pidx+1)+']</h2><span class="typing icon" style="display:none;">💬</span><span class="talking icon" style="display:none;">🎙</span></div><div class="chat"></div></div></div>';
@@ -102,27 +126,33 @@ var startGame = function(data) {
 	$('#players').html(playerString);
 
 	// Local player
-	if (localPlayer) {
-		localAllegiance = localPlayer.allegiance;
-		$('#card-role .label').text(localRole());
-		$('#card-party .label').text(localParty());
+	if (State.localPlayer) {
+		State.localAllegiance = State.localPlayer.allegiance;
+		$('#card-role .label').text(State.localRole());
+		$('#card-party .label').text(State.localParty());
 	} else {
 		console.error('Local player not found');
 	}
 
-	players.forEach(function(player, pidx) {
+	State.players.forEach(function(player, pidx) {
 		if (player.allegiance != null) {
-			displayAvatar(player, player.allegiance);
+			Players.displayAvatar(player, player.allegiance);
 		}
 	});
 
-	data.history.forEach(function(historyData) {
-		processAction(historyData, true);
-	});
+	Process.history(data.history);
 
-	if (!initializedPlay) {
-		showOverlay('start');
-		playTurn();
-		showCards('role');
+	if (!State.initializedPlay) {
+		Overlay.show('start');
+		Game.playTurn();
+		Cards.show('role');
 	}
+};
+
+//PUBLIC
+
+module.exports = {
+
+	play: startGame,
+
 };

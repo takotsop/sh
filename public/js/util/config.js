@@ -1,1 +1,5 @@
-var TESTING = document.location.hostname == 'localhost';
+module.exports = {
+
+	TESTING: document.location.hostname == 'localhost',
+
+};

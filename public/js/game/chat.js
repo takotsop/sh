@@ -1,3 +1,10 @@
+var Data = require('util/data');
+var Socket = require('util/socket');
+
+var App = require('ui/app');
+
+//LOCAL
+
 var inputState;
 var webrtc;
 
@@ -13,16 +20,17 @@ var setDirective = function(directive) {
 };
 
 var addChatMessage = function(data) {
+	var Players = require('game/players');
 	var message = data.msg;
-	var name = getPlayer(data.uid).name;
-	dataDiv(data, '.chat').text(message);
+	var name = Players.get(data.uid).name;
+	App.dataDiv(data, '.chat').text(message);
 	$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
 };
 
 var setChatState = function(state) {
 	if (inputState !== state) {
 		inputState = state;
-		socket.emit('typing', {on: inputState});
+		Socket.emit('typing', {on: inputState});
 	}
 };
 
@@ -35,17 +43,17 @@ $('#i-chat').on('input', function(event) {
 $('#i-chat').on('keydown', function(event) {
 	var key = event.which || event.keyCode || event.charCode;
 	if (key == 13 && this.value.length > 1) {
-		emitAction('chat', {msg: this.value});
+		require('game/action').emit('chat', {msg: this.value});
 		this.value = '';
 		setChatState(false);
 	}
 });
 
-socket.on('typing', function(data) {
-	dataDiv(data, '.typing').toggle(data.on);
+Socket.on('typing', function(data) {
+	App.dataDiv(data, '.typing').toggle(data.on);
 });
 
-//CHAT BUTTONS
+//BUTTONS
 
 $('#voice-button').on('click', function() {
 	if (!supportsVoiceChat()) {
@@ -73,7 +81,7 @@ $('#voice-button').on('click', function() {
 				audio: true,
 				video: false
 			},
-			nick: uid,
+			nick: Data.uid,
 		});
 
 		webrtc.on('readyToCall', function() {
@@ -81,15 +89,35 @@ $('#voice-button').on('click', function() {
 		});
 
 		webrtc.on('remoteVolumeChange', function(peer, volume) {
-			uidDiv(peer.nick, '.talking').toggle(volume > -50);
+			App.uidDiv(peer.nick, '.talking').toggle(volume > -50);
 		});
 	}
 });
 
 $('#menu-button').on('click', function() {
 	if ($('#overlay').css('display') == 'none') {
-		showOverlay('menu');
+		require('game/overlay').show('menu');
 	} else {
-		hideOverlay();
+		require('game/overlay').hide();
 	}
 });
+
+//PUBLIC
+
+module.exports = {
+
+	setDirective: setDirective,
+
+	addMessage: addChatMessage,
+
+	// VOICE
+
+	supportsVoice: supportsVoiceChat,
+
+	voiceDisconnect: function() {
+		if (webrtc) {
+			webrtc.disconnect();
+		}
+	},
+
+};

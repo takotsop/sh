@@ -1,7 +1,15 @@
+var Cards = require('game/cards');
+var Players = require('game/players');
+var State = require('game/state');
+
+var Socket = require('util/socket');
+
+//LOCAL
+
 var hideOverlay = function() {
 	$('#game-mat').removeClass('overlay');
 	$('#overlay').fadeOut();
-	hideCards('role');
+	Cards.hide('role');
 };
 
 var showOverlaySection = function(name) {
@@ -27,14 +35,14 @@ var showOverlay = function(type, data) {
 		extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 		inner += '<h2><em>welcome to...</em></h2><h1>Secret Hitler</h1>';
-		inner += '<h3>Your secret role this game is: <strong>'+localRole()+'</strong></h3>';
-		inner += '<div class="avatar image '+allegianceClass(localAllegiance)+'"></div>';
+		inner += '<h3>Your secret role this game is: <strong>'+State.localRole()+'</strong></h3>';
+		inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
 		inner += '<p>';
 
 		inner += 'Your objective is to ';
-		if (localPlayer.allegiance == 0) {
+		if (State.localAllegiance == 0) {
 			inner += 'work together with the other Liberals and pass 5 Liberal policies, or assassinate Hitler with one of the Fascist bullet policies.';
-		} else if (localPlayer.allegiance == 1) {
+		} else if (State.localAllegiance == 1) {
 			inner += 'work together with the other Fascists to enact 6 Fascist policies, or elect Hitler as Chancellor <strong>after the third</strong> Fascist policy has been enacted.';
 		} else {
 			inner += 'discover the other Fascists, working together to enact 6 Fascist policies, or get yourself elected Chancellor <strong>after the third</strong> Fascist policy has been enacted.<br>As Hitler, you\'ll want to keep yourself out of suspicion to avoid being assassinated.';
@@ -52,7 +60,7 @@ var showOverlay = function(type, data) {
 			inner += '<h1>'+winName+'s win!</h1>';
 			inner += '<h3>';
 			if (data.method == 'policies') {
-				var winCount = liberalVictory ? enactedLiberal : enactedFascist;
+				var winCount = liberalVictory ? State.enactedLiberal : State.enactedFascist;
 				inner += winName+' enacted '+winCount+' '+winName+' policies';
 			} else if (data.method == 'hitler') {
 				if (liberalVictory) {
@@ -62,7 +70,7 @@ var showOverlay = function(type, data) {
 				}
 			} else if (data.method == 'hitler quit') {
 				inner += 'The Liberals successfully scared Hitler out of his Thumb Bunker (quit the game)';
-			} else if (playerCount <= 3) {
+			} else if (State.playerCount <= 3) {
 				if (data.method == 'killed') {
 					inner += 'Hitler successfully killed one of the two Liberal players';
 				} else if (data.method == 'quit') {
@@ -101,12 +109,11 @@ $('#menu-about').on('click', function() {
 
 $('#menu-quit').on('click', function() {
 	var confirmed = true;
-	if (!gameOver) {
+	if (!State.gameOver) {
 		confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
 	}
 	if (confirmed) {
-		quitGame();
-		showLobby();
+		require('lobby/lobby').quitToLobby();
 	}
 });
 
@@ -132,7 +139,7 @@ $('#feedback-submit').on('click', function() {
 		alert('Please enter some feedback into the text area!');
 		return;
 	}
-	socket.emit('feedback', {type: type, body: body}, function(response) {
+	Socket.emit('feedback', {type: type, body: body}, function(response) {
 		if (response) {
 			$('#i-feedback-type').val('default');
 			$('#i-feedback-body').val('');
@@ -142,3 +149,12 @@ $('#feedback-submit').on('click', function() {
 	});
 });
 
+//PUBLIC
+
+module.exports = {
+
+	hide: hideOverlay,
+
+	show: showOverlay,
+
+};
