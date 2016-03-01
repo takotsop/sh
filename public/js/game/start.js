@@ -1,9 +1,8 @@
 var gameOver = true, initializedPlay;
 var players, playerCount, currentCount;
-var presidentIndex, positionIndex, specialPresidentIndex, chancellorIndex, presidentPower;
-var presidentElect, chancellorElect;
-var localPlayer, localIndex, localRole;
-var localElective, electionTracker;
+var presidentIndex, positionIndex, specialPresidentIndex, chancellorIndex;
+var presidentElect, chancellorElect, presidentPower, electionTracker;
+var localPlayer, localIndex;
 var chatDisabled;
 var enactedFascist, enactedLiberal;
 

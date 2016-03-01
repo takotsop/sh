@@ -132,7 +132,6 @@ var chancellorChosen = function(data) {
 	var president = getPlayer(data.president);
 	var chancellor = getPlayer(data.chancellor);
 	chancellorIndex = chancellor.index;
-	localElective = uid == data.president || uid == data.chancellor;
 
 	$('.player-slot').removeClass('choose').removeClass('elect');
 	playerDiv(president).addClass('elect');
