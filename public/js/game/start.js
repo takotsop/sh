@@ -89,17 +89,17 @@ var startGame = function(data) {
 	var centerIndex = Math.ceil(State.playerCount / 2);
 
 	var floatIndex = 0;
-	State.players.forEach(function(player, pidx) {
-		player.index = pidx;
+	State.players.forEach(function(player) {
+		var playerIndex = player.index;
 
-		var centerBreak = pidx == centerIndex;
+		var centerBreak = playerIndex == centerIndex;
 		if (centerBreak) {
 			playerString += '</div><div class="player-section bottom">';
 		}
 		var floatingLeft = floatIndex % 2 == 0;
 		var floatClass = floatingLeft ? 'left' : 'right';
 		if (centerBreak) {
-			var evenRemaining = ((State.playerCount - pidx) % 2) == 0;
+			var evenRemaining = ((State.playerCount - playerIndex) % 2) == 0;
 			if (floatingLeft) {
 				if (!evenRemaining) {
 					floatClass = 'right clear';
@@ -116,10 +116,10 @@ var startGame = function(data) {
 		}
 		if (player.uid == Data.uid) {
 			State.localPlayer = player;
-			State.localIndex = pidx;
+			State.localIndex = playerIndex;
 			floatClass += ' local';
 		}
-		playerString += '<div id="ps'+player.uid+'" class="player-slot '+floatClass+'" data-uid="'+player.uid+'"><div class="avatar image"><div class="vote" style="display:none;"></div></div><div class="contents"><div class="details"><h2>'+player.name+' ['+(pidx+1)+']</h2><span class="typing icon" style="display:none;">💬</span><span class="talking icon" style="display:none;">🎙</span></div><div class="chat"></div></div></div>';
+		playerString += '<div id="ps'+player.uid+'" class="player-slot '+floatClass+'" data-uid="'+player.uid+'"><div class="avatar image"><div class="vote" style="display:none;"></div></div><div class="contents"><div class="details"><h2>'+player.name+' ['+(playerIndex+1)+']</h2><span class="typing icon" style="display:none;">💬</span><span class="talking icon" style="display:none;">🎙</span></div><div class="chat"></div></div></div>';
 		++floatIndex;
 	});
 	playerString += '</div>';
@@ -135,7 +135,7 @@ var startGame = function(data) {
 		console.error('Local player not found');
 	}
 
-	State.players.forEach(function(player, pidx) {
+	State.players.forEach(function(player) {
 		if (player.allegiance != null) {
 			Players.displayAvatar(player, player.allegiance);
 		}
