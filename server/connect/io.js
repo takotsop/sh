@@ -1,9 +1,9 @@
 var SocketIO = require('socket.io');
 
-var DB = require.main.require('./tools/db');
+var DB = require.main.require('./server/tools/db');
 
 var Signin = require('./signin');
-var Play = require.main.require('./play/play');
+var Play = require.main.require('./server/play/play');
 
 //PUBLIC
 

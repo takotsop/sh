@@ -1,4 +1,4 @@
-var Player = require.main.require('./play/player');
+var Player = require.main.require('./server/play/player');
 
 //MANAGE
 

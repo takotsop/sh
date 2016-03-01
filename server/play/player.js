@@ -1,4 +1,4 @@
-var Utils = require.main.require('./tools/utils');
+var Utils = require.main.require('./server/tools/utils');
 
 var allPlayers = {};
 

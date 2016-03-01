@@ -1,4 +1,4 @@
-var Config = require.main.require('./tools/config');
+var Config = require.main.require('./server/tools/config');
 var SendGrid = require('sendgrid')(Config.SENDGRID_API_KEY);
 
 module.exports = {

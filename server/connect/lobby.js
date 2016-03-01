@@ -1,7 +1,7 @@
-var DB = require.main.require('./tools/db');
-var Utils = require.main.require('./tools/utils');
+var DB = require.main.require('./server/tools/db');
+var Utils = require.main.require('./server/tools/utils');
 
-var Game = require.main.require('./play/game');
+var Game = require.main.require('./server/play/game');
 
 //LOCAL
 

@@ -1,9 +1,9 @@
-var Utils = require.main.require('./tools/utils');
-var DB = require.main.require('./tools/db');
-var Mailer = require.main.require('./tools/mailer');
+var Utils = require.main.require('./server/tools/utils');
+var DB = require.main.require('./server/tools/db');
+var Mailer = require.main.require('./server/tools/mailer');
 
 var Lobby = require('./lobby');
-var Player = require.main.require('./play/player');
+var Player = require.main.require('./server/play/player');
 
 //LOCAL
 

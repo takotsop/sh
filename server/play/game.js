@@ -1,8 +1,8 @@
-var DB = require.main.require('./tools/db');
-var Utils = require.main.require('./tools/utils');
+var DB = require.main.require('./server/tools/db');
+var Utils = require.main.require('./server/tools/utils');
 var SeedRandom = require('seedrandom');
 
-var Player = require.main.require('./play/player');
+var Player = require.main.require('./server/play/player');
 
 var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
 
