@@ -1,3 +1,5 @@
+var CommonGame = require.main.require('./common/game');
+
 var DB = require.main.require('./server/tools/db');
 var Utils = require.main.require('./server/tools/utils');
 var SeedRandom = require('seedrandom');
@@ -209,25 +211,7 @@ var Game = function(size, private) {
 	};
 
 	this.getFascistPower = function() {
-		var enacted = this.enactedFascist;
-		if (enacted == 1) {
-			if (Utils.TESTING) {
-				// return 'bullet'; //SAMPLE
-			}
-			return this.playerCount >= 9 ? 'investigate' : null;
-		}
-		if (enacted == 2) {
-			return this.playerCount >= 7 ? 'investigate' : null;
-		}
-		if (enacted == 3) {
-			return this.playerCount >= 7 ? 'election' : 'peek';
-		}
-		if (enacted == 4) {
-			return this.playerCount != 4 ? 'bullet' : null;
-		}
-		if (enacted == 5) {
-			return this.playerCount >= 4 ? 'bullet' : null;
-		}
+		return CommonGame.getFascistPower(this.enactedFascist, this.playerCount);
 	};
 
 //STATE

@@ -1,3 +1,5 @@
+var CommonGame = require('common/game');
+
 var Data = require('util/data');
 
 var App = require('ui/app');
@@ -13,29 +15,6 @@ var Policies = require('game/policies');
 var State = require('game/state');
 
 //LOCAL
-
-var getFascistPowers = function() {
-	var fascistPowers = ['', '', '', '', '', ''];
-	if (State.playerCount >= 7) {
-		if (State.playerCount >= 9) {
-			fascistPowers[0] = 'investigate';
-		}
-		fascistPowers[1] = 'investigate';
-		fascistPowers[2] = 'election';
-	} else {
-		fascistPowers[2] = 'peek';
-	}
-	if (State.playerCount >= 4) {
-		if (State.playerCount >= 5) {
-			fascistPowers[3] = 'bullet';
-		}
-		fascistPowers[4] = State.playerCount >= 5 ? 'bullet veto' : 'veto';
-	} else {
-		fascistPowers[3] = 'bullet';
-	}
-	// fascistPowers[0] = 'bullet'; //SAMPLE
-	return fascistPowers;
-};
 
 var startGame = function(data) {
 	gameId = data.gid;
@@ -65,7 +44,11 @@ var startGame = function(data) {
 	Policies.shuffle();
 
 	var fascistPlaceholders = $('#board-fascist .policy-placeholder');
-	getFascistPowers().forEach(function(power, index) {
+	for (var index = 0; index < Data.FASCIST_POLICIES_REQUIRED; ++index) {
+		var power = CommonGame.getFascistPower(index + 1, State.playerCount);
+		if (!power) {
+			continue;
+		}
 		var placeholder = fascistPlaceholders.eq(index);
 		var description = '';
 		if (power == 'peek') {
@@ -82,7 +65,7 @@ var startGame = function(data) {
 		}
 		placeholder.data('power', power);
 		placeholder.html('<div class="detail">' + description + '</div>');
-	});
+	}
 
 	// Display players
 	var playerString = '<div class="player-section">';

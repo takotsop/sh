@@ -46,7 +46,7 @@
 
 	__webpack_require__(1);
 
-	__webpack_require__(17);
+	__webpack_require__(21);
 
 
 /***/ },
@@ -57,7 +57,7 @@
 
 	var Socket = __webpack_require__(3);
 
-	var Lobby = __webpack_require__(5);
+	var Lobby = __webpack_require__(6);
 	var Welcome = __webpack_require__(18);
 
 	//SOCKET
@@ -110,9 +110,9 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var IO = __webpack_require__(20);
+	var IO = __webpack_require__(4);
 
-	var Config = __webpack_require__(4);
+	var Config = __webpack_require__(5);
 	var Data = __webpack_require__(2);
 
 	//LOCAL
@@ -133,6 +133,12 @@
 /* 4 */
 /***/ function(module, exports) {
 
+	module.exports = io;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
 	module.exports = {
 
 		TESTING: document.location.hostname == 'localhost',
@@ -141,22 +147,22 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Config = __webpack_require__(4);
-	var Util = __webpack_require__(19);
+	var Config = __webpack_require__(5);
+	var Util = __webpack_require__(7);
 
-	var Chat = __webpack_require__(22);
+	var Chat = __webpack_require__(8);
 
-	var App = __webpack_require__(8);
+	var App = __webpack_require__(10);
 
-	var Action = __webpack_require__(12);
+	var Action = __webpack_require__(14);
 	var Socket = __webpack_require__(3);
 
 	var Welcome = __webpack_require__(18);
 
-	var Start = __webpack_require__(16);
+	var Start = __webpack_require__(19);
 
 	//LOCAL
 
@@ -311,19 +317,163 @@
 
 
 /***/ },
-/* 6 */,
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = SimpleWebRTC;
+	module.exports = {
+
+		timestamp: function() {
+			return Math.round(Date.now() * 0.001);
+		},
+
+	};
+
 
 /***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var SimpleWebRTC = __webpack_require__(9);
+
 	var Data = __webpack_require__(2);
 
-	var State = __webpack_require__(9);
+	var App = __webpack_require__(10);
+
+	var Socket = __webpack_require__(3);
+
+	//LOCAL
+
+	var inputState;
+	var webrtc;
+
+	var supportsVoiceChat = function() {
+		return window.RTCPeerConnection != null || window.mozRTCPeerConnection != null || window.webkitRTCPeerConnection != null;
+	};
+
+	//MESSAGES
+
+	var setDirective = function(directive) {
+		$('#s-game').toggleClass('directive', directive != null);
+		$('#directive').html(directive);
+	};
+
+	var addChatMessage = function(data) {
+		var Players = __webpack_require__(12);
+		var message = data.msg;
+		var name = Players.get(data.uid).name;
+		App.dataDiv(data, '.chat').text(message);
+		$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+	};
+
+	var setChatState = function(state) {
+		if (inputState !== state) {
+			inputState = state;
+			Socket.emit('typing', {on: inputState});
+		}
+	};
+
+	//EVENTS
+
+	$('#i-chat').on('input', function(event) {
+		setChatState(this.value.length > 0);
+	});
+
+	$('#i-chat').on('keydown', function(event) {
+		var key = event.which || event.keyCode || event.charCode;
+		if (key == 13 && this.value.length > 1) {
+			__webpack_require__(14).emit('chat', {msg: this.value});
+			this.value = '';
+			setChatState(false);
+		}
+	});
+
+	Socket.on('typing', function(data) {
+		App.dataDiv(data, '.typing').toggle(data.on);
+	});
+
+	//BUTTONS
+
+	$('#voice-button').on('click', function() {
+		if (!supportsVoiceChat()) {
+			alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
+			return;
+		}
+		if (webrtc) {
+			$(this).toggleClass('muted');
+			if ($(this).hasClass('muted')) {
+				webrtc.mute();
+			} else {
+				webrtc.unmute();
+			}
+			return;
+		}
+
+		var voiceChatRequested = window.confirm('Would you like to enable voice chat? This requires you to approve microphone access, which allows you to talk with the other players in your game.\n\nThis feature is in beta, and is only supported in some browsers. Please report any issues you have with it. Thanks!');
+		if (voiceChatRequested) {
+			webrtc = new SimpleWebRTC({
+				// url: '',
+				autoRequestMedia: true,
+				enableDataChannels: true,
+				detectSpeakingEvents: true,
+				media: {
+					audio: true,
+					video: false
+				},
+				nick: Data.uid,
+			});
+
+			webrtc.on('readyToCall', function() {
+				webrtc.joinRoom('s-h-'+gameId);
+			});
+
+			webrtc.on('remoteVolumeChange', function(peer, volume) {
+				App.uidDiv(peer.nick, '.talking').toggle(volume > -50);
+			});
+		}
+	});
+
+	$('#menu-button').on('click', function() {
+		if ($('#overlay').css('display') == 'none') {
+			__webpack_require__(16).show('menu');
+		} else {
+			__webpack_require__(16).hide();
+		}
+	});
+
+	//PUBLIC
+
+	module.exports = {
+
+		setDirective: setDirective,
+
+		addMessage: addChatMessage,
+
+		// VOICE
+
+		supportsVoice: supportsVoiceChat,
+
+		voiceDisconnect: function() {
+			if (webrtc) {
+				webrtc.disconnect();
+			}
+		},
+
+	};
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = SimpleWebRTC;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Data = __webpack_require__(2);
+
+	var State = __webpack_require__(11);
 
 	//LOCAL
 
@@ -389,7 +539,7 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Data = __webpack_require__(2);
@@ -430,18 +580,18 @@
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Data = __webpack_require__(2);
 
-	var App = __webpack_require__(8);
-	var Cards = __webpack_require__(21);
-	var Chat = __webpack_require__(22);
+	var App = __webpack_require__(10);
+	var Cards = __webpack_require__(13);
+	var Chat = __webpack_require__(8);
 
-	var Action = __webpack_require__(12);
+	var Action = __webpack_require__(14);
 
-	var State = __webpack_require__(9);
+	var State = __webpack_require__(11);
 
 
 	//HELPERS
@@ -480,7 +630,7 @@
 			State.currentCount -= 1;
 
 			if (!State.gameOver) {
-				var Game = __webpack_require__(13);
+				var Game = __webpack_require__(15);
 				if (hitler) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
 				} else if (State.currentCount <= 2) {
@@ -500,7 +650,7 @@
 		Chat.addMessage({msg: 'left the game', uid: data.uid});
 
 		if (data.advance) {
-			__webpack_require__(13).advanceTurn();
+			__webpack_require__(15).advanceTurn();
 		}
 	};
 
@@ -565,8 +715,70 @@
 
 
 /***/ },
-/* 11 */,
-/* 12 */
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Action = __webpack_require__(14);
+
+	var State = __webpack_require__(11);
+
+	//LOCAL
+
+	var hideCards = function(hideName) {
+		$('#cards-'+hideName).hide();
+	};
+
+	var showCards = function(showName) {
+		$('#player-cards > *').hide();
+		$('#cards-'+showName).show();
+
+		if (showName == 'vote') {
+			$('#cards-vote .card').removeClass('selected');
+		} else if (showName == 'policy') {
+			$('#veto-request').toggle(State.isLocalChancellor() && State.canVeto());
+		}
+	};
+
+	//EVENTS
+
+	$('#cards-vote').on('click', '.card', function() {
+		$('#cards-vote .card').removeClass('selected');
+		$(this).addClass('selected');
+
+		Action.emit('vote', {up: this.id == 'card-ja'});
+	});
+
+	$('#cards-policy').on('click', '.card', function() {
+		if (State.presidentPower == 'peek') {
+			Action.emit('peek');
+		} else {
+			var data = {};
+			if ($(this).data('veto')) {
+				data.veto = $(this).data('veto') == true;
+			} else {
+				data.policyIndex = $(this).data('index');
+			}
+			Action.emit('policy', data);
+		}
+	});
+
+	$('#cards-veto').on('click', '.card', function() {
+		Action.emit('policy', {veto: $(this).data('veto') == true});
+	});
+
+	//PUBLIC
+
+	module.exports = {
+
+		hide: hideCards,
+
+		show: showCards,
+
+	};
+
+
+/***/ },
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Socket = __webpack_require__(3);
@@ -591,16 +803,16 @@
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var App = __webpack_require__(8);
-	var Cards = __webpack_require__(21);
-	var Chat = __webpack_require__(22);
-	var Overlay = __webpack_require__(15);
+	var App = __webpack_require__(10);
+	var Cards = __webpack_require__(13);
+	var Chat = __webpack_require__(8);
+	var Overlay = __webpack_require__(16);
 
-	var State = __webpack_require__(9);
-	var Policies = __webpack_require__(14);
+	var State = __webpack_require__(11);
+	var Policies = __webpack_require__(17);
 
 	//FINISH
 
@@ -750,16 +962,183 @@
 
 
 /***/ },
-/* 14 */
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Cards = __webpack_require__(13);
+
+	var Socket = __webpack_require__(3);
+
+	var Players = __webpack_require__(12);
+	var State = __webpack_require__(11);
+
+	//LOCAL
+
+	var hideOverlay = function() {
+		$('#game-mat').removeClass('overlay');
+		$('#overlay').fadeOut();
+		Cards.hide('role');
+	};
+
+	var showOverlaySection = function(name) {
+		$('#overlay .toggle-section').hide();
+		$('#overlay-' + name).show();
+	};
+
+	var showOverlay = function(type, data) {
+		setTimeout(function() {
+			$('#game-mat').addClass('overlay');
+		}, 0);
+		$('#overlay').fadeIn();
+		var showInfo = type != 'menu' && type != 'feedback';
+		showOverlaySection(showInfo ? 'info' : type);
+
+		var inner = '';
+		var extras = '';
+
+		// Start
+		if (type == 'start') {
+			extras += '<div class="tip top">game status ⤴︎</div>';
+			extras += '<div class="tip bottom">⤹ chat box</div>';
+			extras += '<div class="tip bottom right">menu⤵︎</div>';
+
+			inner += '<h2><em>welcome to...</em></h2><h1>Secret Hitler</h1>';
+			inner += '<h3>Your secret role this game is: <strong>'+State.localRole()+'</strong></h3>';
+			inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
+			inner += '<p>';
+
+			inner += 'Your objective is to ';
+			if (State.localAllegiance == 0) {
+				inner += 'work together with the other Liberals and pass 5 Liberal policies, or assassinate Hitler with one of the Fascist bullet policies.';
+			} else if (State.localAllegiance == 1) {
+				inner += 'work together with the other Fascists to enact 6 Fascist policies, or elect Hitler as Chancellor <strong>after the third</strong> Fascist policy has been enacted.';
+			} else {
+				inner += 'discover the other Fascists, working together to enact 6 Fascist policies, or get yourself elected Chancellor <strong>after the third</strong> Fascist policy has been enacted.<br>As Hitler, you\'ll want to keep yourself out of suspicion to avoid being assassinated.';
+			}
+			inner += '</p><h3>Good luck!</h3>';
+
+		// Game over
+		} else if (type == 'victory') {
+			var liberalVictory = data.liberals;
+			if (liberalVictory === null) {
+				inner += '<h1>Game Abandoned</h1>';
+				inner += '<h3>Sorry, too many players quit the game to continue :(</h3>';
+			} else {
+				var winName = liberalVictory ? 'Liberal' : 'Fascist';
+				inner += '<h1>'+winName+'s win!</h1>';
+				inner += '<h3>';
+				if (data.method == 'policies') {
+					var winCount = liberalVictory ? State.enactedLiberal : State.enactedFascist;
+					inner += winName+' enacted '+winCount+' '+winName+' policies';
+				} else if (data.method == 'hitler') {
+					if (liberalVictory) {
+						inner += 'The Liberals successfully found and killed Hitler';
+					} else {
+						inner += 'The Fascists successfully elected Hitler as Chancellor after the third Fascist policy';
+					}
+				} else if (data.method == 'hitler quit') {
+					inner += 'The Liberals successfully scared Hitler out of his Thumb Bunker (quit the game)';
+				} else if (State.playerCount <= 3) {
+					if (data.method == 'killed') {
+						inner += 'Hitler successfully killed one of the two Liberal players';
+					} else if (data.method == 'quit') {
+						inner += 'A Liberal quit the game, leaving too few players remaining :(';
+					}
+					inner += '</h3><h3>';
+					inner += '(special win condition for 3 player)';
+				}
+				inner += '</h3><p><hr></p><button class="menu-feedback large">give feedback</button>';
+			}
+		}
+
+		inner += '<button id="overlay-continue" class="large" data-type="'+type+'">continue</button>';
+		$('#overlay .detail').html(inner);
+		$('#overlay .extras').html(extras);
+	};
+
+	$('#overlay').on('click', '#overlay-continue', function() {
+		var type = $(this).data('type');
+		hideOverlay();
+	});
+
+	//MENU
+
+	$('#menu-issues').on('click', function() {
+		window.open('https://github.com/kylecoburn/secret-hitler/issues', '_blank');
+	});
+
+	$('#overlay').on('click', '.menu-feedback', function() {
+		showOverlaySection('feedback');
+	});
+
+	$('#menu-about').on('click', function() {
+		showOverlaySection('about');
+	});
+
+	$('#menu-quit').on('click', function() {
+		var confirmed = true;
+		if (!State.gameOver) {
+			confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
+		}
+		if (confirmed) {
+			__webpack_require__(6).quitToLobby();
+		}
+	});
+
+	$('#menu-cancel').on('click', function() {
+		hideOverlay();
+	});
+
+	//FEEDBACK
+
+	$('.menu-back').on('click', function() {
+		showOverlaySection('menu');
+	});
+
+	$('#feedback-submit').on('click', function() {
+		console.log(this);
+		var type = $('#i-feedback-type').val();
+		if (!type) {
+			alert('Please select a type of feedback to report and try again!');
+			return;
+		}
+		var body = $('#i-feedback-body').val();
+		if (body.length < 6) {
+			alert('Please enter some feedback into the text area!');
+			return;
+		}
+		Socket.emit('feedback', {type: type, body: body}, function(response) {
+			if (response) {
+				$('#i-feedback-type').val('default');
+				$('#i-feedback-body').val('');
+				showOverlaySection('menu');
+				alert('Thank you! Your feedback has been recorded.');
+			}
+		});
+	});
+
+	//PUBLIC
+
+	module.exports = {
+
+		hide: hideOverlay,
+
+		show: showOverlay,
+
+	};
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Data = __webpack_require__(2);
 
-	var App = __webpack_require__(8);
-	var Cards = __webpack_require__(21);
-	var Chat = __webpack_require__(22);
+	var App = __webpack_require__(10);
+	var Cards = __webpack_require__(13);
+	var Chat = __webpack_require__(8);
 
-	var State = __webpack_require__(9);
+	var State = __webpack_require__(11);
 
 	//LOCAL
 
@@ -768,12 +1147,12 @@
 		if (type == Data.LIBERAL) {
 			enacted = ++State.enactedLiberal;
 			if (State.enactedLiberal >= Data.LIBERAL_POLICIES_REQUIRED) {
-				__webpack_require__(13).end(true, 'policies');
+				__webpack_require__(15).end(true, 'policies');
 			}
 		} else {
 			enacted = ++State.enactedFascist;
 			if (State.enactedFascist >= Data.FASCIST_POLICIES_REQUIRED) {
-				__webpack_require__(13).end(false, 'policies');
+				__webpack_require__(15).end(false, 'policies');
 			}
 		}
 		var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
@@ -813,7 +1192,7 @@
 	};
 
 	var policyEnacted = function(data) {
-		var Game = __webpack_require__(13);
+		var Game = __webpack_require__(15);
 
 		discardPolicyCards(1);
 
@@ -956,425 +1335,14 @@
 
 
 /***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Cards = __webpack_require__(21);
-
-	var Socket = __webpack_require__(3);
-
-	var Players = __webpack_require__(10);
-	var State = __webpack_require__(9);
-
-	//LOCAL
-
-	var hideOverlay = function() {
-		$('#game-mat').removeClass('overlay');
-		$('#overlay').fadeOut();
-		Cards.hide('role');
-	};
-
-	var showOverlaySection = function(name) {
-		$('#overlay .toggle-section').hide();
-		$('#overlay-' + name).show();
-	};
-
-	var showOverlay = function(type, data) {
-		setTimeout(function() {
-			$('#game-mat').addClass('overlay');
-		}, 0);
-		$('#overlay').fadeIn();
-		var showInfo = type != 'menu' && type != 'feedback';
-		showOverlaySection(showInfo ? 'info' : type);
-
-		var inner = '';
-		var extras = '';
-
-		// Start
-		if (type == 'start') {
-			extras += '<div class="tip top">game status ⤴︎</div>';
-			extras += '<div class="tip bottom">⤹ chat box</div>';
-			extras += '<div class="tip bottom right">menu⤵︎</div>';
-
-			inner += '<h2><em>welcome to...</em></h2><h1>Secret Hitler</h1>';
-			inner += '<h3>Your secret role this game is: <strong>'+State.localRole()+'</strong></h3>';
-			inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
-			inner += '<p>';
-
-			inner += 'Your objective is to ';
-			if (State.localAllegiance == 0) {
-				inner += 'work together with the other Liberals and pass 5 Liberal policies, or assassinate Hitler with one of the Fascist bullet policies.';
-			} else if (State.localAllegiance == 1) {
-				inner += 'work together with the other Fascists to enact 6 Fascist policies, or elect Hitler as Chancellor <strong>after the third</strong> Fascist policy has been enacted.';
-			} else {
-				inner += 'discover the other Fascists, working together to enact 6 Fascist policies, or get yourself elected Chancellor <strong>after the third</strong> Fascist policy has been enacted.<br>As Hitler, you\'ll want to keep yourself out of suspicion to avoid being assassinated.';
-			}
-			inner += '</p><h3>Good luck!</h3>';
-
-		// Game over
-		} else if (type == 'victory') {
-			var liberalVictory = data.liberals;
-			if (liberalVictory === null) {
-				inner += '<h1>Game Abandoned</h1>';
-				inner += '<h3>Sorry, too many players quit the game to continue :(</h3>';
-			} else {
-				var winName = liberalVictory ? 'Liberal' : 'Fascist';
-				inner += '<h1>'+winName+'s win!</h1>';
-				inner += '<h3>';
-				if (data.method == 'policies') {
-					var winCount = liberalVictory ? State.enactedLiberal : State.enactedFascist;
-					inner += winName+' enacted '+winCount+' '+winName+' policies';
-				} else if (data.method == 'hitler') {
-					if (liberalVictory) {
-						inner += 'The Liberals successfully found and killed Hitler';
-					} else {
-						inner += 'The Fascists successfully elected Hitler as Chancellor after the third Fascist policy';
-					}
-				} else if (data.method == 'hitler quit') {
-					inner += 'The Liberals successfully scared Hitler out of his Thumb Bunker (quit the game)';
-				} else if (State.playerCount <= 3) {
-					if (data.method == 'killed') {
-						inner += 'Hitler successfully killed one of the two Liberal players';
-					} else if (data.method == 'quit') {
-						inner += 'A Liberal quit the game, leaving too few players remaining :(';
-					}
-					inner += '</h3><h3>';
-					inner += '(special win condition for 3 player)';
-				}
-				inner += '</h3><p><hr></p><button class="menu-feedback large">give feedback</button>';
-			}
-		}
-
-		inner += '<button id="overlay-continue" class="large" data-type="'+type+'">continue</button>';
-		$('#overlay .detail').html(inner);
-		$('#overlay .extras').html(extras);
-	};
-
-	$('#overlay').on('click', '#overlay-continue', function() {
-		var type = $(this).data('type');
-		hideOverlay();
-	});
-
-	//MENU
-
-	$('#menu-issues').on('click', function() {
-		window.open('https://github.com/kylecoburn/secret-hitler/issues', '_blank');
-	});
-
-	$('#overlay').on('click', '.menu-feedback', function() {
-		showOverlaySection('feedback');
-	});
-
-	$('#menu-about').on('click', function() {
-		showOverlaySection('about');
-	});
-
-	$('#menu-quit').on('click', function() {
-		var confirmed = true;
-		if (!State.gameOver) {
-			confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
-		}
-		if (confirmed) {
-			__webpack_require__(5).quitToLobby();
-		}
-	});
-
-	$('#menu-cancel').on('click', function() {
-		hideOverlay();
-	});
-
-	//FEEDBACK
-
-	$('.menu-back').on('click', function() {
-		showOverlaySection('menu');
-	});
-
-	$('#feedback-submit').on('click', function() {
-		console.log(this);
-		var type = $('#i-feedback-type').val();
-		if (!type) {
-			alert('Please select a type of feedback to report and try again!');
-			return;
-		}
-		var body = $('#i-feedback-body').val();
-		if (body.length < 6) {
-			alert('Please enter some feedback into the text area!');
-			return;
-		}
-		Socket.emit('feedback', {type: type, body: body}, function(response) {
-			if (response) {
-				$('#i-feedback-type').val('default');
-				$('#i-feedback-body').val('');
-				showOverlaySection('menu');
-				alert('Thank you! Your feedback has been recorded.');
-			}
-		});
-	});
-
-	//PUBLIC
-
-	module.exports = {
-
-		hide: hideOverlay,
-
-		show: showOverlay,
-
-	};
-
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Data = __webpack_require__(2);
-
-	var App = __webpack_require__(8);
-	var Cards = __webpack_require__(21);
-	var Chat = __webpack_require__(22);
-	var Overlay = __webpack_require__(15);
-
-	var Process = __webpack_require__(17);
-
-	var Game = __webpack_require__(13);
-	var Players = __webpack_require__(10);
-	var Policies = __webpack_require__(14);
-	var State = __webpack_require__(9);
-
-	//LOCAL
-
-	var getFascistPowers = function() {
-		var fascistPowers = ['', '', '', '', '', ''];
-		if (State.playerCount >= 7) {
-			if (State.playerCount >= 9) {
-				fascistPowers[0] = 'investigate';
-			}
-			fascistPowers[1] = 'investigate';
-			fascistPowers[2] = 'election';
-		} else {
-			fascistPowers[2] = 'peek';
-		}
-		if (State.playerCount >= 4) {
-			if (State.playerCount >= 5) {
-				fascistPowers[3] = 'bullet';
-			}
-			fascistPowers[4] = State.playerCount >= 5 ? 'bullet veto' : 'veto';
-		} else {
-			fascistPowers[3] = 'bullet';
-		}
-		// fascistPowers[0] = 'bullet'; //SAMPLE
-		return fascistPowers;
-	};
-
-	var startGame = function(data) {
-		gameId = data.gid;
-		App.showSection('game');
-
-		State.initializedPlay = false;
-		State.gameOver = false;
-		State.positionIndex = data.startIndex;
-		State.presidentIndex = State.positionIndex;
-		State.chancellorIndex = null;
-		State.players = data.players;
-		State.playerCount = State.players.length;
-		State.currentCount = State.playerCount;
-		State.chatDisabled = false;
-
-		// Election tracker
-		State.presidentPower = null;
-		State.specialPresidentIndex = null;
-		State.presidentElect = 0;
-		State.chancellorElect = 0;
-		State.electionTracker = -1;
-		Game.advanceElectionTracker();
-
-		// Policy deck
-		State.enactedFascist = 0;
-		State.enactedLiberal = 0;
-		Policies.shuffle();
-
-		var fascistPlaceholders = $('#board-fascist .policy-placeholder');
-		getFascistPowers().forEach(function(power, index) {
-			var placeholder = fascistPlaceholders.eq(index);
-			var description = '';
-			if (power == 'peek') {
-				description = 'President checks the top 3 policy cards';
-			} else if (power == 'investigate') {
-				description = 'President investigates a player\'s identity card';
-			} else if (power == 'election') {
-				description = 'President chooses the next presidential candidate';
-			} else if (power.indexOf('bullet') > -1) {
-				description = 'President kills a player';
-			}
-			if (power.indexOf('veto') > -1) {
-				description = 'Veto power unlocked<br><br>' + description;
-			}
-			placeholder.data('power', power);
-			placeholder.html('<div class="detail">' + description + '</div>');
-		});
-
-		// Display players
-		var playerString = '<div class="player-section">';
-		var centerIndex = Math.ceil(State.playerCount / 2);
-
-		var floatIndex = 0;
-		State.players.forEach(function(player) {
-			var playerIndex = player.index;
-
-			var centerBreak = playerIndex == centerIndex;
-			if (centerBreak) {
-				playerString += '</div><div class="player-section bottom">';
-			}
-			var floatingLeft = floatIndex % 2 == 0;
-			var floatClass = floatingLeft ? 'left' : 'right';
-			if (centerBreak) {
-				var evenRemaining = ((State.playerCount - playerIndex) % 2) == 0;
-				if (floatingLeft) {
-					if (!evenRemaining) {
-						floatClass = 'right clear';
-						++floatIndex;
-					}
-				} else {
-					if (evenRemaining) {
-						floatClass = 'left';
-						++floatIndex;
-					} else {
-						floatClass += ' clear';
-					}
-				}
-			}
-			if (player.uid == Data.uid) {
-				State.localPlayer = player;
-				State.localIndex = playerIndex;
-				floatClass += ' local';
-			}
-			playerString += '<div id="ps'+player.uid+'" class="player-slot '+floatClass+'" data-uid="'+player.uid+'"><div class="avatar image"><div class="vote" style="display:none;"></div></div><div class="contents"><div class="details"><h2>'+player.name+' ['+(playerIndex+1)+']</h2><span class="typing icon" style="display:none;">💬</span><span class="talking icon" style="display:none;">🎙</span></div><div class="chat"></div></div></div>';
-			++floatIndex;
-		});
-		playerString += '</div>';
-
-		$('#players').html(playerString);
-
-		// Local player
-		if (State.localPlayer) {
-			State.localAllegiance = State.localPlayer.allegiance;
-			$('#card-role .label').text(State.localRole());
-			$('#card-party .label').text(State.localParty());
-		} else {
-			console.error('Local player not found');
-		}
-
-		State.players.forEach(function(player) {
-			if (player.allegiance != null) {
-				Players.displayAvatar(player, player.allegiance);
-			}
-		});
-
-		Process.history(data.history);
-
-		if (!State.initializedPlay) {
-			Overlay.show('start');
-			Game.playTurn();
-			Cards.show('role');
-		}
-	};
-
-	//PUBLIC
-
-	module.exports = {
-
-		play: startGame,
-
-	};
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Socket = __webpack_require__(3);
-
-	var Cards = __webpack_require__(21);
-	var Chat = __webpack_require__(22);
-
-	var Game = __webpack_require__(13);
-	var Players = __webpack_require__(10);
-	var Policies = __webpack_require__(14);
-	var State = __webpack_require__(9);
-
-	//LOCAL
-
-	var processAction = function(data, fastForward) {
-		var action = data.action;
-		if (action == 'abandoned') {
-			Players.abandoned(data);
-		} else if (action == 'chat') {
-			Chat.addMessage(data);
-		} else if (action == 'chancellor chosen') {
-			Players.chancellorChosen(data);
-		} else if (action == 'voted') {
-			Game.voteCompleted(data);
-		} else if (action == 'discarded') {
-			Policies.discarded(data);
-		} else if (action == 'enacted') {
-			Policies.enacted(data);
-		} else if (action == 'veto requested') {
-			vetoRequest(data);
-		} else if (action == 'vetoed') {
-			Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
-		} else if (action == 'veto overridden') {
-			Policies.vetoOverridden(data);
-		} else {
-			if (action == 'peeked') {
-				Policies.returnPreviewed();
-			} else {
-				var target = Players.get(data.uid);
-				if (action == 'investigated') {
-					if (State.isLocalPresident()) {
-						Players.displayAvatar(target, data.secret.party);
-					}
-					Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
-				} else if (action == 'special election') {
-					State.specialPresidentIndex = target.index;
-				} else if (action == 'killed') {
-					Players.kill(target, data.hitler, false);
-				}
-			}
-			Cards.show(null);
-			Game.advanceTurn();
-		}
-		if (data.roles) {
-			Players.revealRoles(data.roles);
-		}
-	};
-
-	var processHistory = function(history) {
-		history.forEach(function(action) {
-			processAction(action, true);
-		});
-	};
-
-	//SOCKET
-
-	Socket.on('game action', processAction);
-
-	//PUBLIC
-
-	module.exports = {
-
-		history: processHistory,
-
-	};
-
-
-/***/ },
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Config = __webpack_require__(4);
+	var Config = __webpack_require__(5);
 	var Data = __webpack_require__(2);
 
-	var App = __webpack_require__(8);
-	var Chat = __webpack_require__(22);
+	var App = __webpack_require__(10);
+	var Chat = __webpack_require__(8);
 
 	var Socket = __webpack_require__(3);
 
@@ -1539,13 +1507,148 @@
 
 /***/ },
 /* 19 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
+
+	var CommonGame = __webpack_require__(20);
+
+	var Data = __webpack_require__(2);
+
+	var App = __webpack_require__(10);
+	var Cards = __webpack_require__(13);
+	var Chat = __webpack_require__(8);
+	var Overlay = __webpack_require__(16);
+
+	var Process = __webpack_require__(21);
+
+	var Game = __webpack_require__(15);
+	var Players = __webpack_require__(12);
+	var Policies = __webpack_require__(17);
+	var State = __webpack_require__(11);
+
+	//LOCAL
+
+	var startGame = function(data) {
+		gameId = data.gid;
+		App.showSection('game');
+
+		State.initializedPlay = false;
+		State.gameOver = false;
+		State.positionIndex = data.startIndex;
+		State.presidentIndex = State.positionIndex;
+		State.chancellorIndex = null;
+		State.players = data.players;
+		State.playerCount = State.players.length;
+		State.currentCount = State.playerCount;
+		State.chatDisabled = false;
+
+		// Election tracker
+		State.presidentPower = null;
+		State.specialPresidentIndex = null;
+		State.presidentElect = 0;
+		State.chancellorElect = 0;
+		State.electionTracker = -1;
+		Game.advanceElectionTracker();
+
+		// Policy deck
+		State.enactedFascist = 0;
+		State.enactedLiberal = 0;
+		Policies.shuffle();
+
+		var fascistPlaceholders = $('#board-fascist .policy-placeholder');
+		for (var index = 0; index < Data.FASCIST_POLICIES_REQUIRED; ++index) {
+			var power = CommonGame.getFascistPower(index + 1, State.playerCount);
+			if (!power) {
+				continue;
+			}
+			var placeholder = fascistPlaceholders.eq(index);
+			var description = '';
+			if (power == 'peek') {
+				description = 'President checks the top 3 policy cards';
+			} else if (power == 'investigate') {
+				description = 'President investigates a player\'s identity card';
+			} else if (power == 'election') {
+				description = 'President chooses the next presidential candidate';
+			} else if (power.indexOf('bullet') > -1) {
+				description = 'President kills a player';
+			}
+			if (power.indexOf('veto') > -1) {
+				description = 'Veto power unlocked<br><br>' + description;
+			}
+			placeholder.data('power', power);
+			placeholder.html('<div class="detail">' + description + '</div>');
+		}
+
+		// Display players
+		var playerString = '<div class="player-section">';
+		var centerIndex = Math.ceil(State.playerCount / 2);
+
+		var floatIndex = 0;
+		State.players.forEach(function(player) {
+			var playerIndex = player.index;
+
+			var centerBreak = playerIndex == centerIndex;
+			if (centerBreak) {
+				playerString += '</div><div class="player-section bottom">';
+			}
+			var floatingLeft = floatIndex % 2 == 0;
+			var floatClass = floatingLeft ? 'left' : 'right';
+			if (centerBreak) {
+				var evenRemaining = ((State.playerCount - playerIndex) % 2) == 0;
+				if (floatingLeft) {
+					if (!evenRemaining) {
+						floatClass = 'right clear';
+						++floatIndex;
+					}
+				} else {
+					if (evenRemaining) {
+						floatClass = 'left';
+						++floatIndex;
+					} else {
+						floatClass += ' clear';
+					}
+				}
+			}
+			if (player.uid == Data.uid) {
+				State.localPlayer = player;
+				State.localIndex = playerIndex;
+				floatClass += ' local';
+			}
+			playerString += '<div id="ps'+player.uid+'" class="player-slot '+floatClass+'" data-uid="'+player.uid+'"><div class="avatar image"><div class="vote" style="display:none;"></div></div><div class="contents"><div class="details"><h2>'+player.name+' ['+(playerIndex+1)+']</h2><span class="typing icon" style="display:none;">💬</span><span class="talking icon" style="display:none;">🎙</span></div><div class="chat"></div></div></div>';
+			++floatIndex;
+		});
+		playerString += '</div>';
+
+		$('#players').html(playerString);
+
+		// Local player
+		if (State.localPlayer) {
+			State.localAllegiance = State.localPlayer.allegiance;
+			$('#card-role .label').text(State.localRole());
+			$('#card-party .label').text(State.localParty());
+		} else {
+			console.error('Local player not found');
+		}
+
+		State.players.forEach(function(player) {
+			if (player.allegiance != null) {
+				Players.displayAvatar(player, player.allegiance);
+			}
+		});
+
+		Process.history(data.history);
+
+		if (!State.initializedPlay) {
+			Overlay.show('start');
+			Game.playTurn();
+			Cards.show('role');
+		}
+	};
+
+	//PUBLIC
 
 	module.exports = {
 
-		timestamp: function() {
-			return Math.round(Date.now() * 0.001);
-		},
+		play: startGame,
 
 	};
 
@@ -1554,199 +1657,105 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = io;
+	module.exports = {
+
+		getFascistPower: function(enactedFascist, gameSize) {
+			if (enactedFascist == 1) {
+				// return 'bullet'; //SAMPLE
+				return gameSize >= 9 ? 'investigate' : null;
+			}
+			if (enactedFascist == 2) {
+				return gameSize >= 7 ? 'investigate' : null;
+			}
+			if (enactedFascist == 3) {
+				return gameSize >= 7 ? 'election' : 'peek';
+			}
+			if (enactedFascist == 4) {
+				return gameSize != 4 ? 'bullet' : null;
+			}
+			if (enactedFascist == 5) {
+				return gameSize >= 4 ? 'bullet' : null;
+			}
+		},
+
+	};
+
 
 /***/ },
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Action = __webpack_require__(12);
-
-	var State = __webpack_require__(9);
-
-	//LOCAL
-
-	var hideCards = function(hideName) {
-		$('#cards-'+hideName).hide();
-	};
-
-	var showCards = function(showName) {
-		$('#player-cards > *').hide();
-		$('#cards-'+showName).show();
-
-		if (showName == 'vote') {
-			$('#cards-vote .card').removeClass('selected');
-		} else if (showName == 'policy') {
-			$('#veto-request').toggle(State.isLocalChancellor() && State.canVeto());
-		}
-	};
-
-	//EVENTS
-
-	$('#cards-vote').on('click', '.card', function() {
-		$('#cards-vote .card').removeClass('selected');
-		$(this).addClass('selected');
-
-		Action.emit('vote', {up: this.id == 'card-ja'});
-	});
-
-	$('#cards-policy').on('click', '.card', function() {
-		if (State.presidentPower == 'peek') {
-			Action.emit('peek');
-		} else {
-			var data = {};
-			if ($(this).data('veto')) {
-				data.veto = $(this).data('veto') == true;
-			} else {
-				data.policyIndex = $(this).data('index');
-			}
-			Action.emit('policy', data);
-		}
-	});
-
-	$('#cards-veto').on('click', '.card', function() {
-		Action.emit('policy', {veto: $(this).data('veto') == true});
-	});
-
-	//PUBLIC
-
-	module.exports = {
-
-		hide: hideCards,
-
-		show: showCards,
-
-	};
-
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SimpleWebRTC = __webpack_require__(7);
-
-	var Data = __webpack_require__(2);
-
-	var App = __webpack_require__(8);
-
 	var Socket = __webpack_require__(3);
 
+	var Cards = __webpack_require__(13);
+	var Chat = __webpack_require__(8);
+
+	var Game = __webpack_require__(15);
+	var Players = __webpack_require__(12);
+	var Policies = __webpack_require__(17);
+	var State = __webpack_require__(11);
+
 	//LOCAL
 
-	var inputState;
-	var webrtc;
-
-	var supportsVoiceChat = function() {
-		return window.RTCPeerConnection != null || window.mozRTCPeerConnection != null || window.webkitRTCPeerConnection != null;
-	};
-
-	//MESSAGES
-
-	var setDirective = function(directive) {
-		$('#s-game').toggleClass('directive', directive != null);
-		$('#directive').html(directive);
-	};
-
-	var addChatMessage = function(data) {
-		var Players = __webpack_require__(10);
-		var message = data.msg;
-		var name = Players.get(data.uid).name;
-		App.dataDiv(data, '.chat').text(message);
-		$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
-	};
-
-	var setChatState = function(state) {
-		if (inputState !== state) {
-			inputState = state;
-			Socket.emit('typing', {on: inputState});
-		}
-	};
-
-	//EVENTS
-
-	$('#i-chat').on('input', function(event) {
-		setChatState(this.value.length > 0);
-	});
-
-	$('#i-chat').on('keydown', function(event) {
-		var key = event.which || event.keyCode || event.charCode;
-		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(12).emit('chat', {msg: this.value});
-			this.value = '';
-			setChatState(false);
-		}
-	});
-
-	Socket.on('typing', function(data) {
-		App.dataDiv(data, '.typing').toggle(data.on);
-	});
-
-	//BUTTONS
-
-	$('#voice-button').on('click', function() {
-		if (!supportsVoiceChat()) {
-			alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
-			return;
-		}
-		if (webrtc) {
-			$(this).toggleClass('muted');
-			if ($(this).hasClass('muted')) {
-				webrtc.mute();
-			} else {
-				webrtc.unmute();
-			}
-			return;
-		}
-
-		var voiceChatRequested = window.confirm('Would you like to enable voice chat? This requires you to approve microphone access, which allows you to talk with the other players in your game.\n\nThis feature is in beta, and is only supported in some browsers. Please report any issues you have with it. Thanks!');
-		if (voiceChatRequested) {
-			webrtc = new SimpleWebRTC({
-				// url: '',
-				autoRequestMedia: true,
-				enableDataChannels: true,
-				detectSpeakingEvents: true,
-				media: {
-					audio: true,
-					video: false
-				},
-				nick: Data.uid,
-			});
-
-			webrtc.on('readyToCall', function() {
-				webrtc.joinRoom('s-h-'+gameId);
-			});
-
-			webrtc.on('remoteVolumeChange', function(peer, volume) {
-				App.uidDiv(peer.nick, '.talking').toggle(volume > -50);
-			});
-		}
-	});
-
-	$('#menu-button').on('click', function() {
-		if ($('#overlay').css('display') == 'none') {
-			__webpack_require__(15).show('menu');
+	var processAction = function(data, fastForward) {
+		var action = data.action;
+		if (action == 'abandoned') {
+			Players.abandoned(data);
+		} else if (action == 'chat') {
+			Chat.addMessage(data);
+		} else if (action == 'chancellor chosen') {
+			Players.chancellorChosen(data);
+		} else if (action == 'voted') {
+			Game.voteCompleted(data);
+		} else if (action == 'discarded') {
+			Policies.discarded(data);
+		} else if (action == 'enacted') {
+			Policies.enacted(data);
+		} else if (action == 'veto requested') {
+			vetoRequest(data);
+		} else if (action == 'vetoed') {
+			Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
+		} else if (action == 'veto overridden') {
+			Policies.vetoOverridden(data);
 		} else {
-			__webpack_require__(15).hide();
+			if (action == 'peeked') {
+				Policies.returnPreviewed();
+			} else {
+				var target = Players.get(data.uid);
+				if (action == 'investigated') {
+					if (State.isLocalPresident()) {
+						Players.displayAvatar(target, data.secret.party);
+					}
+					Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
+				} else if (action == 'special election') {
+					State.specialPresidentIndex = target.index;
+				} else if (action == 'killed') {
+					Players.kill(target, data.hitler, false);
+				}
+			}
+			Cards.show(null);
+			Game.advanceTurn();
 		}
-	});
+		if (data.roles) {
+			Players.revealRoles(data.roles);
+		}
+	};
+
+	var processHistory = function(history) {
+		history.forEach(function(action) {
+			processAction(action, true);
+		});
+	};
+
+	//SOCKET
+
+	Socket.on('game action', processAction);
 
 	//PUBLIC
 
 	module.exports = {
 
-		setDirective: setDirective,
-
-		addMessage: addChatMessage,
-
-		// VOICE
-
-		supportsVoice: supportsVoiceChat,
-
-		voiceDisconnect: function() {
-			if (webrtc) {
-				webrtc.disconnect();
-			}
-		},
+		history: processHistory,
 
 	};
 
