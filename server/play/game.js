@@ -1,3 +1,4 @@
+var CommonConsts = require.main.require('./common/constants');
 var CommonGame = require.main.require('./common/game');
 
 var DB = require.main.require('./server/tools/db');
@@ -58,7 +59,7 @@ var Game = function(size, private) {
 		var cardsRemaining = 17 - this.enactedFascist - this.enactedLiberal;
 		var liberalsRemaining = 6 - this.enactedLiberal;
 		for (var i = 0; i < cardsRemaining; ++i) {
-			this.policyDeck[i] = i < liberalsRemaining ? CommonGame.LIBERAL : CommonGame.FASCIST;
+			this.policyDeck[i] = i < liberalsRemaining ? CommonConsts.LIBERAL : CommonConsts.FASCIST;
 		}
 		this.policyDeck = this.shuffle(this.policyDeck);
 	};
@@ -261,15 +262,15 @@ var Game = function(size, private) {
 	this.enactPolicy = function(policy, byVote) {
 		var fascistPower;
 		this.electionTracker = 0;
-		if (policy == CommonGame.LIBERAL) {
+		if (policy == CommonConsts.LIBERAL) {
 			++this.enactedLiberal;
-			if (this.enactedLiberal >= CommonGame.LIBERAL_POLICIES_REQUIRED) {
+			if (this.enactedLiberal >= CommonConsts.LIBERAL_POLICIES_REQUIRED) {
 				this.finish(true, 'policy');
 				return;
 			}
 		} else {
 			++this.enactedFascist;
-			if (this.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED) {
+			if (this.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED) {
 				this.finish(false, 'policy');
 				return;
 			}
@@ -421,7 +422,7 @@ var Game = function(size, private) {
 	};
 
 	this.canVeto = function() {
-		return this.enactedFascist >= (Utils.TESTING ? 1 : CommonGame.FASCIST_POLICIES_REQUIRED - 1);
+		return this.enactedFascist >= (Utils.TESTING ? 1 : CommonConsts.FASCIST_POLICIES_REQUIRED - 1);
 	};
 
 	return this;

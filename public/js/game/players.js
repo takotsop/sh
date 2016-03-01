@@ -1,4 +1,4 @@
-var CommonGame = require('common/game');
+var CommonConsts = require('common/constants');
 
 var App = require('ui/app');
 var Cards = require('ui/cards');
@@ -22,9 +22,9 @@ var getPlayer = function(uid) {
 var allegianceClass = function(allegiance) {
 	var ac;
 	if (allegiance == 0) {
-		ac = CommonGame.LIBERAL;
+		ac = CommonConsts.LIBERAL;
 	} else {
-		ac = CommonGame.FASCIST;
+		ac = CommonConsts.FASCIST;
 		if (allegiance == 2) {
 			ac += ' hitler';
 		}

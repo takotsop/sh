@@ -1,3 +1,4 @@
+var CommonConsts = require('common/constants');
 var CommonGame = require('common/game');
 
 var Data = require('util/data');
@@ -44,7 +45,7 @@ var startGame = function(data) {
 	Policies.shuffle();
 
 	var fascistPlaceholders = $('#board-fascist .policy-placeholder');
-	for (var index = 0; index < CommonGame.FASCIST_POLICIES_REQUIRED; ++index) {
+	for (var index = 0; index < CommonConsts.FASCIST_POLICIES_REQUIRED; ++index) {
 		var power = CommonGame.getFascistPower(index + 1, State.playerCount);
 		if (!power) {
 			continue;

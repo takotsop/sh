@@ -1,12 +1,5 @@
 module.exports = {
 
-	LIBERAL: 'liberal',
-	FASCIST: 'fascist',
-	NONE: 'none',
-
-	FASCIST_POLICIES_REQUIRED: 6,
-	LIBERAL_POLICIES_REQUIRED: 5,
-
 	getFascistPower: function(enactedFascist, gameSize) {
 		if (enactedFascist == 1) {
 			// return 'bullet'; //SAMPLE

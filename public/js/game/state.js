@@ -1,4 +1,4 @@
-var CommonGame = require('common/game');
+var CommonConsts = require('common/constants');
 
 //PUBLIC
 
@@ -21,7 +21,7 @@ module.exports = {
 	},
 
 	canVeto: function() {
-		return this.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : CommonGame.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
+		return this.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : CommonConsts.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
 	},
 
 	localRole: function() {
