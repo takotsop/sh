@@ -58,7 +58,7 @@
 	var Socket = __webpack_require__(3);
 
 	var Lobby = __webpack_require__(6);
-	var Welcome = __webpack_require__(18);
+	var Welcome = __webpack_require__(19);
 
 	//SOCKET
 
@@ -90,18 +90,6 @@
 		auth: localStorage.getItem('auth'),
 
 		username: null,
-
-		// CONSTANTS
-
-		FASCIST_POLICIES_REQUIRED: 6,
-
-		LIBERAL_POLICIES_REQUIRED: 5,
-
-		LIBERAL: 'liberal',
-
-		FASCIST: 'fascist',
-
-		NONE: 'none',
 
 	};
 
@@ -157,12 +145,12 @@
 
 	var App = __webpack_require__(10);
 
-	var Action = __webpack_require__(14);
+	var Action = __webpack_require__(15);
 	var Socket = __webpack_require__(3);
 
-	var Welcome = __webpack_require__(18);
+	var Welcome = __webpack_require__(19);
 
-	var Start = __webpack_require__(19);
+	var Start = __webpack_require__(20);
 
 	//LOCAL
 
@@ -358,7 +346,7 @@
 	};
 
 	var addChatMessage = function(data) {
-		var Players = __webpack_require__(12);
+		var Players = __webpack_require__(13);
 		var message = data.msg;
 		var name = Players.get(data.uid).name;
 		App.dataDiv(data, '.chat').text(message);
@@ -381,7 +369,7 @@
 	$('#i-chat').on('keydown', function(event) {
 		var key = event.which || event.keyCode || event.charCode;
 		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(14).emit('chat', {msg: this.value});
+			__webpack_require__(15).emit('chat', {msg: this.value});
 			this.value = '';
 			setChatState(false);
 		}
@@ -434,9 +422,9 @@
 
 	$('#menu-button').on('click', function() {
 		if ($('#overlay').css('display') == 'none') {
-			__webpack_require__(16).show('menu');
+			__webpack_require__(17).show('menu');
 		} else {
-			__webpack_require__(16).hide();
+			__webpack_require__(17).hide();
 		}
 	});
 
@@ -542,7 +530,7 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Data = __webpack_require__(2);
+	var CommonGame = __webpack_require__(12);
 
 	//PUBLIC
 
@@ -565,7 +553,7 @@
 		},
 
 		canVeto: function() {
-			return this.enactedFascist >= Data. FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : Data.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
+			return this.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : CommonGame.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
 		},
 
 		localRole: function() {
@@ -581,18 +569,69 @@
 
 /***/ },
 /* 12 */
+/***/ function(module, exports) {
+
+	module.exports = {
+
+		LIBERAL: 'liberal',
+		FASCIST: 'fascist',
+		NONE: 'none',
+
+		FASCIST_POLICIES_REQUIRED: 6,
+		LIBERAL_POLICIES_REQUIRED: 5,
+
+		getFascistPower: function(enactedFascist, gameSize) {
+			if (enactedFascist == 1) {
+				// return 'bullet'; //SAMPLE
+				return gameSize >= 9 ? 'investigate' : null;
+			}
+			if (enactedFascist == 2) {
+				return gameSize >= 7 ? 'investigate' : null;
+			}
+			if (enactedFascist == 3) {
+				return gameSize >= 7 ? 'election' : 'peek';
+			}
+			if (enactedFascist == 4) {
+				return gameSize != 4 ? 'bullet' : null;
+			}
+			if (enactedFascist == 5) {
+				return gameSize >= 4 ? 'bullet' : null;
+			}
+		},
+
+		getNextPresident: function(gameSize, players, startIndex, playerState) {
+			for (var attempts = 0; attempts < gameSize; ++attempts) {
+				++startIndex;
+				if (startIndex >= gameSize) {
+					startIndex = 0;
+				}
+				var player = players[startIndex];
+				if (playerState) {
+					player = playerState[player];
+				}
+				if (!player.killed) {
+					break;
+				}
+			}
+			return startIndex;
+		},
+
+	};
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Data = __webpack_require__(2);
+	var CommonGame = __webpack_require__(12);
 
 	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(13);
+	var Cards = __webpack_require__(14);
 	var Chat = __webpack_require__(8);
 
-	var Action = __webpack_require__(14);
+	var Action = __webpack_require__(15);
 
 	var State = __webpack_require__(11);
-
 
 	//HELPERS
 
@@ -608,9 +647,9 @@
 	var allegianceClass = function(allegiance) {
 		var ac;
 		if (allegiance == 0) {
-			ac = Data.LIBERAL;
+			ac = CommonGame.LIBERAL;
 		} else {
-			ac = Data.FASCIST;
+			ac = CommonGame.FASCIST;
 			if (allegiance == 2) {
 				ac += ' hitler';
 			}
@@ -630,7 +669,7 @@
 			State.currentCount -= 1;
 
 			if (!State.gameOver) {
-				var Game = __webpack_require__(15);
+				var Game = __webpack_require__(16);
 				if (hitler) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
 				} else if (State.currentCount <= 2) {
@@ -650,7 +689,7 @@
 		Chat.addMessage({msg: 'left the game', uid: data.uid});
 
 		if (data.advance) {
-			__webpack_require__(15).advanceTurn();
+			__webpack_require__(16).advanceTurn();
 		}
 	};
 
@@ -715,10 +754,10 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Action = __webpack_require__(14);
+	var Action = __webpack_require__(15);
 
 	var State = __webpack_require__(11);
 
@@ -778,7 +817,7 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Socket = __webpack_require__(3);
@@ -803,16 +842,18 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var CommonGame = __webpack_require__(12);
+
 	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(13);
+	var Cards = __webpack_require__(14);
 	var Chat = __webpack_require__(8);
-	var Overlay = __webpack_require__(16);
+	var Overlay = __webpack_require__(17);
 
 	var State = __webpack_require__(11);
-	var Policies = __webpack_require__(17);
+	var Policies = __webpack_require__(18);
 
 	//FINISH
 
@@ -851,17 +892,8 @@
 			State.presidentIndex = State.specialPresidentIndex;
 			State.specialPresidentIndex = null;
 		} else {
-			for (var attempts = 0; attempts < State.playerCount; ++attempts) { //TODO common
-				++State.positionIndex;
-				if (State.positionIndex >= State.playerCount) {
-					State.positionIndex = 0;
-				}
-				var player = State.players[State.positionIndex];
-				if (!player.killed) {
-					break;
-				}
-			}
-			State.presidentIndex = State.positionIndex;
+			State.presidentIndex = CommonGame.getNextPresident(State.playerCount, State.players, State.positionIndex);
+			State.positionIndex = State.presidentIndex;
 		}
 
 		State.presidentPower = null;
@@ -962,14 +994,14 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Cards = __webpack_require__(13);
+	var Cards = __webpack_require__(14);
 
 	var Socket = __webpack_require__(3);
 
-	var Players = __webpack_require__(12);
+	var Players = __webpack_require__(13);
 	var State = __webpack_require__(11);
 
 	//LOCAL
@@ -1129,13 +1161,13 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Data = __webpack_require__(2);
+	var CommonGame = __webpack_require__(12);
 
 	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(13);
+	var Cards = __webpack_require__(14);
 	var Chat = __webpack_require__(8);
 
 	var State = __webpack_require__(11);
@@ -1144,15 +1176,15 @@
 
 	var enactPolicy = function(type) {
 		var enacted;
-		if (type == Data.LIBERAL) {
+		if (type == CommonGame.LIBERAL) {
 			enacted = ++State.enactedLiberal;
-			if (State.enactedLiberal >= Data.LIBERAL_POLICIES_REQUIRED) {
-				__webpack_require__(15).end(true, 'policies');
+			if (State.enactedLiberal >= CommonGame.LIBERAL_POLICIES_REQUIRED) {
+				__webpack_require__(16).end(true, 'policies');
 			}
 		} else {
 			enacted = ++State.enactedFascist;
-			if (State.enactedFascist >= Data.FASCIST_POLICIES_REQUIRED) {
-				__webpack_require__(15).end(false, 'policies');
+			if (State.enactedFascist >= CommonGame.FASCIST_POLICIES_REQUIRED) {
+				__webpack_require__(16).end(false, 'policies');
 			}
 		}
 		var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
@@ -1167,8 +1199,8 @@
 			var hasPolicy = policyType != null;
 			$(this).toggle(hasPolicy);
 			if (hasPolicy) {
-				$(this).toggleClass(Data.LIBERAL, policyType == Data.LIBERAL);
-				$(this).toggleClass(Data.FASCIST, policyType == Data.FASCIST);
+				$(this).toggleClass(CommonGame.LIBERAL, policyType == CommonGame.LIBERAL);
+				$(this).toggleClass(CommonGame.FASCIST, policyType == CommonGame.FASCIST);
 			}
 		});
 	};
@@ -1192,7 +1224,7 @@
 	};
 
 	var policyEnacted = function(data) {
-		var Game = __webpack_require__(15);
+		var Game = __webpack_require__(16);
 
 		discardPolicyCards(1);
 
@@ -1335,7 +1367,7 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Config = __webpack_require__(5);
@@ -1506,23 +1538,23 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommonGame = __webpack_require__(20);
+	var CommonGame = __webpack_require__(12);
 
 	var Data = __webpack_require__(2);
 
 	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(13);
+	var Cards = __webpack_require__(14);
 	var Chat = __webpack_require__(8);
-	var Overlay = __webpack_require__(16);
+	var Overlay = __webpack_require__(17);
 
 	var Process = __webpack_require__(21);
 
-	var Game = __webpack_require__(15);
-	var Players = __webpack_require__(12);
-	var Policies = __webpack_require__(17);
+	var Game = __webpack_require__(16);
+	var Players = __webpack_require__(13);
+	var Policies = __webpack_require__(18);
 	var State = __webpack_require__(11);
 
 	//LOCAL
@@ -1555,7 +1587,7 @@
 		Policies.shuffle();
 
 		var fascistPlaceholders = $('#board-fascist .policy-placeholder');
-		for (var index = 0; index < Data.FASCIST_POLICIES_REQUIRED; ++index) {
+		for (var index = 0; index < CommonGame.FASCIST_POLICIES_REQUIRED; ++index) {
 			var power = CommonGame.getFascistPower(index + 1, State.playerCount);
 			if (!power) {
 				continue;
@@ -1654,45 +1686,17 @@
 
 
 /***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	module.exports = {
-
-		getFascistPower: function(enactedFascist, gameSize) {
-			if (enactedFascist == 1) {
-				// return 'bullet'; //SAMPLE
-				return gameSize >= 9 ? 'investigate' : null;
-			}
-			if (enactedFascist == 2) {
-				return gameSize >= 7 ? 'investigate' : null;
-			}
-			if (enactedFascist == 3) {
-				return gameSize >= 7 ? 'election' : 'peek';
-			}
-			if (enactedFascist == 4) {
-				return gameSize != 4 ? 'bullet' : null;
-			}
-			if (enactedFascist == 5) {
-				return gameSize >= 4 ? 'bullet' : null;
-			}
-		},
-
-	};
-
-
-/***/ },
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Socket = __webpack_require__(3);
 
-	var Cards = __webpack_require__(13);
+	var Cards = __webpack_require__(14);
 	var Chat = __webpack_require__(8);
 
-	var Game = __webpack_require__(15);
-	var Players = __webpack_require__(12);
-	var Policies = __webpack_require__(17);
+	var Game = __webpack_require__(16);
+	var Players = __webpack_require__(13);
+	var Policies = __webpack_require__(18);
 	var State = __webpack_require__(11);
 
 	//LOCAL

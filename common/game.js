@@ -26,4 +26,21 @@ module.exports = {
 		}
 	},
 
+	getNextPresident: function(gameSize, players, startIndex, playerState) {
+		for (var attempts = 0; attempts < gameSize; ++attempts) {
+			++startIndex;
+			if (startIndex >= gameSize) {
+				startIndex = 0;
+			}
+			var player = players[startIndex];
+			if (playerState) {
+				player = playerState[player];
+			}
+			if (!player.killed) {
+				break;
+			}
+		}
+		return startIndex;
+	},
+
 };

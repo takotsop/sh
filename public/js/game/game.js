@@ -1,3 +1,5 @@
+var CommonGame = require('common/game');
+
 var App = require('ui/app');
 var Cards = require('ui/cards');
 var Chat = require('ui/chat');
@@ -43,17 +45,8 @@ var advanceTurn = function() {
 		State.presidentIndex = State.specialPresidentIndex;
 		State.specialPresidentIndex = null;
 	} else {
-		for (var attempts = 0; attempts < State.playerCount; ++attempts) { //TODO common
-			++State.positionIndex;
-			if (State.positionIndex >= State.playerCount) {
-				State.positionIndex = 0;
-			}
-			var player = State.players[State.positionIndex];
-			if (!player.killed) {
-				break;
-			}
-		}
-		State.presidentIndex = State.positionIndex;
+		State.presidentIndex = CommonGame.getNextPresident(State.playerCount, State.players, State.positionIndex);
+		State.positionIndex = State.presidentIndex;
 	}
 
 	State.presidentPower = null;

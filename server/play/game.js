@@ -220,16 +220,7 @@ var Game = function(size, private) {
 			this.presidentIndex = this.specialPresident;
 			this.specialPresident = null;
 		} else {
-			for (var attempts = 0; attempts < this.playerCount; ++attempts) {
-				++this.positionIndex;
-				if (this.positionIndex >= this.playerCount) {
-					this.positionIndex = 0;
-				}
-				var puid = this.players[this.positionIndex];
-				if (!this.playerState[puid].killed) {
-					break;
-				}
-			}
+			this.positionIndex = CommonGame.getNextPresident(this.playerCount, this.players, this.positionIndex, this.playerState);
 			this.presidentIndex = this.positionIndex;
 		}
 		this.power = null;
