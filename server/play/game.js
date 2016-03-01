@@ -403,6 +403,10 @@ var Game = function(size, private) {
 			delete this.playerState[player.uid];
 			if (this.players.length == 0) {
 				this.removeSelf();
+			} else {
+				this.players.forEach(function(puid, pidx) {
+					game.playerState[puid].index = pidx;
+				});
 			}
 		}
 		player.game = null;
