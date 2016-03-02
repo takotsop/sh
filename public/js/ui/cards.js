@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var Action = require('socket/action');
 
 var State = require('game/state');

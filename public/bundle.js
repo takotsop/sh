@@ -148,6 +148,8 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(23);
+
 	var Config = __webpack_require__(5);
 	var Util = __webpack_require__(7);
 
@@ -335,6 +337,8 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(23);
+
 	var SimpleWebRTC = __webpack_require__(9);
 
 	var Data = __webpack_require__(2);
@@ -474,6 +478,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var $ = __webpack_require__(23);
 
 	var Data = __webpack_require__(2);
 
@@ -630,6 +636,8 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(23);
+
 	var CommonConsts = __webpack_require__(22);
 
 	var App = __webpack_require__(10);
@@ -766,6 +774,8 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(23);
+
 	var Action = __webpack_require__(15);
 
 	var State = __webpack_require__(11);
@@ -857,6 +867,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var $ = __webpack_require__(23);
 
 	var CommonGame = __webpack_require__(12);
 
@@ -1011,6 +1023,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var $ = __webpack_require__(23);
 
 	var Cards = __webpack_require__(14);
 
@@ -1180,6 +1194,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var $ = __webpack_require__(23);
 
 	var CommonConsts = __webpack_require__(22);
 
@@ -1388,6 +1404,8 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(23);
+
 	var Config = __webpack_require__(5);
 	var Data = __webpack_require__(2);
 
@@ -1560,6 +1578,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var $ = __webpack_require__(23);
 
 	var CommonConsts = __webpack_require__(22);
 	var CommonGame = __webpack_require__(12);
@@ -1809,6 +1829,12 @@
 
 	};
 
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	module.exports = jQuery;
 
 /***/ }
 /******/ ]);

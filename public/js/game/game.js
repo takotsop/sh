@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var CommonGame = require('common/game');
 
 var App = require('ui/app');

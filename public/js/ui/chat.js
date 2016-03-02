@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var SimpleWebRTC = require("simplewebrtc");
 
 var Data = require('util/data');

@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var Config = require('util/config');
 var Util = require('util/util');
 
