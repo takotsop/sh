@@ -166,4 +166,3 @@ module.exports = {
 	showSignin: showSignin,
 
 };
-

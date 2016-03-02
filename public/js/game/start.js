@@ -9,7 +9,6 @@ var Data = require('util/data');
 
 var App = require('ui/app');
 var Cards = require('ui/cards');
-var Chat = require('ui/chat');
 var Overlay = require('ui/overlay');
 
 var Process = require('socket/process');
@@ -22,7 +21,7 @@ var State = require('game/state');
 //LOCAL
 
 var startGame = function(data) {
-	gameId = data.gid;
+	Data.gameId = data.gid;
 	App.showSection('game');
 
 	State.initializedPlay = false;

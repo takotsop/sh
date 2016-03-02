@@ -137,7 +137,7 @@ var vetoOverridden = function(data) {
 //SELECTION
 
 var previewPolicies = function(secret) {
-	drawPolicyCards(3, true);
+	drawPolicyCards(3);
 
 	var cards, directive;
 	if (State.isLocalPresident()) {
@@ -157,14 +157,14 @@ var shufflePolicyCards = function() {
 	$('#pile-discard .pile-cards').hide().text('0');
 };
 
-var checkRemainingPolicies = function(count, preview) {
+var checkRemainingPolicies = function() {
 	var remainingPolicies = parseInt($('#pile-draw .pile-cards').text());
 	if (remainingPolicies < 3) {
 		shufflePolicyCards();
 	}
 };
 
-var drawPolicyCards = function(count, preview) {
+var drawPolicyCards = function(count) {
 	var startCount = parseInt($('#pile-draw .pile-cards').text());
 	$('#pile-draw .pile-cards').show().text(startCount - count);
 };
@@ -191,7 +191,7 @@ module.exports = {
 	vetoRequest: vetoRequest,
 
 	returnPreviewed: function() {
-		drawPolicyCards(-3, true);
+		drawPolicyCards(-3);
 	},
 
 	draw: drawPolicyCards,

@@ -48,7 +48,7 @@
 
 	__webpack_require__(1);
 
-	__webpack_require__(21);
+	__webpack_require__(23);
 
 
 /***/ },
@@ -62,7 +62,7 @@
 	var Socket = __webpack_require__(3);
 
 	var Lobby = __webpack_require__(6);
-	var Welcome = __webpack_require__(19);
+	var Welcome = __webpack_require__(21);
 
 	//SOCKET
 
@@ -103,6 +103,8 @@
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var IO = __webpack_require__(4);
 
@@ -148,21 +150,22 @@
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
 	var Config = __webpack_require__(5);
-	var Util = __webpack_require__(7);
+	var Util = __webpack_require__(8);
 
-	var Chat = __webpack_require__(8);
+	var Chat = __webpack_require__(9);
 
-	var App = __webpack_require__(10);
+	var App = __webpack_require__(11);
 
-	var Action = __webpack_require__(15);
+	var Action = __webpack_require__(16);
 	var Socket = __webpack_require__(3);
 
-	var Welcome = __webpack_require__(19);
+	var Welcome = __webpack_require__(21);
 
-	var Start = __webpack_require__(20);
+	var Start = __webpack_require__(22);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
@@ -206,7 +209,7 @@
 		$('#lobby-player-summary').text(lobbyPlayerCount + ' of ' + data.maxSize);
 		var nameList = '';
 		data.players.forEach(function(player, index) {
-			floatClass = index % 2 == 0 ? 'left' : 'right';
+			var floatClass = index % 2 == 0 ? 'left' : 'right';
 			nameList += '<div class="player-slot '+floatClass+'"><h2>' + player.name + '</h2></div>';
 		});
 		$('#lobby-players').html(nameList);
@@ -230,7 +233,7 @@
 	};
 
 	var showLobby = function() {
-		gameOver = true;
+		State.gameOver = true;
 		Chat.voiceDisconnect();
 		App.showSection('lobby');
 		connectToLobby();
@@ -300,7 +303,7 @@
 	Socket.on('lobby game data', updateLobby);
 
 	window.onbeforeunload = function() {
-		if (!Config.TESTING && !gameOver) {
+		if (!Config.TESTING && !State.gameOver) {
 			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 		}
 	};
@@ -320,6 +323,12 @@
 /* 7 */
 /***/ function(module, exports) {
 
+	module.exports = jQuery;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
 	'use strict';
 
 	module.exports = {
@@ -332,18 +341,18 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var SimpleWebRTC = __webpack_require__(9);
+	var SimpleWebRTC = __webpack_require__(10);
 
 	var Data = __webpack_require__(2);
 
-	var App = __webpack_require__(10);
+	var App = __webpack_require__(11);
 
 	var Socket = __webpack_require__(3);
 
@@ -387,7 +396,7 @@
 	$('#i-chat').on('keydown', function(event) {
 		var key = event.which || event.keyCode || event.charCode;
 		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(15).emit('chat', {msg: this.value});
+			__webpack_require__(16).emit('chat', {msg: this.value});
 			this.value = '';
 			setChatState(false);
 		}
@@ -401,7 +410,7 @@
 
 	$('#voice-button').on('click', function() {
 		if (!supportsVoiceChat()) {
-			alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
+			window.alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
 			return;
 		}
 		if (webrtc) {
@@ -429,7 +438,7 @@
 			});
 
 			webrtc.on('readyToCall', function() {
-				webrtc.joinRoom('s-h-'+gameId);
+				webrtc.joinRoom('s-h-'+Data.gameId);
 			});
 
 			webrtc.on('remoteVolumeChange', function(peer, volume) {
@@ -440,9 +449,9 @@
 
 	$('#menu-button').on('click', function() {
 		if ($('#overlay').css('display') == 'none') {
-			__webpack_require__(17).show('menu');
+			__webpack_require__(19).show('menu');
 		} else {
-			__webpack_require__(17).hide();
+			__webpack_require__(19).hide();
 		}
 	});
 
@@ -468,22 +477,22 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	module.exports = SimpleWebRTC;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
 	var Data = __webpack_require__(2);
 
-	var State = __webpack_require__(11);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
@@ -549,7 +558,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -584,69 +593,22 @@
 
 
 /***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = {
-
-		getFascistPower: function(enactedFascist, gameSize) {
-			if (enactedFascist == 1) {
-				// return 'bullet'; //SAMPLE
-				return gameSize >= 9 ? 'investigate' : null;
-			}
-			if (enactedFascist == 2) {
-				return gameSize >= 7 ? 'investigate' : null;
-			}
-			if (enactedFascist == 3) {
-				return gameSize >= 7 ? 'election' : 'peek';
-			}
-			if (enactedFascist == 4) {
-				return gameSize != 4 ? 'bullet' : null;
-			}
-			if (enactedFascist == 5) {
-				return gameSize >= 4 ? 'bullet veto' : null;
-			}
-		},
-
-		getNextPresident: function(gameSize, players, startIndex, playerState) {
-			for (var attempts = 0; attempts < gameSize; ++attempts) {
-				++startIndex;
-				if (startIndex >= gameSize) {
-					startIndex = 0;
-				}
-				var player = players[startIndex];
-				if (playerState) {
-					player = playerState[player];
-				}
-				if (!player.killed) {
-					break;
-				}
-			}
-			return startIndex;
-		},
-
-	};
-
-
-/***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var CommonConsts = __webpack_require__(22);
+	var CommonConsts = __webpack_require__(14);
 
-	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(14);
-	var Chat = __webpack_require__(8);
+	var App = __webpack_require__(11);
+	var Cards = __webpack_require__(15);
+	var Chat = __webpack_require__(9);
 
-	var Action = __webpack_require__(15);
+	var Action = __webpack_require__(16);
 
-	var State = __webpack_require__(11);
+	var State = __webpack_require__(12);
 
 	//HELPERS
 
@@ -684,7 +646,7 @@
 			State.currentCount -= 1;
 
 			if (!State.gameOver) {
-				var Game = __webpack_require__(16);
+				var Game = __webpack_require__(17);
 				if (hitler) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
 				} else if (State.currentCount <= 2) {
@@ -704,7 +666,7 @@
 		Chat.addMessage({msg: 'left the game', uid: data.uid});
 
 		if (data.advance) {
-			__webpack_require__(16).advanceTurn();
+			__webpack_require__(17).advanceTurn();
 		}
 	};
 
@@ -770,15 +732,33 @@
 
 /***/ },
 /* 14 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+
+		LIBERAL: 'liberal',
+		FASCIST: 'fascist',
+		NONE: 'none',
+
+		FASCIST_POLICIES_REQUIRED: 6,
+		LIBERAL_POLICIES_REQUIRED: 5,
+
+	};
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var Action = __webpack_require__(15);
+	var Action = __webpack_require__(16);
 
-	var State = __webpack_require__(11);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
@@ -836,7 +816,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -863,22 +843,22 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var CommonGame = __webpack_require__(12);
+	var CommonGame = __webpack_require__(18);
 
-	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(14);
-	var Chat = __webpack_require__(8);
-	var Overlay = __webpack_require__(17);
+	var App = __webpack_require__(11);
+	var Cards = __webpack_require__(15);
+	var Chat = __webpack_require__(9);
+	var Overlay = __webpack_require__(19);
 
-	var State = __webpack_require__(11);
-	var Policies = __webpack_require__(18);
+	var State = __webpack_require__(12);
+	var Policies = __webpack_require__(20);
 
 	//FINISH
 
@@ -1019,19 +999,66 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+
+		getFascistPower: function(enactedFascist, gameSize) {
+			if (enactedFascist == 1) {
+				// return 'bullet'; //SAMPLE
+				return gameSize >= 9 ? 'investigate' : null;
+			}
+			if (enactedFascist == 2) {
+				return gameSize >= 7 ? 'investigate' : null;
+			}
+			if (enactedFascist == 3) {
+				return gameSize >= 7 ? 'election' : 'peek';
+			}
+			if (enactedFascist == 4) {
+				return gameSize != 4 ? 'bullet' : null;
+			}
+			if (enactedFascist == 5) {
+				return gameSize >= 4 ? 'bullet veto' : null;
+			}
+		},
+
+		getNextPresident: function(gameSize, players, startIndex, playerState) {
+			for (var attempts = 0; attempts < gameSize; ++attempts) {
+				++startIndex;
+				if (startIndex >= gameSize) {
+					startIndex = 0;
+				}
+				var player = players[startIndex];
+				if (playerState) {
+					player = playerState[player];
+				}
+				if (!player.killed) {
+					break;
+				}
+			}
+			return startIndex;
+		},
+
+	};
+
+
+/***/ },
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var Cards = __webpack_require__(14);
+	var Cards = __webpack_require__(15);
 
 	var Socket = __webpack_require__(3);
 
 	var Players = __webpack_require__(13);
-	var State = __webpack_require__(11);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
@@ -1118,7 +1145,6 @@
 	};
 
 	$('#overlay').on('click', '#overlay-continue', function() {
-		var type = $(this).data('type');
 		hideOverlay();
 	});
 
@@ -1157,15 +1183,14 @@
 	});
 
 	$('#feedback-submit').on('click', function() {
-		console.log(this);
 		var type = $('#i-feedback-type').val();
 		if (!type) {
-			alert('Please select a type of feedback to report and try again!');
+			window.alert('Please select a type of feedback to report and try again!');
 			return;
 		}
 		var body = $('#i-feedback-body').val();
 		if (body.length < 6) {
-			alert('Please enter some feedback into the text area!');
+			window.alert('Please enter some feedback into the text area!');
 			return;
 		}
 		Socket.emit('feedback', {type: type, body: body}, function(response) {
@@ -1173,7 +1198,7 @@
 				$('#i-feedback-type').val('default');
 				$('#i-feedback-body').val('');
 				showOverlaySection('menu');
-				alert('Thank you! Your feedback has been recorded.');
+				window.alert('Thank you! Your feedback has been recorded.');
 			}
 		});
 	});
@@ -1190,20 +1215,20 @@
 
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var CommonConsts = __webpack_require__(22);
+	var CommonConsts = __webpack_require__(14);
 
-	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(14);
-	var Chat = __webpack_require__(8);
+	var App = __webpack_require__(11);
+	var Cards = __webpack_require__(15);
+	var Chat = __webpack_require__(9);
 
-	var State = __webpack_require__(11);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
@@ -1212,12 +1237,12 @@
 		if (type == CommonConsts.LIBERAL) {
 			enacted = ++State.enactedLiberal;
 			if (State.enactedLiberal >= CommonConsts.LIBERAL_POLICIES_REQUIRED) {
-				__webpack_require__(16).end(true, 'policies');
+				__webpack_require__(17).end(true, 'policies');
 			}
 		} else {
 			enacted = ++State.enactedFascist;
 			if (State.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED) {
-				__webpack_require__(16).end(false, 'policies');
+				__webpack_require__(17).end(false, 'policies');
 			}
 		}
 		var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
@@ -1257,7 +1282,7 @@
 	};
 
 	var policyEnacted = function(data) {
-		var Game = __webpack_require__(16);
+		var Game = __webpack_require__(17);
 
 		discardPolicyCards(1);
 
@@ -1332,7 +1357,7 @@
 	//SELECTION
 
 	var previewPolicies = function(secret) {
-		drawPolicyCards(3, true);
+		drawPolicyCards(3);
 
 		var cards, directive;
 		if (State.isLocalPresident()) {
@@ -1352,14 +1377,14 @@
 		$('#pile-discard .pile-cards').hide().text('0');
 	};
 
-	var checkRemainingPolicies = function(count, preview) {
+	var checkRemainingPolicies = function() {
 		var remainingPolicies = parseInt($('#pile-draw .pile-cards').text());
 		if (remainingPolicies < 3) {
 			shufflePolicyCards();
 		}
 	};
 
-	var drawPolicyCards = function(count, preview) {
+	var drawPolicyCards = function(count) {
 		var startCount = parseInt($('#pile-draw .pile-cards').text());
 		$('#pile-draw .pile-cards').show().text(startCount - count);
 	};
@@ -1386,7 +1411,7 @@
 		vetoRequest: vetoRequest,
 
 		returnPreviewed: function() {
-			drawPolicyCards(-3, true);
+			drawPolicyCards(-3);
 		},
 
 		draw: drawPolicyCards,
@@ -1399,18 +1424,18 @@
 
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
 	var Config = __webpack_require__(5);
 	var Data = __webpack_require__(2);
 
-	var App = __webpack_require__(10);
-	var Chat = __webpack_require__(8);
+	var App = __webpack_require__(11);
+	var Chat = __webpack_require__(9);
 
 	var Socket = __webpack_require__(3);
 
@@ -1572,36 +1597,34 @@
 	};
 
 
-
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(23);
+	var $ = __webpack_require__(7);
 
-	var CommonConsts = __webpack_require__(22);
-	var CommonGame = __webpack_require__(12);
+	var CommonConsts = __webpack_require__(14);
+	var CommonGame = __webpack_require__(18);
 
 	var Data = __webpack_require__(2);
 
-	var App = __webpack_require__(10);
-	var Cards = __webpack_require__(14);
-	var Chat = __webpack_require__(8);
-	var Overlay = __webpack_require__(17);
+	var App = __webpack_require__(11);
+	var Cards = __webpack_require__(15);
+	var Overlay = __webpack_require__(19);
 
-	var Process = __webpack_require__(21);
+	var Process = __webpack_require__(23);
 
-	var Game = __webpack_require__(16);
+	var Game = __webpack_require__(17);
 	var Players = __webpack_require__(13);
-	var Policies = __webpack_require__(18);
-	var State = __webpack_require__(11);
+	var Policies = __webpack_require__(20);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
 	var startGame = function(data) {
-		gameId = data.gid;
+		Data.gameId = data.gid;
 		App.showSection('game');
 
 		State.initializedPlay = false;
@@ -1729,20 +1752,20 @@
 
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Socket = __webpack_require__(3);
 
-	var Cards = __webpack_require__(14);
-	var Chat = __webpack_require__(8);
+	var Cards = __webpack_require__(15);
+	var Chat = __webpack_require__(9);
 
-	var Game = __webpack_require__(16);
+	var Game = __webpack_require__(17);
 	var Players = __webpack_require__(13);
-	var Policies = __webpack_require__(18);
-	var State = __webpack_require__(11);
+	var Policies = __webpack_require__(20);
+	var State = __webpack_require__(12);
 
 	//LOCAL
 
@@ -1811,30 +1834,6 @@
 
 	};
 
-
-/***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = {
-
-		LIBERAL: 'liberal',
-		FASCIST: 'fascist',
-		NONE: 'none',
-
-		FASCIST_POLICIES_REQUIRED: 6,
-		LIBERAL_POLICIES_REQUIRED: 5,
-
-	};
-
-
-/***/ },
-/* 23 */
-/***/ function(module, exports) {
-
-	module.exports = jQuery;
 
 /***/ }
 /******/ ]);

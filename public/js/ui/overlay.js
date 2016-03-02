@@ -94,7 +94,6 @@ var showOverlay = function(type, data) {
 };
 
 $('#overlay').on('click', '#overlay-continue', function() {
-	var type = $(this).data('type');
 	hideOverlay();
 });
 
@@ -133,15 +132,14 @@ $('.menu-back').on('click', function() {
 });
 
 $('#feedback-submit').on('click', function() {
-	console.log(this);
 	var type = $('#i-feedback-type').val();
 	if (!type) {
-		alert('Please select a type of feedback to report and try again!');
+		window.alert('Please select a type of feedback to report and try again!');
 		return;
 	}
 	var body = $('#i-feedback-body').val();
 	if (body.length < 6) {
-		alert('Please enter some feedback into the text area!');
+		window.alert('Please enter some feedback into the text area!');
 		return;
 	}
 	Socket.emit('feedback', {type: type, body: body}, function(response) {
@@ -149,7 +147,7 @@ $('#feedback-submit').on('click', function() {
 			$('#i-feedback-type').val('default');
 			$('#i-feedback-body').val('');
 			showOverlaySection('menu');
-			alert('Thank you! Your feedback has been recorded.');
+			window.alert('Thank you! Your feedback has been recorded.');
 		}
 	});
 });

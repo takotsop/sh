@@ -15,6 +15,7 @@ var Socket = require('socket/socket');
 var Welcome = require('lobby/welcome');
 
 var Start = require('game/start');
+var State = require('game/state');
 
 //LOCAL
 
@@ -58,7 +59,7 @@ var updateLobby = function(data) {
 	$('#lobby-player-summary').text(lobbyPlayerCount + ' of ' + data.maxSize);
 	var nameList = '';
 	data.players.forEach(function(player, index) {
-		floatClass = index % 2 == 0 ? 'left' : 'right';
+		var floatClass = index % 2 == 0 ? 'left' : 'right';
 		nameList += '<div class="player-slot '+floatClass+'"><h2>' + player.name + '</h2></div>';
 	});
 	$('#lobby-players').html(nameList);
@@ -82,7 +83,7 @@ var connectToLobby = function() {
 };
 
 var showLobby = function() {
-	gameOver = true;
+	State.gameOver = true;
 	Chat.voiceDisconnect();
 	App.showSection('lobby');
 	connectToLobby();
@@ -152,7 +153,7 @@ $('#lobby-submit-private').on('click', function() {
 Socket.on('lobby game data', updateLobby);
 
 window.onbeforeunload = function() {
-	if (!Config.TESTING && !gameOver) {
+	if (!Config.TESTING && !State.gameOver) {
 		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 	}
 };

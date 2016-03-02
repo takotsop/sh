@@ -1,3 +1,5 @@
+'use strict';
+
 var IO = require('socket.io');
 
 var Config = require('util/config');

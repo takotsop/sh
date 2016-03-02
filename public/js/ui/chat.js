@@ -64,7 +64,7 @@ Socket.on('typing', function(data) {
 
 $('#voice-button').on('click', function() {
 	if (!supportsVoiceChat()) {
-		alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
+		window.alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
 		return;
 	}
 	if (webrtc) {
@@ -92,7 +92,7 @@ $('#voice-button').on('click', function() {
 		});
 
 		webrtc.on('readyToCall', function() {
-			webrtc.joinRoom('s-h-'+gameId);
+			webrtc.joinRoom('s-h-'+Data.gameId);
 		});
 
 		webrtc.on('remoteVolumeChange', function(peer, volume) {
