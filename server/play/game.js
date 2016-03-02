@@ -421,10 +421,6 @@ var Game = function(size, private) {
 		return count;
 	};
 
-	this.canVeto = function() {
-		return this.enactedFascist >= (Utils.TESTING ? 1 : CommonConsts.FASCIST_POLICIES_REQUIRED - 1);
-	};
-
 	return this;
 };
 

@@ -30,6 +30,7 @@ var startGame = function(data) {
 	State.playerCount = State.players.length;
 	State.currentCount = State.playerCount;
 	State.chatDisabled = false;
+	State.canVeto = false;
 
 	// Election tracker
 	State.presidentPower = null;
@@ -46,25 +47,26 @@ var startGame = function(data) {
 
 	var fascistPlaceholders = $('#board-fascist .policy-placeholder');
 	for (var index = 0; index < CommonConsts.FASCIST_POLICIES_REQUIRED; ++index) {
-		var power = CommonGame.getFascistPower(index + 1, State.playerCount);
-		if (!power) {
+		var fascistPower = CommonGame.getFascistPower(index + 1, State.playerCount);
+		if (!fascistPower) {
 			continue;
 		}
 		var placeholder = fascistPlaceholders.eq(index);
 		var description = '';
-		if (power == 'peek') {
-			description = 'President checks the top 3 policy cards';
-		} else if (power == 'investigate') {
-			description = 'President investigates a player\'s identity card';
-		} else if (power == 'election') {
-			description = 'President chooses the next presidential candidate';
-		} else if (power.indexOf('bullet') > -1) {
-			description = 'President kills a player';
+		if (fascistPower.indexOf(' veto') > -1) {
+			description = 'Veto power unlocked<br><br>';
 		}
-		if (power.indexOf('veto') > -1) {
-			description = 'Veto power unlocked<br><br>' + description;
+		if (fascistPower.indexOf('peek') > -1) {
+			description += 'President checks the top 3 policy cards';
+		} else if (fascistPower.indexOf('investigate') > -1) {
+			description += 'President investigates a player\'s identity card';
+		} else if (fascistPower.indexOf('election') > -1) {
+			description += 'President chooses the next presidential candidate';
+		} else if (fascistPower.indexOf('bullet') > -1) {
+			description += 'President kills a player';
 		}
-		placeholder.data('power', power);
+
+		placeholder.data('power', fascistPower);
 		placeholder.html('<div class="detail">' + description + '</div>');
 	}
 

@@ -44,7 +44,7 @@ var policyDiscarded = function(data) {
 	if (State.isLocalChancellor()) {
 		updatePolicyChoices(data.secret.policies);
 		directive = 'Select a policy to <strong>enact</strong>';
-		if (State.canVeto()) {
+		if (State.canVeto) {
 			directive += ', or request a <strong>veto</strong>';
 		}
 		cards = 'policy';
@@ -66,33 +66,30 @@ var policyEnacted = function(data) {
 	State.chatDisabled = false;
 	Game.resetElectionTracker();
 	var fascistPower = enactPolicy(data.policy);
-	State.presidentPower = fascistPower;
 	if (State.gameOver) {
 		return;
 	}
 	checkRemainingPolicies();
 
 	if (fascistPower) {
-		if (fascistPower.indexOf('veto') > -1) {
-			fascistPower = presidentPower.replace(' veto', '');
-		}
-		if (fascistPower == 'peek') {
+		State.presidentPower = fascistPower;
+		if (fascistPower.indexOf('peek') > -1) {
 			previewPolicies(data.secret);
 		} else {
 			var directive;
-			if (fascistPower == 'investigate') {
+			if (fascistPower.indexOf('investigate') > -1) {
 				if (State.isLocalPresident()) {
 					directive = 'Choose a player to investigate their allegiance';
 				} else {
 					directive = 'Wait for the president to investigate a player';
 				}
-			} else if (fascistPower == 'election') {
+			} else if (fascistPower.indexOf('election') > -1) {
 				if (State.isLocalPresident()) {
 					directive = 'Choose a presidential candidate for the next election';
 				} else {
 					directive = 'Wait for the president to choose the next presidential candidate';
 				}
-			} else if (fascistPower == 'bullet') {
+			} else if (fascistPower.indexOf('bullet') > -1) {
 				if (State.isLocalPresident()) {
 					directive = 'Choose a player to kill';
 				} else {
@@ -186,6 +183,8 @@ module.exports = {
 	discarded: policyDiscarded,
 
 	enacted: policyEnacted,
+
+	vetoRequest: vetoRequest,
 
 	returnPreviewed: function() {
 		drawPolicyCards(-3, true);

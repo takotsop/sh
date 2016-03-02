@@ -15,7 +15,7 @@ var showCards = function(showName) {
 	if (showName == 'vote') {
 		$('#cards-vote .card').removeClass('selected');
 	} else if (showName == 'policy') {
-		$('#veto-request').toggle(State.isLocalChancellor() && State.canVeto());
+		$('#veto-request').toggle(State.canVeto && State.isLocalChancellor());
 	}
 };
 
@@ -29,8 +29,8 @@ $('#cards-vote').on('click', '.card', function() {
 });
 
 $('#cards-policy').on('click', '.card', function() {
-	if (State.presidentPower == 'peek') {
-		Action.emit('peek');
+	if (State.presidentPower && State.presidentPower.indexOf('peek') > -1) {
+		Action.emit(State.presidentPower);
 	} else {
 		var data = {};
 		if ($(this).data('veto')) {

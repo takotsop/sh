@@ -15,7 +15,7 @@ module.exports = {
 			return gameSize != 4 ? 'bullet' : null;
 		}
 		if (enactedFascist == 5) {
-			return gameSize >= 4 ? 'bullet' : null;
+			return gameSize >= 4 ? 'bullet veto' : null;
 		}
 	},
 

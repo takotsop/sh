@@ -131,7 +131,7 @@ var policyAction = function(data, player, game) {
 			return;
 		}
 		if (data.veto != null) {
-			if (!game.turn.vetoRequested && game.canVeto()) {
+			if (game.canVeto && !game.turn.vetoRequested) {
 				game.turn.vetoRequested = true;
 				game.turn.chancellorAction = true;
 				data = game.emitAction('veto requested', data);
@@ -144,7 +144,7 @@ var policyAction = function(data, player, game) {
 			var secret;
 			var policy = game.turn.policies[data.policyIndex];
 			var fascistPower = game.enactPolicy(policy, true);
-			if (fascistPower == 'peek') {
+			if (fascistPower && fascistPower.indexOf('peek') > -1) {
 				secret = {target: game.presidentElect, peek: game.peekPolicies()};
 			}
 			data.policy = policy;
@@ -171,27 +171,31 @@ var playerPower = function(action, uid, player, game) {
 
 var powerAction = function(action, data, player, game) {
 	if (player.isPresident() && game.power == action) {
-		if (action == 'peek') {
+		if (action.indexOf('veto') > -1) {
+			data.canVeto = true;
+			game.canVeto = true;
+		}
+		if (action.indexOf('peek') > -1) {
 			data = player.emitAction('peeked', data);
 		} else {
 			if (player.equals(data)) {
 				return;
 			}
 			var target = Player.get(data.uid);
-			if (action == 'investigate') {
+			if (action.indexOf('investigate') > -1) {
 				if (target.investigated) {
 					return;
 				}
 				secret = {target: game.presidentElect, party: target.getParty()};
 				target.investigated = true;
 				data = game.emitAction('investigated', data, secret);
-			} else if (action == 'election') {
+			} else if (action.indexOf('election') > -1) {
 				if (game.turn.chancellor == data.uid) {
 					return;
 				}
 				game.specialPresident = target.gameState().index;
 				data = game.emitAction('special election', data);
-			} else if (action == 'bullet') {
+			} else if (action.indexOf('bullet') > -1) {
 				var wasHitler = target.isHitler();
 				if (!target.kill(false)) {
 					return;
@@ -203,6 +207,7 @@ var powerAction = function(action, data, player, game) {
 		game.advanceTurn();
 		return data;
 	}
+	console.log('Invalid power', player.isPresident(), game.power, action);
 };
 
 //PUBLIC

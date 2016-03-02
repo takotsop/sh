@@ -25,12 +25,15 @@ var processAction = function(data, fastForward) {
 	} else if (action == 'enacted') {
 		Policies.enacted(data);
 	} else if (action == 'veto requested') {
-		vetoRequest(data);
+		Policies.vetoRequest(data);
 	} else if (action == 'vetoed') {
 		Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
 	} else if (action == 'veto overridden') {
 		Policies.vetoOverridden(data);
 	} else {
+		if (data.canVeto) {
+			State.canVeto = true;
+		}
 		if (action == 'peeked') {
 			Policies.returnPreviewed();
 		} else {

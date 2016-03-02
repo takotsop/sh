@@ -481,20 +481,20 @@
 		var localPresident = State.isLocalPresident();
 		$('#players .player-slot:not(.killed)').toggleClass('choose', localPresident);
 
-		if (localPresident) {
+		if (localPresident && purpose) {
 			localDiv().removeClass('choose');
-			if (purpose == 'election') {
+			if (purpose.indexOf('election') > -1) {
 				if (State.playerCount > 5) {
 					uidDiv(State.presidentElect).removeClass('choose');
 				}
 				uidDiv(State.chancellorElect).removeClass('choose');
-			} else if (purpose == 'investigate') {
+			} else if (purpose.indexOf('investigate') > -1) {
 				State.players.forEach(function(player) {
 					if (player.investigated) {
 						playerDiv(player).removeClass('choose');
 					}
 				});
-			} else if (purpose == 'bullet') {
+			} else if (purpose.indexOf('bullet') > -1) {
 				State.players.forEach(function(player) {
 					if (player.killed) {
 						playerDiv(player).removeClass('choose');
@@ -528,11 +528,7 @@
 
 /***/ },
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CommonConsts = __webpack_require__(22);
-
-	//PUBLIC
+/***/ function(module, exports) {
 
 	module.exports = {
 
@@ -550,10 +546,6 @@
 
 		isLocalChancellor: function() {
 			return this.chancellorIndex == this.localIndex;
-		},
-
-		canVeto: function() {
-			return this.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : CommonConsts.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
 		},
 
 		localRole: function() {
@@ -588,7 +580,7 @@
 				return gameSize != 4 ? 'bullet' : null;
 			}
 			if (enactedFascist == 5) {
-				return gameSize >= 4 ? 'bullet' : null;
+				return gameSize >= 4 ? 'bullet veto' : null;
 			}
 		},
 
@@ -767,7 +759,7 @@
 		if (showName == 'vote') {
 			$('#cards-vote .card').removeClass('selected');
 		} else if (showName == 'policy') {
-			$('#veto-request').toggle(State.isLocalChancellor() && State.canVeto());
+			$('#veto-request').toggle(State.canVeto && State.isLocalChancellor());
 		}
 	};
 
@@ -781,8 +773,8 @@
 	});
 
 	$('#cards-policy').on('click', '.card', function() {
-		if (State.presidentPower == 'peek') {
-			Action.emit('peek');
+		if (State.presidentPower && State.presidentPower.indexOf('peek') > -1) {
+			Action.emit(State.presidentPower);
 		} else {
 			var data = {};
 			if ($(this).data('veto')) {
@@ -1203,7 +1195,7 @@
 		if (State.isLocalChancellor()) {
 			updatePolicyChoices(data.secret.policies);
 			directive = 'Select a policy to <strong>enact</strong>';
-			if (State.canVeto()) {
+			if (State.canVeto) {
 				directive += ', or request a <strong>veto</strong>';
 			}
 			cards = 'policy';
@@ -1225,33 +1217,30 @@
 		State.chatDisabled = false;
 		Game.resetElectionTracker();
 		var fascistPower = enactPolicy(data.policy);
-		State.presidentPower = fascistPower;
 		if (State.gameOver) {
 			return;
 		}
 		checkRemainingPolicies();
 
 		if (fascistPower) {
-			if (fascistPower.indexOf('veto') > -1) {
-				fascistPower = presidentPower.replace(' veto', '');
-			}
-			if (fascistPower == 'peek') {
+			State.presidentPower = fascistPower;
+			if (fascistPower.indexOf('peek') > -1) {
 				previewPolicies(data.secret);
 			} else {
 				var directive;
-				if (fascistPower == 'investigate') {
+				if (fascistPower.indexOf('investigate') > -1) {
 					if (State.isLocalPresident()) {
 						directive = 'Choose a player to investigate their allegiance';
 					} else {
 						directive = 'Wait for the president to investigate a player';
 					}
-				} else if (fascistPower == 'election') {
+				} else if (fascistPower.indexOf('election') > -1) {
 					if (State.isLocalPresident()) {
 						directive = 'Choose a presidential candidate for the next election';
 					} else {
 						directive = 'Wait for the president to choose the next presidential candidate';
 					}
-				} else if (fascistPower == 'bullet') {
+				} else if (fascistPower.indexOf('bullet') > -1) {
 					if (State.isLocalPresident()) {
 						directive = 'Choose a player to kill';
 					} else {
@@ -1345,6 +1334,8 @@
 		discarded: policyDiscarded,
 
 		enacted: policyEnacted,
+
+		vetoRequest: vetoRequest,
 
 		returnPreviewed: function() {
 			drawPolicyCards(-3, true);
@@ -1566,6 +1557,7 @@
 		State.playerCount = State.players.length;
 		State.currentCount = State.playerCount;
 		State.chatDisabled = false;
+		State.canVeto = false;
 
 		// Election tracker
 		State.presidentPower = null;
@@ -1582,25 +1574,26 @@
 
 		var fascistPlaceholders = $('#board-fascist .policy-placeholder');
 		for (var index = 0; index < CommonConsts.FASCIST_POLICIES_REQUIRED; ++index) {
-			var power = CommonGame.getFascistPower(index + 1, State.playerCount);
-			if (!power) {
+			var fascistPower = CommonGame.getFascistPower(index + 1, State.playerCount);
+			if (!fascistPower) {
 				continue;
 			}
 			var placeholder = fascistPlaceholders.eq(index);
 			var description = '';
-			if (power == 'peek') {
-				description = 'President checks the top 3 policy cards';
-			} else if (power == 'investigate') {
-				description = 'President investigates a player\'s identity card';
-			} else if (power == 'election') {
-				description = 'President chooses the next presidential candidate';
-			} else if (power.indexOf('bullet') > -1) {
-				description = 'President kills a player';
+			if (fascistPower.indexOf(' veto') > -1) {
+				description = 'Veto power unlocked<br><br>';
 			}
-			if (power.indexOf('veto') > -1) {
-				description = 'Veto power unlocked<br><br>' + description;
+			if (fascistPower.indexOf('peek') > -1) {
+				description += 'President checks the top 3 policy cards';
+			} else if (fascistPower.indexOf('investigate') > -1) {
+				description += 'President investigates a player\'s identity card';
+			} else if (fascistPower.indexOf('election') > -1) {
+				description += 'President chooses the next presidential candidate';
+			} else if (fascistPower.indexOf('bullet') > -1) {
+				description += 'President kills a player';
 			}
-			placeholder.data('power', power);
+
+			placeholder.data('power', fascistPower);
 			placeholder.html('<div class="detail">' + description + '</div>');
 		}
 
@@ -1710,12 +1703,15 @@
 		} else if (action == 'enacted') {
 			Policies.enacted(data);
 		} else if (action == 'veto requested') {
-			vetoRequest(data);
+			Policies.vetoRequest(data);
 		} else if (action == 'vetoed') {
 			Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
 		} else if (action == 'veto overridden') {
 			Policies.vetoOverridden(data);
 		} else {
+			if (data.canVeto) {
+				State.canVeto = true;
+			}
 			if (action == 'peeked') {
 				Policies.returnPreviewed();
 			} else {

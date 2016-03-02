@@ -20,20 +20,20 @@ var enablePlayerSelection = function(purpose) {
 	var localPresident = State.isLocalPresident();
 	$('#players .player-slot:not(.killed)').toggleClass('choose', localPresident);
 
-	if (localPresident) {
+	if (localPresident && purpose) {
 		localDiv().removeClass('choose');
-		if (purpose == 'election') {
+		if (purpose.indexOf('election') > -1) {
 			if (State.playerCount > 5) {
 				uidDiv(State.presidentElect).removeClass('choose');
 			}
 			uidDiv(State.chancellorElect).removeClass('choose');
-		} else if (purpose == 'investigate') {
+		} else if (purpose.indexOf('investigate') > -1) {
 			State.players.forEach(function(player) {
 				if (player.investigated) {
 					playerDiv(player).removeClass('choose');
 				}
 			});
-		} else if (purpose == 'bullet') {
+		} else if (purpose.indexOf('bullet') > -1) {
 			State.players.forEach(function(player) {
 				if (player.killed) {
 					playerDiv(player).removeClass('choose');

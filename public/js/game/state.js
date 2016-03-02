@@ -1,7 +1,3 @@
-var CommonConsts = require('common/constants');
-
-//PUBLIC
-
 module.exports = {
 
 	getPresident: function() {
@@ -18,10 +14,6 @@ module.exports = {
 
 	isLocalChancellor: function() {
 		return this.chancellorIndex == this.localIndex;
-	},
-
-	canVeto: function() {
-		return this.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED - 1; //(TESTING ? 1 : CommonConsts.FASCIST_POLICIES_REQUIRED - 1); //SAMPLE
 	},
 
 	localRole: function() {
