@@ -9,7 +9,7 @@ var State = require('game/state');
 //LOCAL
 
 var uidDiv = function(uid, query) {
-	return $('#ps'+uid + (query ? ' '+query :''));
+	return $('#ps'+uid + (query ? ' '+query : ''));
 };
 
 var localDiv = function(query) {
