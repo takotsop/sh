@@ -1,3 +1,5 @@
+'use strict';
+
 var DB = require.main.require('./server/tools/db');
 var Utils = require.main.require('./server/tools/utils');
 

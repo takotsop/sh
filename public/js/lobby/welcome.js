@@ -1,3 +1,5 @@
+'use strict';
+
 var Config = require('util/config');
 var Data = require('util/data');
 

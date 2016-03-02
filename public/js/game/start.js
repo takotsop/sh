@@ -1,3 +1,5 @@
+'use strict';
+
 var CommonConsts = require('common/constants');
 var CommonGame = require('common/game');
 

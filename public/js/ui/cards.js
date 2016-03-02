@@ -1,3 +1,5 @@
+'use strict';
+
 var Action = require('socket/action');
 
 var State = require('game/state');

@@ -44,6 +44,8 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	__webpack_require__(1);
 
 	__webpack_require__(21);
@@ -52,6 +54,8 @@
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var Data = __webpack_require__(2);
 
@@ -82,6 +86,8 @@
 /***/ },
 /* 2 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	module.exports = {
 
@@ -127,6 +133,8 @@
 /* 5 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	module.exports = {
 
 		TESTING: document.location.hostname == 'localhost',
@@ -137,6 +145,8 @@
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var Config = __webpack_require__(5);
 	var Util = __webpack_require__(7);
@@ -308,6 +318,8 @@
 /* 7 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	module.exports = {
 
 		timestamp: function() {
@@ -320,6 +332,8 @@
 /***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var SimpleWebRTC = __webpack_require__(9);
 
@@ -459,6 +473,8 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Data = __webpack_require__(2);
 
 	var State = __webpack_require__(11);
@@ -530,6 +546,8 @@
 /* 11 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	module.exports = {
 
 		getPresident: function() {
@@ -562,6 +580,8 @@
 /***/ },
 /* 12 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	module.exports = {
 
@@ -607,6 +627,8 @@
 /***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var CommonConsts = __webpack_require__(22);
 
@@ -742,6 +764,8 @@
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Action = __webpack_require__(15);
 
 	var State = __webpack_require__(11);
@@ -805,6 +829,8 @@
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Socket = __webpack_require__(3);
 
 	//LOCAL
@@ -829,6 +855,8 @@
 /***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var CommonGame = __webpack_require__(12);
 
@@ -981,6 +1009,8 @@
 /***/ },
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var Cards = __webpack_require__(14);
 
@@ -1148,6 +1178,8 @@
 /***/ },
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var CommonConsts = __webpack_require__(22);
 
@@ -1354,6 +1386,8 @@
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Config = __webpack_require__(5);
 	var Data = __webpack_require__(2);
 
@@ -1525,6 +1559,8 @@
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var CommonConsts = __webpack_require__(22);
 	var CommonGame = __webpack_require__(12);
 
@@ -1676,6 +1712,8 @@
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Socket = __webpack_require__(3);
 
 	var Cards = __webpack_require__(14);
@@ -1757,6 +1795,8 @@
 /***/ },
 /* 22 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	module.exports = {
 

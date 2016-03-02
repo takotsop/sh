@@ -1,3 +1,5 @@
+'use strict';
+
 var SimpleWebRTC = require("simplewebrtc");
 
 var Data = require('util/data');

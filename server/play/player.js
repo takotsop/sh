@@ -1,3 +1,5 @@
+'use strict';
+
 var Utils = require.main.require('./server/tools/utils');
 
 var allPlayers = {};

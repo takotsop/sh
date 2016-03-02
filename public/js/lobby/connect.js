@@ -1,3 +1,5 @@
+'use strict';
+
 var Data = require('util/data');
 
 var Socket = require('socket/socket');

@@ -1,3 +1,5 @@
+'use strict';
+
 var Player = require.main.require('./server/play/player');
 
 //MANAGE

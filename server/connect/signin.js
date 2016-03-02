@@ -1,3 +1,5 @@
+'use strict';
+
 var Utils = require.main.require('./server/tools/utils');
 var DB = require.main.require('./server/tools/db');
 var Mailer = require.main.require('./server/tools/mailer');

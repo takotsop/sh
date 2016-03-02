@@ -1,3 +1,5 @@
+'use strict';
+
 var Socket = require('socket/socket');
 
 //LOCAL

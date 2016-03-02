@@ -1,3 +1,5 @@
+'use strict';
+
 var Data = require('util/data');
 
 var State = require('game/state');

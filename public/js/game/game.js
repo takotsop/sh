@@ -1,3 +1,5 @@
+'use strict';
+
 var CommonGame = require('common/game');
 
 var App = require('ui/app');

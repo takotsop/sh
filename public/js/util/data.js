@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
 	uid: localStorage.getItem('uid'),

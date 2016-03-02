@@ -1,3 +1,5 @@
+'use strict';
+
 var Config = require('util/config');
 var Util = require('util/util');
 

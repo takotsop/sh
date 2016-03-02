@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
 	getFascistPower: function(enactedFascist, gameSize) {

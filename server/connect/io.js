@@ -1,3 +1,5 @@
+'use strict';
+
 var SocketIO = require('socket.io');
 
 var DB = require.main.require('./server/tools/db');
