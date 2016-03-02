@@ -1,3 +1,5 @@
+'use strict';
+
 var Postgres = require('pg');
 
 var Config = require('./config');

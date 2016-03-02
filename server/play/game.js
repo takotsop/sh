@@ -3,9 +3,10 @@
 var CommonConsts = require.main.require('./common/constants');
 var CommonGame = require.main.require('./common/game');
 
+var SeedRandom = require('seedrandom');
+
 var DB = require.main.require('./server/tools/db');
 var Utils = require.main.require('./server/tools/utils');
-var SeedRandom = require('seedrandom');
 
 var Socket = require.main.require('./server/connect/io');
 
@@ -17,10 +18,10 @@ var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
 
 var games = [];
 
-var Game = function(size, private) {
+var Game = function(size, privateGame) {
 	this.gid = Utils.uid();
 	this.maxSize = size;
-	this.private = private;
+	this.private = privateGame;
 
 	this.players = [];
 	this.playerState = {};

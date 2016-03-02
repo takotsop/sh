@@ -160,17 +160,6 @@ var policyAction = function(data, player, game) {
 
 //POWERS
 
-var playerPower = function(action, uid, player, game) {
-	if (!player.isPresident() || game.power != action) {
-		console.error('Invalid power', player.isPresident(), game.power, action);
-		return;
-	}
-
-	data = player.emitAction('peeked', data);
-	game.advanceTurn();
-	return data;
-};
-
 var powerAction = function(action, data, player, game) {
 	if (player.isPresident() && game.power == action) {
 		if (action.indexOf('veto') > -1) {
@@ -188,7 +177,7 @@ var powerAction = function(action, data, player, game) {
 				if (target.investigated) {
 					return;
 				}
-				secret = {target: game.presidentElect, party: target.getParty()};
+				var secret = {target: game.presidentElect, party: target.getParty()};
 				target.investigated = true;
 				data = game.emitAction('investigated', data, secret);
 			} else if (action.indexOf('election') > -1) {

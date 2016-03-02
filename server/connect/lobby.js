@@ -73,7 +73,7 @@ module.exports = function(socket) {
 		var player = socket.player;
 		player.leaveCurrentGame();
 		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
-		joiningGame = new Game(gameMaxSize, data.private);
+		var joiningGame = new Game(gameMaxSize, data.private);
 		joiningGame.addPlayer(socket, player);
 	});
 

@@ -1,3 +1,5 @@
+'use strict';
+
 var Config = require.main.require('./server/tools/config');
 var SendGrid = require('sendgrid')(Config.SENDGRID_API_KEY);
 

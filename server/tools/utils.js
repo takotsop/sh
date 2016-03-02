@@ -1,3 +1,5 @@
+'use strict';
+
 var rng = function(generator) {
 	return generator.int32();
 };

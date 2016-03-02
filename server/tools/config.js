@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
 	LOCAL_DB_URL: 'postgres://kiko@localhost/secrethitler',
