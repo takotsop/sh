@@ -39,7 +39,7 @@ var showSignin = function() {
 		setTimeout(function() {
 			$('#start-playing').click();
 			$('#guest-login').click();
-		}, 100);
+		}, 200);
 	}
 
 	$('#voice-unsupported').toggle(!Chat.supportsVoice());
