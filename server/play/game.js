@@ -7,6 +7,8 @@ var DB = require.main.require('./server/tools/db');
 var Utils = require.main.require('./server/tools/utils');
 var SeedRandom = require('seedrandom');
 
+var Socket = require.main.require('./server/connect/io');
+
 var Player = require.main.require('./server/play/player');
 
 //LOCAL
@@ -90,7 +92,7 @@ var Game = function(size, private) {
 //LOBBY
 
 	this.emit = function(name, data) {
-		io.to(this.gid).emit(name, data);
+		Socket.io().to(this.gid).emit(name, data);
 	};
 
 	this.emitAction = function(name, data, secret) {

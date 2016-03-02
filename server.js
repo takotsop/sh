@@ -6,11 +6,13 @@ var http = require('http').createServer(app);
 
 var Utils = require.main.require('./server/tools/utils');
 
+var Socket = require.main.require('./server/connect/io');
+
 var portNumber = process.env.PORT || 8004;
 
 app.use(express.static('public'));
 
-require.main.require('./server/connect/io')(http);
+Socket.init(http);
 
 http.listen(portNumber);
 
