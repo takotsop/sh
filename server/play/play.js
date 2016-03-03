@@ -4,29 +4,27 @@ var Player = require.main.require('./server/play/player');
 
 //MANAGE
 
-var chatAction = function(data, player) {
+var chatAction = function(data, player, game) {
 	data.uid = player.uid;
 	data = player.emitAction('chat', data);
 	return data;
 };
 
 var quitAction = function(data, player, game, socket) {
-	if (!player.gameState().left) {
-		var wasPresident = player.isPresident();
-		var wasChancellor = player.isChancellor();
-		var wasHitler = player.isHitler();
-		if (game.remove(socket)) {
-			var advance;
-			if (wasPresident) {
-				advance = true;
-			} else if (wasChancellor) {
-				advance = !game.turn.chancellorAction;
-			}
-			if (advance) {
-				game.advanceTurn();
-			}
-			return game.emitAction('abandoned', {uid: player.uid, hitler: wasHitler, advance: advance});
+	var wasPresident = player.isPresident();
+	var wasChancellor = player.isChancellor();
+	var wasHitler = game.isHitler(player.uid);
+	if (game.remove(socket)) {
+		var advance;
+		if (wasPresident) {
+			advance = true;
+		} else if (wasChancellor) {
+			advance = !game.turn.chancellorAction;
 		}
+		if (advance) {
+			game.advanceTurn();
+		}
+		return game.emitAction('abandoned', {uid: player.uid, hitler: wasHitler, advance: advance});
 	}
 };
 
@@ -47,7 +45,7 @@ var chancellorAction = function(data, player, game) {
 		game.turn.chancellor = data.uid;
 		return chancellorData;
 	}
-	console.log('Chancellor invalid', player.uid, data, player.gameState().index, game.presidentIndex);
+	console.log('Chancellor invalid', player.uid, data, player.gameState('index'), game.presidentIndex);
 };
 
 var voteAction = function(data, player, game) {
@@ -55,13 +53,13 @@ var voteAction = function(data, player, game) {
 		console.error('vote already complete');
 		return;
 	}
-	if (player.gameState().killed) {
+	if (player.gameState('killed')) {
 		return;
 	}
-	player.gameState().vote = data.up;
+	player.gameState('vote', data.up);
 	var doneVoting = true;
 	game.players.forEach(function(puid) {
-		var playerState = game.playerState[puid];
+		var playerState = game.playerState(puid);
 		if (!playerState.killed && playerState.vote == null) {
 			doneVoting = false;
 		}
@@ -72,7 +70,7 @@ var voteAction = function(data, player, game) {
 		var supporters = [];
 		var supportCount = 0;
 		game.players.forEach(function(puid, idx) {
-			var playerState = game.playerState[puid];
+			var playerState = game.playerState(puid);
 			supporters[idx] = playerState.vote;
 			if (playerState.vote) {
 				++supportCount;
@@ -184,11 +182,11 @@ var powerAction = function(action, data, player, game) {
 				if (game.turn.chancellor == data.uid) {
 					return;
 				}
-				game.specialPresident = target.gameState().index;
+				game.specialPresident = target.gameState('index');
 				data = game.emitAction('special election', data);
 			} else if (action.indexOf('bullet') > -1) {
-				var wasHitler = target.isHitler();
-				if (!target.kill(false)) {
+				var wasHitler = game.isHitler(target.uid);
+				if (!game.kill(target, false)) {
 					return;
 				}
 				data.hitler = wasHitler;
@@ -209,18 +207,21 @@ module.exports = function(socket) {
 		var action = rawData.action;
 		var player = socket.player;
 		if (!player) {
-			console.error('Socket invalid player', socket.uid, action);
+			console.error('Socket action invalid player', socket.uid, action);
+			return;
+		}
+		var game = player.game;
+		if (!game || game.playerState(player.uid) == null) {
+			console.log('Socket action invalid game', player.uid, action, game);
 			return;
 		}
 		var data = {action: action};
-		var game = player.game;
-
 		var recording;
 		if (action == 'quit') {
 			recording = quitAction(data, player, game, socket);
 		} else if (action == 'chat') {
 			data.msg = rawData.msg.substr(0, 255);
-			recording = chatAction(data, player);
+			recording = chatAction(data, player, game);
 		} else if (action == 'chancellor') {
 			data.uid = rawData.uid;
 			recording = chancellorAction(data, player, game);

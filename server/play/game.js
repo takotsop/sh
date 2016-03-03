@@ -24,7 +24,7 @@ var Game = function(size, privateGame) {
 	this.private = privateGame;
 
 	this.players = [];
-	this.playerState = {};
+	this.playersState = {};
 	this.history = [];
 
 	this.generator = SeedRandom(this.gid);
@@ -101,7 +101,7 @@ var Game = function(size, privateGame) {
 		if (this.finished) {
 			var roles = [];
 			this.players.forEach(function(uid, index) {
-				roles[index] = game.playerState[uid].allegiance;
+				roles[index] = game.playerState(uid, 'allegiance');
 			});
 			data.roles = roles;
 		}
@@ -121,7 +121,7 @@ var Game = function(size, privateGame) {
 		var sendPlayers = [];
 		var showFascists;
 		if (perspectiveUid) {
-			var perspectiveAllegiance = this.playerState[perspectiveUid].allegiance;
+			var perspectiveAllegiance = this.playerState(perspectiveUid, 'allegiance');
 			showFascists = perspectiveAllegiance == 1 || (perspectiveAllegiance == 2 && this.playerCount <= 6);
 		}
 		this.players.forEach(function(uid, index) {
@@ -132,7 +132,7 @@ var Game = function(size, privateGame) {
 				index: index,
 			};
 			if (perspectiveUid) {
-				var playerAllegiance = game.playerState[uid].allegiance;
+				var playerAllegiance = game.playerState(uid, 'allegiance');
 				if (perspectiveUid == uid || (showFascists && playerAllegiance > 0)) {
 					playerData.allegiance = playerAllegiance;
 				}
@@ -198,7 +198,7 @@ var Game = function(size, privateGame) {
 		fascistIndicies = this.shuffle(fascistIndicies);
 		this.players.forEach(function(puid, pidx) {
 			var allegiance = fascistIndicies[pidx];
-			game.playerState[puid].allegiance = allegiance;
+			game.playerState(puid, 'allegiance', allegiance);
 			if (allegiance == 2) {
 				game.hitlerUid = puid;
 			}
@@ -226,7 +226,7 @@ var Game = function(size, privateGame) {
 			this.presidentIndex = this.specialPresident;
 			this.specialPresident = null;
 		} else {
-			this.positionIndex = CommonGame.getNextPresident(this.playerCount, this.players, this.positionIndex, this.playerState);
+			this.positionIndex = CommonGame.getNextPresident(this.playerCount, this.players, this.positionIndex, this.playersState);
 			this.presidentIndex = this.positionIndex;
 		}
 		this.power = null;
@@ -252,7 +252,7 @@ var Game = function(size, privateGame) {
 
 			var activePlayers = [];
 			this.players.forEach(function(puid) {
-				if (!game.playerState[puid].quit) {
+				if (!game.playerState(puid, 'quit')) {
 					activePlayers.push(puid);
 				}
 			});
@@ -293,6 +293,17 @@ var Game = function(size, privateGame) {
 
 //PLAYERS
 
+	this.playerState = function(puid, key, value) {
+		var state = this.playersState[puid];
+		if (state && key) {
+			if (value == undefined) {
+				return state[key];
+			}
+			state[key] = value;
+		}
+		return state;
+	};
+
 	this.addPlayer = function(socket) {
 		socket.leave('lobby');
 		socket.join(this.gid);
@@ -301,11 +312,11 @@ var Game = function(size, privateGame) {
 		player.game = this;
 		player.disconnected = false;
 
-		var playerState = this.playerState[player.uid];
+		var playerState = this.playerState(player.uid);
 		if (!playerState) {
 			var index = this.players.length;
 			this.players[index] = player.uid;
-			this.playerState[player.uid] = {index: index};
+			this.playersState[player.uid] = {index: index};
 		} else {
 			playerState.left = false;
 		}
@@ -320,8 +331,9 @@ var Game = function(size, privateGame) {
 	};
 
 	this.kill = function(player, quitting) {
-		var playerState = player.gameState();
-		if (!playerState.killed) {
+		var puid = player.uid;
+		var playerState = this.playerState(puid);
+		if (playerState && !playerState.killed) {
 			if (quitting) {
 				playerState.quit = true;
 				DB.updatePlayers([player.uid], 'quit');
@@ -329,7 +341,7 @@ var Game = function(size, privateGame) {
 			playerState.killed = true;
 			this.currentCount -= 1;
 
-			if (player.isHitler()) {
+			if (this.isHitler(puid)) {
 				this.finish(true, quitting ? 'hitler quit' : 'hitler');
 			} else if (this.currentCount <= 2) {
 				this.removeSelf();
@@ -365,23 +377,23 @@ var Game = function(size, privateGame) {
 		socket.leave(this.gid);
 
 		var player = socket.player;
-		var playerState = player.gameState();
+		var playerState = this.playerState(player.uid);
 		if (!playerState || playerState.left) {
 			return false;
 		}
 		if (this.started) {
 			playerState.left = true;
-			player.kill(true);
+			this.kill(player, true);
 		} else {
 			this.players = this.players.filter(function(puid) {
 				return puid != player.uid;
 			});
-			delete this.playerState[player.uid];
+			delete this.playersState[player.uid];
 			if (this.players.length == 0) {
 				this.removeSelf();
 			} else {
 				this.players.forEach(function(puid, pidx) {
-					game.playerState[puid].index = pidx;
+					game.playerState(puid, 'index', pidx);
 				});
 			}
 		}

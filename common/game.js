@@ -21,15 +21,15 @@ module.exports = {
 		}
 	},
 
-	getNextPresident: function(gameSize, players, startIndex, playerState) {
+	getNextPresident: function(gameSize, players, startIndex, playersState) {
 		for (var attempts = 0; attempts < gameSize; ++attempts) {
 			++startIndex;
 			if (startIndex >= gameSize) {
 				startIndex = 0;
 			}
 			var player = players[startIndex];
-			if (playerState) {
-				player = playerState[player];
+			if (playersState) {
+				player = playersState[player];
 			}
 			if (!player.killed) {
 				break;

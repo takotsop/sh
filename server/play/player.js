@@ -1,7 +1,5 @@
 'use strict';
 
-var Utils = require.main.require('./server/tools/utils');
-
 var allPlayers = {};
 
 var Player = function(socket, uid, name, oldPlayer) {
@@ -32,44 +30,32 @@ var Player = function(socket, uid, name, oldPlayer) {
 		return this.game.emitAction(name, data);
 	};
 
-	// Helpers
+	this.leaveCurrentGame = function() {
+		if (this.game) {
+			return this.game.disconnect(socket);
+		}
+	};
+
+	// Play helpers
 
 	this.equals = function(data) {
 		return this.uid == data.uid;
 	};
 
-	this.gamePlayer = function(socket) {
-		return this.game ? this.game.players[this.gameState().index] : null;
-	};
-
-	this.getParty = function(socket) {
-		return this.gameState().allegiance == 0 ? 0 : 1;
+	this.getParty = function() {
+		return this.gameState('allegiance') == 0 ? 0 : 1;
 	};
 
 	this.isPresident = function() {
-		return this.gameState().index == this.game.presidentIndex;
+		return this.gameState('index') == this.game.presidentIndex;
 	};
 
 	this.isChancellor = function() {
 		return this.uid == this.game.turn.chancellor;
 	};
 
-	this.isHitler = function() {
-		return this.game.isHitler(this.uid);
-	};
-
-	this.kill = function(quitting) {
-		return this.game.kill(this, quitting);
-	};
-
-	this.gameState = function() {
-		return this.game ? this.game.playerState[this.uid] : {};
-	};
-
-	this.leaveCurrentGame = function() {
-		if (this.game) {
-			return this.game.disconnect(socket);
-		}
+	this.gameState = function(key, value) {
+		return this.game.playerState(this.uid, key, value);
 	};
 
 	return this;
