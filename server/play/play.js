@@ -36,16 +36,18 @@ var chancellorAction = function(data, player, game) {
 		return;
 	}
 	if (data.uid == game.chancellorElect || (game.playerCount > 5 && data.uid == game.presidentElect)) {
-		console.error('Player involved in the last election', data.uid, game.presidentElect, game.chancellorElect);
+		console.error('Chancellor selected involved in prior election', data.uid, game.presidentElect, game.chancellorElect);
 		return;
 	}
-	if (!player.equals(data) && player.isPresident()) {
-		var chancellorData = {president: player.uid, chancellor: data.uid};
-		chancellorData = player.emitAction('chancellor chosen', chancellorData);
-		game.turn.chancellor = data.uid;
-		return chancellorData;
+	if (player.equals(data) || !player.isPresident()) {
+		console.error('Chancellor invalid', player.uid, data, player.gameState('index'), game.presidentIndex);
+		return;
 	}
-	console.log('Chancellor invalid', player.uid, data, player.gameState('index'), game.presidentIndex);
+
+	var chancellorData = {president: player.uid, chancellor: data.uid};
+	chancellorData = player.emitAction('chancellor chosen', chancellorData);
+	game.turn.chancellor = data.uid;
+	return chancellorData;
 };
 
 var voteAction = function(data, player, game) {
