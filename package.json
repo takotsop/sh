@@ -6,6 +6,7 @@
   "scripts": {},
   "author": "Kyle Coburn",
   "license": "ISC",
+  "repository": "https://github.com/kylecoburn/secret-hitler",
   "dependencies": {
     "express": "^4.13.3",
     "seedrandom": "^2.4.2",
