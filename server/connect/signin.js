@@ -1,5 +1,7 @@
 'use strict';
 
+var CommonValidate = require.main.require('./common/validate');
+
 var Utils = require.main.require('./server/tools/utils');
 var DB = require.main.require('./server/tools/db');
 var Mailer = require.main.require('./server/tools/mailer');
@@ -73,8 +75,14 @@ module.exports = function(socket, uid, auth) {
 	});
 
 	socket.on('signin email', function(data, callback) {
-		var now = Utils.now();
 		var email = data.email;
+		var errorMessage = CommonValidate.email(email);
+		if (errorMessage) {
+			callback({error: errorMessage});
+			return;
+		}
+
+		var now = Utils.now();
 		DB.fetch('id, name, email, auth_key, passcode, passcode_time', 'users', 'email = $1', [email], function(userData) {
 			if (userData) {
 				var key = userData.passcode;
@@ -109,26 +117,29 @@ module.exports = function(socket, uid, auth) {
 					});
 				}
 			} else {
-				callback({error: 'Passkey incorrect. Please try again.'});
+				callback({error: 'Passkey incorrect'});
 			}
 		});
 	});
 
 	socket.on('signin name', function(data, callback) {
 		var username = data.name;
-		var invalidStarts = ['guest', 'admin', 'mod'];
-		for (var idx in invalidStarts) {
-			var check = invalidStarts[idx];
-			if (username.indexOf(check) === 0) {
-				callback({error: 'Your username may not start with "'+check+'". Please try again.'});
-				return;
-			}
+		var email = data.email;
+
+		var errorMessage = CommonValidate.username(username);
+		if (errorMessage) {
+			callback({error: errorMessage});
+			return;
+		}
+		errorMessage = CommonValidate.email(email);
+		if (errorMessage) {
+			callback({error: errorMessage});
+			return;
 		}
 
-		var email = data.email;
 		DB.fetch('id, name', 'users', 'name = $1 OR email = $2', [username, email], function(userData) {
 			if (userData) {
-				callback({error: 'This ' + (userData.name == username ? 'username' : 'email') + ' has already been taken. Please try again.'});
+				callback({error: 'This ' + (userData.name == username ? 'username' : 'email') + ' has already been taken.'});
 			} else {
 				var authKey = Utils.uid() + Utils.uid();
 				var userBegin = {name: username, email: email, auth_key: authKey};
