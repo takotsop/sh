@@ -62,28 +62,28 @@
 
 	<div id="welcome-signin" style="display:none;">
 		<h1>Secret&nbsp;Hitler Online</h1>
-		<div id="signin-start" class="sd-signin">
+		<div id="s-signin-email" class="sd-signin">
 			<form id="signin-start-form">
 				<h2>Enter your email to begin:</h2>
-				<input class="full input-signin" id="i-signin-email" type="email" placeholder="example@email.com" /> <div class="input-error mini"></div>
+				<input class="full input-signin" id="i-signin-email" type="email" placeholder="example@email.com" /> <div class="input-error mini">Invalid email, please try again</div>
 				<button type="submit" class="large">submit</button>
 			</form>
 			<p>(or use a guest account to try it out)</p>
 			<button id="guest-login" class="large">login as guest</button>
 		</div>
-		<div id="signin-confirm" class="sd-signin">
+		<div id="s-signin-passkey" class="sd-signin">
 			<h2>Welcome back, <span class="signin-email-address">a@a.a</span>!</h2>
 			<h3 class="faint">Wrong email? <button class="signin-restart">try again</button></h3>
 
-			<input class="full input-signin" id="i-signin-passkey" type="number" placeholder="6-digit passkey" maxlength="6" autocomplete="none" /> <div class="input-error mini"></div>
-			<h3>Your passcode has been emailed to you. Please enter it to complete your sign in.</h3>
+			<input class="full input-signin" id="i-signin-passkey" type="number" placeholder="6-digit passkey" maxlength="6" autocomplete="none" /> <div class="input-error mini">Passkey must be exactly 6 digits (0-9)</div>
+			<h3>Your passkey has been emailed to you. Please enter it to complete your sign in.</h3>
 		</div>
-		<div id="signin-register" class="sd-signin">
+		<div id="s-signin-username" class="sd-signin">
 			<h2>Welcome, <span class="signin-email-address">a@a.a</span>!</h2>
 			<h3 class="faint">Wrong email? <button class="signin-restart">try again</button></h3>
 
-			<input class="full input-signin" id="i-signin-name" placeholder="username" maxlength="12" /> <div class="input-error mini"></div>
-			<h3 class="faint">Provide 3 - 12 letters, numbers, and underscores</h3>
+			<input class="full input-signin" id="i-signin-username" placeholder="username" maxlength="12" /> <div class="input-error mini"></div>
+			<h3 class="faint">Provide 4 - 12 letters, numbers, and underscores</h3>
 			<h3 class="faint">Prefer your Twitch chat name if possible</h3>
 		</div>
 	</div>

@@ -48,6 +48,10 @@ section {
 	color: #666;
 }
 
+.error, .input-error {
+	color: #E3644F !important;
+}
+
 /* FORMS */
 
 input.full {
