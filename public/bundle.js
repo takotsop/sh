@@ -106,7 +106,7 @@
 
 	'use strict';
 
-	var IO = __webpack_require__(4);
+	var SocketIO = __webpack_require__(4);
 
 	var Config = __webpack_require__(5);
 	var Data = __webpack_require__(2);
@@ -118,7 +118,7 @@
 		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
 	}
 
-	var socket = IO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
+	var socket = SocketIO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
 
 	//PUBLIC
 
