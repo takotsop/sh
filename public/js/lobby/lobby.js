@@ -1,5 +1,7 @@
 'use strict';
 
+require('css/lobby/lobby');
+
 var $ = require('jquery');
 
 var Config = require('util/config');

@@ -1,5 +1,7 @@
 'use strict';
 
+require('css/ui/overlay');
+
 var $ = require('jquery');
 
 var Cards = require('ui/cards');

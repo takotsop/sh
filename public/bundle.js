@@ -48,21 +48,373 @@
 
 	__webpack_require__(1);
 
-	__webpack_require__(23);
+	__webpack_require__(5);
+
+	__webpack_require__(44);
 
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(2);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./main.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./main.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\n}\n\nbody {\n\tmargin: 0;\n\twidth: inherit;\n\theight: inherit;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
-	var Data = __webpack_require__(2);
+	var Data = __webpack_require__(6);
 
-	var Socket = __webpack_require__(3);
+	var Socket = __webpack_require__(7);
 
-	var Lobby = __webpack_require__(6);
-	var Welcome = __webpack_require__(21);
+	var Lobby = __webpack_require__(10);
+	var Welcome = __webpack_require__(39);
 
 	//SOCKET
 
@@ -84,7 +436,7 @@
 
 
 /***/ },
-/* 2 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -101,15 +453,15 @@
 
 
 /***/ },
-/* 3 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var SocketIO = __webpack_require__(4);
+	var SocketIO = __webpack_require__(8);
 
-	var Config = __webpack_require__(5);
-	var Data = __webpack_require__(2);
+	var Config = __webpack_require__(9);
+	var Data = __webpack_require__(6);
 
 	//LOCAL
 
@@ -126,13 +478,13 @@
 
 
 /***/ },
-/* 4 */
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = io;
 
 /***/ },
-/* 5 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -145,27 +497,29 @@
 
 
 /***/ },
-/* 6 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(11);
 
-	var Config = __webpack_require__(5);
-	var Util = __webpack_require__(8);
+	var $ = __webpack_require__(13);
 
-	var Chat = __webpack_require__(9);
+	var Config = __webpack_require__(9);
+	var Util = __webpack_require__(14);
 
-	var App = __webpack_require__(11);
+	var Chat = __webpack_require__(15);
 
-	var Action = __webpack_require__(16);
-	var Socket = __webpack_require__(3);
+	var App = __webpack_require__(19);
 
-	var Welcome = __webpack_require__(21);
+	var Action = __webpack_require__(28);
+	var Socket = __webpack_require__(7);
 
-	var Start = __webpack_require__(22);
-	var State = __webpack_require__(12);
+	var Welcome = __webpack_require__(39);
+
+	var Start = __webpack_require__(43);
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -320,13 +674,53 @@
 
 
 /***/ },
-/* 7 */
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(12);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./lobby.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./lobby.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#s-lobby .detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = jQuery;
 
 /***/ },
-/* 8 */
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -341,20 +735,22 @@
 
 
 /***/ },
-/* 9 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(16);
 
-	var SimpleWebRTC = __webpack_require__(10);
+	var $ = __webpack_require__(13);
 
-	var Data = __webpack_require__(2);
+	var SimpleWebRTC = __webpack_require__(18);
 
-	var App = __webpack_require__(11);
+	var Data = __webpack_require__(6);
 
-	var Socket = __webpack_require__(3);
+	var App = __webpack_require__(19);
+
+	var Socket = __webpack_require__(7);
 
 	//LOCAL
 
@@ -373,7 +769,7 @@
 	};
 
 	var addChatMessage = function(data) {
-		var Players = __webpack_require__(13);
+		var Players = __webpack_require__(21);
 		var message = data.msg;
 		var name = Players.get(data.uid).name;
 		App.dataDiv(data, '.chat').text(message);
@@ -396,7 +792,7 @@
 	$('#i-chat').on('keydown', function(event) {
 		var key = event.which || event.keyCode || event.charCode;
 		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(16).emit('chat', {msg: this.value});
+			__webpack_require__(28).emit('chat', {msg: this.value});
 			this.value = '';
 			setChatState(false);
 		}
@@ -449,9 +845,9 @@
 
 	$('#menu-button').on('click', function() {
 		if ($('#overlay').css('display') == 'none') {
-			__webpack_require__(19).show('menu');
+			__webpack_require__(35).show('menu');
 		} else {
-			__webpack_require__(19).hide();
+			__webpack_require__(35).hide();
 		}
 	});
 
@@ -477,22 +873,62 @@
 
 
 /***/ },
-/* 10 */
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(17);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./chat.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./chat.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/image/menu.png);\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = SimpleWebRTC;
 
 /***/ },
-/* 11 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	var $ = __webpack_require__(13);
 
-	var Data = __webpack_require__(2);
+	var Data = __webpack_require__(6);
 
-	var State = __webpack_require__(12);
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -558,7 +994,7 @@
 
 
 /***/ },
-/* 12 */
+/* 20 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -593,22 +1029,24 @@
 
 
 /***/ },
-/* 13 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(22);
 
-	var CommonConsts = __webpack_require__(14);
+	var $ = __webpack_require__(13);
 
-	var App = __webpack_require__(11);
-	var Cards = __webpack_require__(15);
-	var Chat = __webpack_require__(9);
+	var CommonConsts = __webpack_require__(24);
 
-	var Action = __webpack_require__(16);
+	var App = __webpack_require__(19);
+	var Cards = __webpack_require__(25);
+	var Chat = __webpack_require__(15);
 
-	var State = __webpack_require__(12);
+	var Action = __webpack_require__(28);
+
+	var State = __webpack_require__(20);
 
 	//HELPERS
 
@@ -646,7 +1084,7 @@
 			State.currentCount -= 1;
 
 			if (!State.gameOver) {
-				var Game = __webpack_require__(17);
+				var Game = __webpack_require__(29);
 				if (hitler) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
 				} else if (State.currentCount <= 2) {
@@ -666,7 +1104,7 @@
 		Chat.addMessage({msg: 'left the game', uid: data.uid});
 
 		if (data.advance) {
-			__webpack_require__(17).advanceTurn();
+			__webpack_require__(29).advanceTurn();
 		}
 	};
 
@@ -731,7 +1169,47 @@
 
 
 /***/ },
-/* 14 */
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(23);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./players.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./players.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#players {\n\twidth: 100%;\n\tmin-height: 100%;\n\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* PLAYERS */\n\n.player-slot {\n\tdisplay: flex;\n\tbox-sizing: border-box;\n\twidth: 50%;\n\tpadding: 16px;\n\theight: 104px;\n}\n\n.player-slot.left {\n\tfloat: left;\n\ttext-align: left;\n}\n\n.player-slot.right {\n\tfloat: right;\n\tflex-direction: row-reverse;\n\ttext-align: right;\n}\n\n.player-slot.choose {\n\tborder: 1px dashed #FFD556;\n\tbackground-color: rgba(255,255,255, 0.5);\n\tcursor: pointer;\n}\n.player-slot.choose:hover {\n\tborder-style: solid;\n\tbackground-color: rgba(255,255,255, 0.25);\n}\n\n.player-slot.elect .avatar {\n\tbox-shadow: 0 0 32px #FFD556;\n}\n\n.player-slot .avatar {\n\tflex-shrink: 0;\n}\n.player-slot .contents {\n\tflex-grow: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.player-slot .details {\n\tflex-shrink: 0;\n\tfloat: inherit;\n}\n.player-slot .chat {\n\tmargin: 4px 8px;\n\tfont-style: italic;\n\n\tdisplay: -webkit-box;\n\t-webkit-line-clamp: 2;\n\t-webkit-box-orient: vertical;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\tword-wrap: break-word;\n}\n\n.player-slot h2 {\n\tfont-weight: 300;\n\tmargin: 0 8px;\n\tdisplay: inline;\n\tfont-size: 1.4em;\n}\n\n.player-slot.killed {\n\topacity: 0.5;\n\tbackground-color: #E3644F;\n}\n\n.icon {\n\tdisplay: inline-block;\n}\n.typing {\n\tfont-size: 1.3em;\n}\n.talking {\n\tfont-size: 1.7em;\n\tline-height: 0;\n}\n\n.right .details {\n\tdisplay: flex;\n\tflex-direction: row-reverse;\n}\n\n/* AVATARS */\n\n.avatar {\n\tposition: relative;\n\tbox-sizing: border-box;\n\twidth: 80px;\n\theight: 80px;\n\tborder-radius: 50%;\n\tborder: 2px solid #F7E2C0;\n\n\tbackground-image: url(/image/unknown.png);\n\tbackground-size: cover;\n}\n\n.avatar .vote {\n\tposition: absolute;\n\tbottom: -2px;\n\tleft: 0;\n\tright: 0;\n\tborder: 1px solid #383633;\n\ttext-align: center;\n\tbackground-color: #F7E2C0;\n}\n\n@media (max-width: 719px) {\n\t.player-slot {\n\t\twidth: 100%;\n\t}\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 24 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -749,16 +1227,18 @@
 
 
 /***/ },
-/* 15 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(26);
 
-	var Action = __webpack_require__(16);
+	var $ = __webpack_require__(13);
 
-	var State = __webpack_require__(12);
+	var Action = __webpack_require__(28);
+
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -816,12 +1296,52 @@
 
 
 /***/ },
-/* 16 */
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(27);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./cards.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./cards.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".card {\n\tborder-radius: 3px;\n\tbox-sizing: border-box;\n\toverflow: hidden;\n}\n\n#player-cards {\n\tposition: fixed;\n\tbottom: 44px;\n\tleft: 0;\n\tright: 0;\n\ttext-align: center;\n\tz-index: 900;\n}\n\n#player-cards .card {\n\tposition: relative;\n\tbottom: -96px;\n\tpadding-top: 24px;\n\tdisplay: inline-block;\n\twidth: 192px;\n\theight: 192px;\n\n\tmargin: 0 4px;\n\tborder: 1px dashed rgba(0,0,0, 0.1);\n\n\tmax-width: 45%;\n\tbackground-color: #F7E2C0;\n\tbox-shadow: 0 8px 16px rgba(0,0,0, 0.75);\n}\n\n#player-cards .description {\n\tfont-size: 0.75em;\n}\n\n#player-cards .policy {\n\twidth: 128px;\n\tfont-size: 1.4em;\n\tbackground-size: contain;\n}\ndiv.policy {\n\tborder-radius: 12%/9%;\n}\n\n#cards-vote .card, #player-cards .policy {\n\tcursor: pointer;\n}\n\n.card.selected {\n\tbottom: -46px !important;\n\tz-index: 9000;\n}\n\n#veto-request span {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tmargin-top: 16px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Socket = __webpack_require__(3);
+	var Socket = __webpack_require__(7);
 
 	//LOCAL
 
@@ -843,22 +1363,25 @@
 
 
 /***/ },
-/* 17 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(30);
+	__webpack_require__(32);
 
-	var CommonGame = __webpack_require__(18);
+	var $ = __webpack_require__(13);
 
-	var App = __webpack_require__(11);
-	var Cards = __webpack_require__(15);
-	var Chat = __webpack_require__(9);
-	var Overlay = __webpack_require__(19);
+	var CommonGame = __webpack_require__(34);
 
-	var State = __webpack_require__(12);
-	var Policies = __webpack_require__(20);
+	var App = __webpack_require__(19);
+	var Cards = __webpack_require__(25);
+	var Chat = __webpack_require__(15);
+	var Overlay = __webpack_require__(35);
+
+	var State = __webpack_require__(20);
+	var Policies = __webpack_require__(38);
 
 	//FINISH
 
@@ -999,7 +1522,87 @@
 
 
 /***/ },
-/* 18 */
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(31);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./game.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./game.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-mat {\n\tposition: relative;\n\tbox-sizing: border-box;\n\theight: 100%;\n\tmin-height: 600px;\n\tpadding-bottom: 44px;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#s-game.directive #game-mat {\n\tpadding-top: 44px;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/image/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/image/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/image/hitler.png);\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(33);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./board.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./board.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#board-container {\n\tposition: absolute;\n\tz-index: -1;\n\tleft: 0;\n\tright: 0;\n\ttop: 0;\n\tbottom: 0;\n\tmargin: auto;\n\n\twidth: 720px;\n\tmax-width: 100vw;\n\theight: 480px;\n\tmax-height: 67vw;\n}\n\n#board {\n\twidth: 100%;\n\theight: 100%;\n\tbox-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);\n\tborder-radius: 4px;\n\toverflow: hidden;\n}\n\n.board-component {\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 33.34%;\n\tpadding: 8px 3px;\n\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-around;\n\talign-items: stretch;\n}\n\n/* PLACEHOLDERS */\n\n.policy-placeholder {\n\tbox-sizing: border-box;\n\tposition: relative;\n\theight: 100%;\n\twidth: 15%;\n\tborder: 2px solid;\n\tpadding: 1%;\n\ttext-align: center;\n}\n\n.policy-placeholder .detail {\n\tposition: absolute;\n\tbottom: 6px;\n\tleft: 6px;\n\tright: 6px;\n\tfont-size: 0.8em;\n}\n\n.policy-placeholder .policy {\n\twidth: 100%;\n\theight: 100%;\n\tbackground-size: contain;\n\tbackground-position: center;\n\tbox-sizing: border-box;\n\tborder: 1px solid;\n}\n\n.policy-placeholder.victory {\n\tbackground-size: contain;\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n}\n\n.policy-placeholder.victory.liberal {\n\tbackground-image: url(/image/liberal-victory.png);\n}\n.policy-placeholder.victory.fascist {\n\tbackground-image: url(/image/fascist-victory.png);\n}\n\n/* POLICIES */\n\n#board-policy-piles .policy {\n\tbox-shadow: 2px -1px 4px rgba(0, 0, 0, 0.5);\n}\n\n#board-policy-piles {\n\tmargin: auto;\n\tjustify-content: center;\n\tpadding: 8px 4px;\n\tbackground-color: #9E927C;\n}\n\n.card-pile {\n\tbackground-color: #383633;\n\tpadding-bottom: 2%;\n}\n\n.pile-label {\n\tcolor: #F7E2C0;\n\tfont-size: 0.5em;\n\tfont-weight: 100;\n\tletter-spacing: 3px;\n\tposition: absolute;\n\tbottom: 1px;\n\tleft: 0;\n\tright: 0;\n}\n\n.pile-cards {\n\tfont-size: 3em;\n\tfont-weight: 200;\n\tbackground-color: #F7E2C0;\n\twidth: 100%;\n\theight: 100%;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n}\n\n/* TRACKER */\n\n#election-tracker {\n\tposition: relative;\n\twidth: 50%;\n\tmargin: 0 16px;\n\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-around;\n\talign-items: center;\n}\n\n.tracker-slot {\n\twidth: 72px;\n\theight: 72px;\n\tmax-width: 8vw;\n\tmax-height: 8vw;\n\n\tbox-sizing: border-box;\n/* \tmargin: 20px; */\n\tborder-radius: 50%;\n\tborder: 4px solid #62C2A0;\n}\n\n.tracker-slot.selected {\n\tbackground-color: #62C2A0;\n}\n\n#tracker-title, #tracker-description {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\twidth: 100%;\n\ttext-align: center;\n}\n\n#tracker-title {\n\ttop: 0;\n\tfont-size: 1.4em;\n\tfont-weight: 100;\n\tletter-spacing: 0.15vw;\n}\n\n#tracker-description {\n\tbottom: 0;\n\tfont-size: 0.7em;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1046,19 +1649,21 @@
 
 
 /***/ },
-/* 19 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(36);
 
-	var Cards = __webpack_require__(15);
+	var $ = __webpack_require__(13);
 
-	var Socket = __webpack_require__(3);
+	var Cards = __webpack_require__(25);
 
-	var Players = __webpack_require__(13);
-	var State = __webpack_require__(12);
+	var Socket = __webpack_require__(7);
+
+	var Players = __webpack_require__(21);
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -1168,7 +1773,7 @@
 			confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
 		}
 		if (confirmed) {
-			__webpack_require__(6).quitToLobby();
+			__webpack_require__(10).quitToLobby();
 		}
 	});
 
@@ -1215,20 +1820,60 @@
 
 
 /***/ },
-/* 20 */
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(37);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./overlay.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./overlay.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#overlay {\n\tposition: fixed;\n\ttop: 44px;\n\tleft: 0;\n\tright: 0;\n\tbottom: 44px;\n\tbackground: rgba(0, 0, 0, 0.5);\n\n\tcolor: #eaeae5;\n\ttext-align: center;\n\ttext-shadow: 0 2px 8px #393734;\n}\n\n#overlay h1 {\n\tfont-size: 4em;\n\tmargin-top: 0;\n}\n\n#overlay h2 {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n#overlay h3 {\n\tfont-size: 1.6em;\n\tfont-weight: 500;\n}\n\n#overlay h4 {\n\tmargin-bottom: 8px;\n\ttext-transform: uppercase;\n\tletter-spacing: 0.2em;\n}\n\n#version {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n/* MENU */\n\n#overlay .front {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\theight: 640px;\n\tmax-height: 100%;\n\tmargin: auto;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#overlay-menu button {\n\ttext-transform: uppercase;\n\tletter-spacing: 0.1em;\n}\n\n#overlay-chat {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n\n#overlay .detail h1 {\n\tcolor: #F7E2C0;\n}\n\n#game-mat.overlay {\n\t-webkit-filter: blur(25px);\n\tfilter: blur(25px);\n/* \tfilter: blur(20px); */\n\t-webkit-transition: 0.4s all linear;\n}\n\n.avatar {\n\tmargin: auto;\n\twidth: 72px !important;\n\theight: 72px !important;\n}\n\n/* TIPS */\n\n.tip {\n\tposition: absolute;\n\tfont-size: 1.5em;\n\tfont-weight: 200;\n\tfont-style: italic;\n\tcolor: #FFD556;\n}\n.tip.top {\n\ttop: 0;\n\tleft: 20%;\n}\n.tip.bottom {\n\tbottom: 0;\n\tleft: 8%;\n}\n.tip.bottom.right {\n\tbottom: 0;\n\tright: 14px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	var $ = __webpack_require__(13);
 
-	var CommonConsts = __webpack_require__(14);
+	var CommonConsts = __webpack_require__(24);
 
-	var App = __webpack_require__(11);
-	var Cards = __webpack_require__(15);
-	var Chat = __webpack_require__(9);
+	var App = __webpack_require__(19);
+	var Cards = __webpack_require__(25);
+	var Chat = __webpack_require__(15);
 
-	var State = __webpack_require__(12);
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -1237,12 +1882,12 @@
 		if (type == CommonConsts.LIBERAL) {
 			enacted = ++State.enactedLiberal;
 			if (State.enactedLiberal >= CommonConsts.LIBERAL_POLICIES_REQUIRED) {
-				__webpack_require__(17).end(true, 'policies');
+				__webpack_require__(29).end(true, 'policies');
 			}
 		} else {
 			enacted = ++State.enactedFascist;
 			if (State.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED) {
-				__webpack_require__(17).end(false, 'policies');
+				__webpack_require__(29).end(false, 'policies');
 			}
 		}
 		var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
@@ -1282,7 +1927,7 @@
 	};
 
 	var policyEnacted = function(data) {
-		var Game = __webpack_require__(17);
+		var Game = __webpack_require__(29);
 
 		discardPolicyCards(1);
 
@@ -1424,22 +2069,24 @@
 
 
 /***/ },
-/* 21 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	__webpack_require__(40);
 
-	var CommonValidate = __webpack_require__(24);
+	var $ = __webpack_require__(13);
 
-	var Config = __webpack_require__(5);
-	var Data = __webpack_require__(2);
+	var CommonValidate = __webpack_require__(42);
 
-	var App = __webpack_require__(11);
-	var Chat = __webpack_require__(9);
+	var Config = __webpack_require__(9);
+	var Data = __webpack_require__(6);
 
-	var Socket = __webpack_require__(3);
+	var App = __webpack_require__(19);
+	var Chat = __webpack_require__(15);
+
+	var Socket = __webpack_require__(7);
 
 	//LOCAL
 
@@ -1638,28 +2285,141 @@
 
 
 /***/ },
-/* 22 */
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(41);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(4)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./welcome.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./welcome.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(3)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#s-welcome {\n\ttext-align: center;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#s-welcome h2 {\n\tfont-weight: 400;\n\tfont-size: 1.5em;\n}\n\n#s-welcome h3 {\n\tfont-weight: 300;\n\tfont-size: 1.2em;\n}\n\n/* SPLASH */\n\n#welcome-splash {\n\tmargin: auto;\n\tmargin-bottom: 64px;\n\tmax-width: 800px;\n}\n\n#welcome-splash h1 {\n\tfont-weight: 200;\n}\n\n#welcome-splash hr {\n\tmargin: 48px 0;\n}\n\n#welcome-splash .section {\n\tpadding: 0 16px;\n}\n\n.wordmark {\n\tmargin: auto;\n\tmax-width: 100%;\n}\n\n#voice-unsupported {\n\tmargin-bottom: 40px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 42 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+
+		// Email
+
+		email: function(email) {
+			var regexEmailSections = /\S+@\S+\.\S+/;
+			if (!regexEmailSections.test(email)) {
+				return 'Invalid email address';
+			}
+		},
+
+		emailProcess: function(value) {
+			return value.trim();
+		},
+
+		// Passkey
+
+		passkey: function(passkey) {
+			if (passkey.length != 6) {
+				return 'Invalid passkey, must be 6 digits';
+			}
+			var regexOnlyDigits = /^[0-9]+$/;
+			if (!regexOnlyDigits.test(passkey)) {
+				return 'Invalid passkey, must be 6 digits';
+			}
+		},
+
+		passkeyProcess: function(value) {
+			return value.trim();
+		},
+
+		// Username
+
+		username: function(username) {
+			if (username.length < 4) {
+				return 'Username must be at least 4 characters';
+			}
+			if (username.length > 12) {
+				return 'Username must be no more than 12 characters';
+			}
+
+			var regexLetters = /[A-Za-z]/g;
+			if (!regexLetters.test(username)) {
+				return 'Username must contain letters';
+			}
+			var regexOnlyLettersNumbersSpaces = /^[A-Za-z0-9 ]+$/;
+			if (!regexOnlyLettersNumbersSpaces.test(username)) {
+				return 'Username must only consist of letters, numbers, and up to one space';
+			}
+
+			var invalidStartStrings = ['guest', 'admin', 'mod'];
+			var lowercaseUsername = username.toLowerCase();
+			for (var idx in invalidStartStrings) {
+				var check = invalidStartStrings[idx];
+				if (lowercaseUsername.indexOf(check) === 0) {
+					return 'Your username may not start with "'+check+'"';
+				}
+			}
+		},
+
+		usernameProcess: function(value) {
+			return value.replace(/\s\s+/g, ' ').trim();
+		},
+
+	};
+
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(7);
+	var $ = __webpack_require__(13);
 
-	var CommonConsts = __webpack_require__(14);
-	var CommonGame = __webpack_require__(18);
+	var CommonConsts = __webpack_require__(24);
+	var CommonGame = __webpack_require__(34);
 
-	var Data = __webpack_require__(2);
+	var Data = __webpack_require__(6);
 
-	var App = __webpack_require__(11);
-	var Cards = __webpack_require__(15);
-	var Overlay = __webpack_require__(19);
+	var App = __webpack_require__(19);
+	var Cards = __webpack_require__(25);
+	var Overlay = __webpack_require__(35);
 
-	var Process = __webpack_require__(23);
+	var Process = __webpack_require__(44);
 
-	var Game = __webpack_require__(17);
-	var Players = __webpack_require__(13);
-	var Policies = __webpack_require__(20);
-	var State = __webpack_require__(12);
+	var Game = __webpack_require__(29);
+	var Players = __webpack_require__(21);
+	var Policies = __webpack_require__(38);
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -1792,20 +2552,20 @@
 
 
 /***/ },
-/* 23 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Socket = __webpack_require__(3);
+	var Socket = __webpack_require__(7);
 
-	var Cards = __webpack_require__(15);
-	var Chat = __webpack_require__(9);
+	var Cards = __webpack_require__(25);
+	var Chat = __webpack_require__(15);
 
-	var Game = __webpack_require__(17);
-	var Players = __webpack_require__(13);
-	var Policies = __webpack_require__(20);
-	var State = __webpack_require__(12);
+	var Game = __webpack_require__(29);
+	var Players = __webpack_require__(21);
+	var Policies = __webpack_require__(38);
+	var State = __webpack_require__(20);
 
 	//LOCAL
 
@@ -1871,79 +2631,6 @@
 	module.exports = {
 
 		history: processHistory,
-
-	};
-
-
-/***/ },
-/* 24 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = {
-
-		// Email
-
-		email: function(email) {
-			var regexEmailSections = /\S+@\S+\.\S+/;
-			if (!regexEmailSections.test(email)) {
-				return 'Invalid email address';
-			}
-		},
-
-		emailProcess: function(value) {
-			return value.trim();
-		},
-
-		// Passkey
-
-		passkey: function(passkey) {
-			if (passkey.length != 6) {
-				return 'Invalid passkey, must be 6 digits';
-			}
-			var regexOnlyDigits = /^[0-9]+$/;
-			if (!regexOnlyDigits.test(passkey)) {
-				return 'Invalid passkey, must be 6 digits';
-			}
-		},
-
-		passkeyProcess: function(value) {
-			return value.trim();
-		},
-
-		// Username
-
-		username: function(username) {
-			if (username.length < 4) {
-				return 'Username must be at least 4 characters';
-			}
-			if (username.length > 12) {
-				return 'Username must be no more than 12 characters';
-			}
-
-			var regexLetters = /[A-Za-z]/g;
-			if (!regexLetters.test(username)) {
-				return 'Username must contain letters';
-			}
-			var regexOnlyLettersNumbersSpaces = /^[A-Za-z0-9 ]+$/;
-			if (!regexOnlyLettersNumbersSpaces.test(username)) {
-				return 'Username must only consist of letters, numbers, and up to one space';
-			}
-
-			var invalidStartStrings = ['guest', 'admin', 'mod'];
-			var lowercaseUsername = username.toLowerCase();
-			for (var idx in invalidStartStrings) {
-				var check = invalidStartStrings[idx];
-				if (lowercaseUsername.indexOf(check) === 0) {
-					return 'Your username may not start with "'+check+'"';
-				}
-			}
-		},
-
-		usernameProcess: function(value) {
-			return value.replace(/\s\s+/g, ' ').trim();
-		},
 
 	};
 

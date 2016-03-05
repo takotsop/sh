@@ -1,5 +1,7 @@
 'use strict';
 
+require('css/lobby/welcome');
+
 var $ = require('jquery');
 
 var CommonValidate = require('common/validate');

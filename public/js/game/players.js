@@ -1,5 +1,7 @@
 'use strict';
 
+require('css/game/players');
+
 var $ = require('jquery');
 
 var CommonConsts = require('common/constants');

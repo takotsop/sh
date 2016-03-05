@@ -1,5 +1,7 @@
 'use strict';
 
+require('css/ui/chat');
+
 var $ = require('jquery');
 
 var SimpleWebRTC = require("simplewebrtc");

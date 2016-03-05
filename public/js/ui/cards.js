@@ -1,5 +1,7 @@
 'use strict';
 
+require('css/ui/cards');
+
 var $ = require('jquery');
 
 var Action = require('socket/action');
