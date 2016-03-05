@@ -9,7 +9,7 @@ var Utils = require('./utils');
 
 Postgres.defaults.parseInt8 = true;
 
-var connectURL = process.env.DATABASE_URL || Config.LOCAL_DB_URL;
+var connectURL = Config.LOCAL_DB_URL;
 var dbConfigured = connectURL != '';
 if (!dbConfigured) {
 	console.log('Database not configured');
