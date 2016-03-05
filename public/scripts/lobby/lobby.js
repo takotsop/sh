@@ -1,6 +1,6 @@
 'use strict';
 
-require('css/lobby/lobby');
+require('styles/lobby/lobby');
 
 var $ = require('jquery');
 

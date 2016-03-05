@@ -4,7 +4,7 @@ var path = require('path');
 
 module.exports = {
 
-	entry: './public/js/main.js',
+	entry: './public/scripts/main.js',
 
 	output: {
 		filename: 'bundle.js',
@@ -12,7 +12,7 @@ module.exports = {
 	},
 
 	resolve: {
-		root: [path.resolve('./'), path.resolve('./public'), path.resolve('./public/js')],
+		root: [path.resolve('./'), path.resolve('./public'), path.resolve('./public/scripts')],
 		extensions: ['', '.js', '.css'],
 	},
 

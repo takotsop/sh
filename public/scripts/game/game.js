@@ -1,7 +1,7 @@
 'use strict';
 
-require('css/game/game');
-require('css/ui/board');
+require('styles/game/game');
+require('styles/ui/board');
 
 var $ = require('jquery');
 

@@ -1,6 +1,6 @@
 'use strict';
 
-require('css/ui/cards');
+require('styles/ui/cards');
 
 var $ = require('jquery');
 

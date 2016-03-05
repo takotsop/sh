@@ -1,6 +1,6 @@
 'use strict';
 
-require('css/ui/chat');
+require('styles/ui/chat');
 
 var $ = require('jquery');
 

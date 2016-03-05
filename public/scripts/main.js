@@ -1,6 +1,6 @@
 'use strict';
 
-require('css/main');
+require('styles/main');
 
 require('lobby/connect');
 

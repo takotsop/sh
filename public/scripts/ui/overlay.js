@@ -1,6 +1,6 @@
 'use strict';
 
-require('css/ui/overlay');
+require('styles/ui/overlay');
 
 var $ = require('jquery');
 

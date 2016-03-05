@@ -69,10 +69,10 @@
 }
 
 .policy-placeholder.victory.liberal {
-	background-image: url(/image/liberal-victory.png);
+	background-image: url(/images/liberal-victory.png);
 }
 .policy-placeholder.victory.fascist {
-	background-image: url(/image/fascist-victory.png);
+	background-image: url(/images/fascist-victory.png);
 }
 
 /* POLICIES */

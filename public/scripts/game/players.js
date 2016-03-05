@@ -1,6 +1,6 @@
 'use strict';
 
-require('css/game/players');
+require('styles/game/players');
 
 var $ = require('jquery');
 
