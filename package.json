@@ -12,5 +12,11 @@
     "seedrandom": "^2.4.2",
     "sendgrid": "^2.0.0",
     "socket.io": "^1.4.4"
+  },
+  "devDependencies": {
+    "css-loader": "^0.23.1",
+    "file-loader": "^0.8.5",
+    "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7"
   }
 }
