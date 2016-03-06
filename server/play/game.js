@@ -343,7 +343,7 @@ var Game = function(size, privateGame) {
 			this.players[index] = player.uid;
 			this.playersState[player.uid] = {index: index};
 		} else {
-			playerState.left = false;
+			playerState.quit = false;
 		}
 
 		if (this.started) {
@@ -399,11 +399,11 @@ var Game = function(size, privateGame) {
 
 		var uid = socket.uid;
 		var playerState = this.playerState(uid);
-		if (!playerState || playerState.left) {
+		if (!playerState || playerState.quit) {
 			return false;
 		}
 		if (this.started) {
-			playerState.left = true;
+			playerState.quit = true;
 			this.kill(uid, true);
 		} else {
 			this.players = this.players.filter(function(puid) {
