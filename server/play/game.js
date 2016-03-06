@@ -351,18 +351,17 @@ var Game = function(size, privateGame) {
 		}
 	};
 
-	this.kill = function(player, quitting) {
-		var puid = player.uid;
-		var playerState = this.playerState(puid);
+	this.kill = function(uid, quitting) {
+		var playerState = this.playerState(uid);
 		if (playerState && !playerState.killed) {
 			if (quitting) {
 				playerState.quit = true;
-				DB.updatePlayers([player.uid], 'quit');
+				DB.updatePlayers([uid], 'quit');
 			}
 			playerState.killed = true;
 			this.currentCount -= 1;
 
-			if (this.isHitler(puid)) {
+			if (this.isHitler(uid)) {
 				this.finish(true, quitting ? 'hitler quit' : 'hitler');
 			} else if (this.currentCount <= 2) {
 				this.removeSelf();
@@ -386,30 +385,27 @@ var Game = function(size, privateGame) {
 	this.disconnect = function(socket) {
 		if (!this.started || this.finished) {
 			this.remove(socket);
-		} else {
-			var player = socket.player;
-			if (player) {
-				player.disconnected = true;
-			}
+		} else if (socket.player) {
+			socket.player.disconnected = true;
 		}
 	};
 
 	this.remove = function(socket) {
 		socket.leave(this.gid);
 
-		var player = socket.player;
-		var playerState = this.playerState(player.uid);
+		var uid = socket.uid;
+		var playerState = this.playerState(uid);
 		if (!playerState || playerState.left) {
 			return false;
 		}
 		if (this.started) {
 			playerState.left = true;
-			this.kill(player, true);
+			this.kill(uid, true);
 		} else {
 			this.players = this.players.filter(function(puid) {
-				return puid != player.uid;
+				return puid != uid;
 			});
-			delete this.playersState[player.uid];
+			delete this.playersState[uid];
 			if (this.players.length == 0) {
 				this.removeSelf();
 			} else {
@@ -418,7 +414,9 @@ var Game = function(size, privateGame) {
 				});
 			}
 		}
-		player.game = null;
+		if (socket.player) {
+			socket.player.game = null;
+		}
 
 		if (!this.started) {
 			this.resetAutostart();

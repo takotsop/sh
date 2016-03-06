@@ -172,7 +172,8 @@ var powerAction = function(action, data, player, game) {
 			if (player.equals(data)) {
 				return;
 			}
-			var target = Player.get(data.uid);
+			var tuid = data.uid;
+			var target = Player.get(tuid);
 			if (action.indexOf('investigate') > -1) {
 				if (target.investigated) {
 					return;
@@ -187,8 +188,8 @@ var powerAction = function(action, data, player, game) {
 				game.specialPresident = target.gameState('index');
 				data = game.emitAction('special election', data);
 			} else if (action.indexOf('bullet') > -1) {
-				var wasHitler = game.isHitler(target.uid);
-				if (!game.kill(target, false)) {
+				var wasHitler = game.isHitler(tuid);
+				if (!game.kill(tuid, false)) {
 					return;
 				}
 				data.hitler = wasHitler;
