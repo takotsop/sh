@@ -14,6 +14,10 @@ var Player = function(socket, uid, name, oldPlayer) {
 
 	// Emit
 
+	this.getSocket = function() {
+		return socket;
+	};
+
 	this.emit = function(name, data) {
 		socket.emit(name, data);
 	};

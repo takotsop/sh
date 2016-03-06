@@ -176,7 +176,28 @@ var Game = function(size, privateGame) {
 	};
 
 	this.start = function() {
+		if (this.started) {
+			return;
+		}
+
+		var startingPlayerIds = this.players.slice();
+		var removed;
+		startingPlayerIds.forEach(function(puid) {
+			var player = Player.get(puid);
+			var playerGame = player.game;
+			if (!playerGame || playerGame.gid != game.gid) {
+				removed = player.uid;
+				game.remove(player.getSocket());
+			}
+		});
+		if (!this.enoughToStart()) {
+			console.log('Start sequence interrupted', startingPlayerIds, removed);
+			this.resetAutostart();
+			return;
+		}
+
 		this.cancelAutostart();
+
 		this.started = true;
 		this.playerCount = this.players.length;
 		this.currentCount = this.playerCount;
