@@ -107,9 +107,13 @@ var Game = function(size, privateGame) {
 		}
 		if (secret) {
 			var target = Player.get(secret.target);
-			target.emitToOthers('game action', data);
-			data.secret = secret;
-			target.emit('game action', data);
+			if (target.game) {
+				target.emitToOthers('game action', data);
+				data.secret = secret;
+				target.emit('game action', data);
+			} else {
+				console.log('Invalid emitAction target', secret.target, this.players);
+			}
 		} else {
 			this.emit('game action', data);
 		}
