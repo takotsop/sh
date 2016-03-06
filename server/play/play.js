@@ -35,16 +35,26 @@ var chancellorAction = function(data, player, game) {
 		console.error('Chancellor already chosen for ' + player.uid);
 		return;
 	}
-	if (data.uid == game.chancellorElect || (game.playerCount > 5 && data.uid == game.presidentElect)) {
-		console.error('Chancellor selected involved in prior election', data.uid, game.presidentElect, game.chancellorElect);
+	var cuid = data.uid;
+	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
+		console.error('Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
 		return;
 	}
-	if (player.equals(data) || !player.isPresident()) {
-		console.error('Chancellor invalid', player.uid, data, player.gameState('index'), game.presidentIndex);
+	if (player.equals(data)) {
+		console.error('Enchancell self', player.uid, data, player.gameState('index'), game.presidentIndex);
+		return;
+	}
+	if (!player.isPresident()) {
+		console.error('President selects chancellor', player.uid, data, player.gameState('index'), game.presidentIndex);
+		return;
+	}
+	var targetState = game.playerState(cuid);
+	if (!targetState || targetState.killed) {
+		console.error('Chancellee killed', targetState);
 		return;
 	}
 
-	var chancellorData = {president: player.uid, chancellor: data.uid};
+	var chancellorData = {president: player.uid, chancellor: cuid};
 	chancellorData = player.emitAction('chancellor chosen', chancellorData);
 	game.turn.chancellor = data.uid;
 	return chancellorData;
