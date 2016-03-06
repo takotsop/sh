@@ -175,7 +175,7 @@ var Game = function(size, privateGame) {
 		}
 	};
 
-	this.start = function(socket) {
+	this.start = function() {
 		this.cancelAutostart();
 		this.started = true;
 		this.playerCount = this.players.length;
@@ -441,7 +441,7 @@ var Game = function(size, privateGame) {
 	return this;
 };
 
-Game.games = function(argument) {
+Game.games = function() {
 	return games;
 };
 

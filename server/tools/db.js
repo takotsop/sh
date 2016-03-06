@@ -5,7 +5,7 @@ var Postgres = require('pg');
 var Config = require('./config');
 var Utils = require('./utils');
 
-// SETUP
+//SETUP
 
 Postgres.defaults.parseInt8 = true;
 
@@ -15,7 +15,7 @@ if (!dbConfigured) {
 	console.log('Database not configured');
 }
 
-// HELPERS
+//HELPERS
 
 var query = function(statement, params, callback) {
 	Postgres.connect(connectURL, function(err, client, done) {
@@ -60,7 +60,7 @@ var property = function(column, table, where, params, callback) {
 	});
 };
 
-// UPSERT
+//UPSERT
 
 var update = function(table, where, columnsValues, returning, callback) {
 	columnsValues.updated_at = Utils.now();
@@ -97,7 +97,7 @@ var insert = function(table, columnsValues, returning, callback) {
 	queryOne(queryString, values, callback);
 };
 
-// PUBLIC
+//PUBLIC
 
 module.exports = {
 

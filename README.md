@@ -42,7 +42,7 @@ Pull requests welcome, or create an [issue](https://github.com/kylecoburn/secret
 # Attribution
 "Secret Hitler" is a game designed by Max Temkin, Mike Boxleiter, Tommy Maranges, and Mackenzie Schubert. This adaptation is neither affiliated with, nor endorsed by the copyright holders.
 
-It is licensed under [Creative Commons BY-NC 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (non-commercial, share-alike, attribution required).
+It is licensed under [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (non-commercial, share-alike, attribution required).
 
 # Screenshots
 ![Secret Hitler Online start](http://i.imgur.com/QJ1kEXS.png)

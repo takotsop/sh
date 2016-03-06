@@ -119,7 +119,7 @@ module.exports = {
 
 	addMessage: addChatMessage,
 
-	// VOICE
+	// Voice
 
 	supportsVoice: supportsVoiceChat,
 

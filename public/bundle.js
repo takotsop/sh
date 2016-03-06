@@ -859,7 +859,7 @@
 
 		addMessage: addChatMessage,
 
-		// VOICE
+		// Voice
 
 		supportsVoice: supportsVoiceChat,
 
