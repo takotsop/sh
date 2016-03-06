@@ -1079,7 +1079,7 @@
 	var killPlayer = function(player, hitler, quit) {
 		if (!player.killed) {
 			player.killed = true;
-			$('.player-slot').removeClass('choose');
+			App.playerDiv(player).removeClass('choose');
 			App.playerDiv(player).addClass(State.gameOver ? 'quit' : 'killed');
 			State.currentCount -= 1;
 
