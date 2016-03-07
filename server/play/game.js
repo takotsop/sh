@@ -23,25 +23,32 @@ var Game = function(size, privateGame) {
 	this.maxSize = size;
 	this.private = privateGame;
 
+	this.generator = new SeedRandom(this.gid);
 	this.players = [];
 	this.playersState = {};
 	this.history = [];
-
-	this.generator = SeedRandom(this.gid);
 	this.turn = {};
+
 	this.enactedLiberal = 0;
 	this.enactedFascist = 0;
-
-	this.startIndex;
-	this.playerCount;
-	this.currentCount;
-	this.policyDeck;
-	this.hitlerUid;
-
-	this.positionIndex;
-	this.specialPresident;
-	this.presidentIndex;
 	this.electionTracker = 0;
+
+	this.started = false;
+	this.finished = false;
+
+	this.autoTimer = null;
+	this.scheduledStart = null;
+
+	this.startIndex = null;
+	this.playerCount = null;
+	this.currentCount = null;
+	this.policyDeck = null;
+	this.hitlerUid = null;
+	this.power = null;
+
+	this.positionIndex = null;
+	this.specialPresident = null;
+	this.presidentIndex = null;
 
 	var game = this;
 	games.push(this);
