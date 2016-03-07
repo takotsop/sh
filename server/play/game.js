@@ -223,7 +223,7 @@ var Game = function(size, privateGame) {
 
 		var playerIdData = this.players.join(',');
 		DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: playerIdData});
-		DB.updatePlayers(this.players, 'started');
+		DB.updatePlayers(this.players, 'started', true);
 
 		// Assign Fascists
 		var facistsCount = Math.ceil(this.playerCount / 2) - 1;
@@ -293,7 +293,7 @@ var Game = function(size, privateGame) {
 					activePlayers.push(puid);
 				}
 			});
-			DB.updatePlayers(activePlayers, 'finished');
+			DB.updatePlayers(activePlayers, 'finished', true);
 
 			this.finished = true;
 			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: Utils.now(), history: JSON.stringify(this.history), enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
@@ -372,7 +372,7 @@ var Game = function(size, privateGame) {
 		if (playerState && !playerState.killed) {
 			if (quitting) {
 				playerState.quit = true;
-				DB.updatePlayers([uid], 'quit');
+				DB.updatePlayers([uid], 'quit', !this.finished);
 			}
 			playerState.killed = true;
 			this.currentCount -= 1;

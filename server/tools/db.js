@@ -130,8 +130,10 @@ module.exports = {
 		});
 	},
 
-	updatePlayers: function(userIds, state) {
-		console.log('Update players', state, userIds);
+	updatePlayers: function(userIds, state, logged) {
+		if (logged) {
+			console.log('Update players', state, userIds);
+		}
 		if (userIds.length > 0) {
 			query('UPDATE users SET games_'+state+' = games_'+state+' + 1 WHERE id IN ('+userIds.join(',')+')');
 		}
