@@ -147,7 +147,7 @@ var Game = function(size, privateGame) {
 			gid: this.gid,
 			started: this.started,
 			maxSize: this.maxSize,
-			startIndex: this.positionIndex,
+			startIndex: this.startIndex,
 			startTime: this.scheduledStart,
 
 			players: sendPlayers,
