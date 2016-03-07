@@ -2047,11 +2047,11 @@
 
 		enact: enactPolicy,
 
+		enacted: policyEnacted,
+
 		updateChoices: updatePolicyChoices,
 
 		discarded: policyDiscarded,
-
-		enacted: policyEnacted,
 
 		vetoRequest: vetoRequest,
 
