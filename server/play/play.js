@@ -32,25 +32,25 @@ var quitAction = function(data, player, game, socket) {
 
 var chancellorAction = function(data, player, game) {
 	if (game.turn.chancellor) {
-		console.error('Chancellor already chosen for ' + player.uid);
+		console.error(game.gid, 'Chancellor already chosen for ' + player.uid);
 		return;
 	}
 	var cuid = data.uid;
 	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
-		console.error('Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
+		console.error(game.gid, 'Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
 		return;
 	}
 	if (player.equals(data)) {
-		console.error('Enchancell self', player.uid, data, player.gameState('index'), game.presidentIndex);
+		console.error(game.gid, 'Enchancell self', player.gameState('index'), game.presidentIndex);
 		return;
 	}
 	if (!player.isPresident()) {
-		console.error('President selects chancellor', player.uid, data, player.gameState('index'), game.presidentIndex);
+		console.error(game.gid, 'President selects chancellor', player.uid, data.uid, '|', player.gameState('index'), game.presidentIndex);
 		return;
 	}
 	var targetState = game.playerState(cuid);
 	if (!targetState || targetState.killed) {
-		console.error('Chancellee killed', targetState);
+		console.error(game.gid, 'Chancellee killed', targetState);
 		return;
 	}
 
@@ -62,7 +62,7 @@ var chancellorAction = function(data, player, game) {
 
 var voteAction = function(data, player, game) {
 	if (game.turn.voted) {
-		console.error('vote already complete');
+		console.error(game.gid, 'Vote already complete');
 		return;
 	}
 	if (player.gameState('killed')) {
@@ -139,7 +139,7 @@ var policyAction = function(data, player, game) {
 		}
 	} else if (player.uid == game.turn.chancellor) {
 		if (game.turn.presidentDiscard == null) {
-			console.error('President has not yet discarded a policy');
+			console.error(game.gid, 'President has not yet discarded a policy');
 			return;
 		}
 		if (data.veto != null) {
@@ -164,7 +164,7 @@ var policyAction = function(data, player, game) {
 			return data;
 		}
 	} else {
-		console.error('Invalid policy action', player.uid, data);
+		console.error(game.gid, 'Invalid policy action', player.uid, data);
 	}
 };
 
@@ -209,7 +209,7 @@ var powerAction = function(action, data, player, game) {
 		game.advanceTurn();
 		return data;
 	}
-	console.log('Invalid power', player.isPresident(), game.power, action);
+	console.error(game.gid, 'Invalid power', player.isPresident(), game.power, action);
 };
 
 //PUBLIC
@@ -225,7 +225,7 @@ module.exports = function(socket) {
 		}
 		var game = player.game;
 		if (!game || game.playerState(player.uid) == null) {
-			console.log('Socket action invalid game', player.uid, action, game);
+			console.error(game.gid, 'Socket action invalid game', player.uid, action, game);
 			return;
 		}
 		var data = {action: action};

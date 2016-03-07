@@ -34,8 +34,7 @@ var query = function(statement, params, callback) {
 					callback(result.rows);
 				}
 			} else if (dbConfigured) {
-				console.error('QUERY ERROR');
-				console.log(statement, params);
+				console.error('QUERY ERROR', statement, params);
 				console.log(err);
 			}
 		});
@@ -132,8 +131,8 @@ module.exports = {
 	},
 
 	updatePlayers: function(userIds, state) {
+		console.log('Update players', state, userIds);
 		if (userIds.length > 0) {
-			console.log(state, userIds);
 			query('UPDATE users SET games_'+state+' = games_'+state+' + 1 WHERE id IN ('+userIds.join(',')+')');
 		}
 	},

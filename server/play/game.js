@@ -112,7 +112,7 @@ var Game = function(size, privateGame) {
 				data.secret = secret;
 				target.emit('game action', data);
 			} else {
-				console.log('Invalid emitAction target', secret.target, this.players);
+				console.error(game.gid, 'Invalid emitAction target', secret.target, this.players);
 			}
 		} else {
 			this.emit('game action', data);
@@ -195,7 +195,7 @@ var Game = function(size, privateGame) {
 			}
 		});
 		if (!this.enoughToStart()) {
-			console.log('Start sequence interrupted', startingPlayerIds, removed);
+			console.error(game.gid, 'Start sequence interrupted', startingPlayerIds, removed);
 			this.resetAutostart();
 			return;
 		}
@@ -273,7 +273,7 @@ var Game = function(size, privateGame) {
 
 	this.finish = function(liberals, method) {
 		if (!this.finished) {
-			console.log('FIN', this.gid, liberals, method);
+			console.log(game.gid, 'FIN', liberals, method);
 
 			var activePlayers = [];
 			this.players.forEach(function(puid) {
