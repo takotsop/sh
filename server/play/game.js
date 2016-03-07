@@ -179,6 +179,10 @@ var Game = function(size, privateGame) {
 		}
 	};
 
+	this.emitStartPerspective = function(player) {
+		player.emit('lobby game data', this.gameData(player.uid));
+	};
+
 	this.start = function() {
 		if (this.started) {
 			return;
@@ -232,7 +236,8 @@ var Game = function(size, privateGame) {
 		// Emit
 		this.players.forEach(function(puid) {
 			var player = Player.get(puid);
-			player.emitStartPerspective();
+			player.game = game;
+			game.emitStartPerspective(player);
 		});
 	};
 
@@ -347,7 +352,7 @@ var Game = function(size, privateGame) {
 		}
 
 		if (this.started) {
-			player.emitStartPerspective();
+			this.emitStartPerspective(player);
 		} else if (this.isFull()) {
 			this.start();
 		} else {
