@@ -91,7 +91,7 @@ var showOverlay = function(type, data) {
 	}
 
 	inner += '<button id="overlay-continue" class="large" data-type="'+type+'">continue</button>';
-	$('#overlay .detail').html(inner);
+	$('#overlay .info').html(inner);
 	$('#overlay .extras').html(extras);
 };
 

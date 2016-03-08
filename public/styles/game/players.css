@@ -54,7 +54,7 @@
 	flex-direction: column;
 }
 
-.player-slot .details {
+.player-slot .title {
 	flex-shrink: 0;
 	float: inherit;
 }
@@ -93,7 +93,7 @@
 	line-height: 0;
 }
 
-.right .details {
+.right .title {
 	display: flex;
 	flex-direction: row-reverse;
 }
