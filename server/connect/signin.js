@@ -42,7 +42,7 @@ module.exports = function(socket, uid, auth) {
 
 	var returnForSignin = 'id, auth_key';
 
-	socket.on('guest login', function(data, callback) {
+	socket.on('guest signin', function(data, callback) {
 		if (!DB.exists) {
 			var uid = Utils.code();
 			var auth = Utils.uid();
@@ -53,6 +53,7 @@ module.exports = function(socket, uid, auth) {
 			setSocket(socket, response, uid, auth);
 			return;
 		}
+
 		DB.fetch('id, auth_key', 'users', 'online_count = $1 AND guest = $2', [0, true], function(userData) {
 			var insertCallback = function(response) {
 				authenticate(socket, response.id, response.auth_key);

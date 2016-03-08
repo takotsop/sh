@@ -44,7 +44,7 @@ var showSignin = function() {
 	if (Config.TESTING && localStorage.getItem('manual') == null) {
 		setTimeout(function() {
 			$('#start-playing').click();
-			$('#guest-login').click();
+			$('#guest-signin').click();
 		}, 200);
 	}
 
@@ -90,8 +90,8 @@ var checkSigninError = function(name, rawValue) {
 
 //GUEST
 
-$('#guest-login').on('click', function() {
-	Socket.emit('guest login', null, finishSignin);
+$('#guest-signin').on('click', function() {
+	Socket.emit('guest signin', null, finishSignin);
 });
 
 //EMAIL
