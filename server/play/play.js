@@ -225,7 +225,7 @@ module.exports = function(socket) {
 		}
 		var game = player.game;
 		if (!game || game.playerState(player.uid) == null) {
-			console.error(game.gid, 'Socket action invalid game', player.uid, action, game);
+			console.error('Socket action invalid game', player.uid, action, game);
 			return;
 		}
 		var data = {action: action};
