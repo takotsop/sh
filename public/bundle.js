@@ -999,6 +999,8 @@
 
 	module.exports = {
 
+		gameOver: true,
+
 		getPresident: function() {
 			return this.players[this.presidentIndex];
 		},
