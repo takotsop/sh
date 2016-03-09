@@ -98,7 +98,9 @@ CREATE TABLE games (
     enacted_liberal integer,
     enacted_fascist integer,
     liberal_victory boolean,
-    win_method text
+    win_method text,
+    version text,
+    player_names text
 );
 
 
@@ -121,7 +123,8 @@ CREATE TABLE users (
     guest boolean,
     games_started integer DEFAULT 0 NOT NULL,
     games_finished integer DEFAULT 0 NOT NULL,
-    games_quit integer DEFAULT 0 NOT NULL
+    games_quit integer DEFAULT 0 NOT NULL,
+    gid text
 );
 
 
