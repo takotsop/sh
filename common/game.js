@@ -4,7 +4,7 @@ module.exports = {
 
 	getFascistPower: function(enactedFascist, gameSize) {
 		if (enactedFascist == 1) {
-			// return 'bullet'; //SAMPLE
+			// return 'investigate'; //SAMPLE
 			return gameSize >= 9 ? 'investigate' : null;
 		}
 		if (enactedFascist == 2) {

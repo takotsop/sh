@@ -29,7 +29,7 @@ var processAction = function(data, fastForward) {
 	} else if (action == 'veto requested') {
 		Policies.vetoRequest(data);
 	} else if (action == 'vetoed') {
-		Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
+		Game.failedGovernment(data.forced, 'Election vetoed');
 	} else if (action == 'veto overridden') {
 		Policies.vetoOverridden(data);
 	} else {

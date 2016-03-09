@@ -218,7 +218,7 @@ var Game = function(restoreData, size, privateGame) {
 			var startingPlayerIds = this.players.slice();
 			var removed;
 			startingPlayerIds.forEach(function(puid) {
-				var player = Player.get(puid);
+				var player = Player.get(puid); //TODO remove dependency
 				var playerGame = player.game;
 				if (!playerGame || playerGame.gid != game.gid) {
 					removed = puid;

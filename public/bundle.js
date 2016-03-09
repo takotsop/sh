@@ -1618,7 +1618,7 @@
 
 		getFascistPower: function(enactedFascist, gameSize) {
 			if (enactedFascist == 1) {
-				// return 'bullet'; //SAMPLE
+				// return 'investigate'; //SAMPLE
 				return gameSize >= 9 ? 'investigate' : null;
 			}
 			if (enactedFascist == 2) {
@@ -2593,7 +2593,7 @@
 		} else if (action == 'veto requested') {
 			Policies.vetoRequest(data);
 		} else if (action == 'vetoed') {
-			Game.failedGovernment(data.forced, 'Election vetoed'); //TODO
+			Game.failedGovernment(data.forced, 'Election vetoed');
 		} else if (action == 'veto overridden') {
 			Policies.vetoOverridden(data);
 		} else {
