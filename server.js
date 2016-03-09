@@ -2,8 +2,6 @@
 
 var CommonConsts = require.main.require('./common/constants');
 
-var Utils = require.main.require('./server/tools/utils');
-
 var Socket = require.main.require('./server/connect/io');
 
 //EXPRESS
@@ -22,4 +20,4 @@ Socket.init(http);
 
 http.listen(portNumber);
 
-console.log('Secret Hitler Online v'+CommonConsts.VERSION+(Utils.TESTING?' TEST SERVER':'')+' on port ' + portNumber);
+console.log('Secret Hitler Online v' + CommonConsts.VERSION + ' '+ (process.env.NODE_ENV || 'TESTING') + ' on port ' + portNumber);
