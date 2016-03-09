@@ -53,7 +53,7 @@ var Game = function(size, privateGame) {
 	var game = this;
 	games.push(this);
 
-	DB.insert('games', {id: this.gid});
+	DB.insert('games', {id: this.gid, version: CommonConsts.COMPATIBLE_VERSION});
 
 //PRIVATE
 
