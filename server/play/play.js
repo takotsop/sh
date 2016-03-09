@@ -187,7 +187,7 @@ var powerAction = function(action, data, puid, game) {
 				if (game.playerState(tuid, 'investigated')) {
 					return;
 				}
-				var targetParty = this.playerState(tuid, 'allegiance') == 0 ? 0 : 1;
+				var targetParty = game.playerState(tuid, 'allegiance') == 0 ? 0 : 1;
 				var secret = {target: game.presidentElect, party: targetParty};
 				game.playerState(tuid, 'investigated', true);
 				data = game.emitAction('investigated', data, secret);
