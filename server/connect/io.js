@@ -22,19 +22,12 @@ module.exports = {
 			require.main.require('./server/play/play')(socket);
 
 			socket.on('disconnect', function() {
-				if (socket.uid) {
-					DB.query('UPDATE users SET online_count = online_count - 1 WHERE id = '+socket.uid+' AND online_count > 0', null);
+				var uid = socket.uid;
+				if (uid) {
+					DB.query('UPDATE users SET online_count = online_count - 1 WHERE id = '+uid+' AND online_count > 0', null);
 				}
-
-				var player = socket.player;
-				if (player) {
-					var game = player.game;
-					if (game) {
-						game.disconnect(socket);
-					} else {
-						delete socket.player;
-						socket.player = null;
-					}
+				if (socket.game) {
+					socket.game.disconnect(socket);
 				}
 			});
 

@@ -7,20 +7,26 @@ var DB = require.main.require('./server/tools/db');
 var Mailer = require.main.require('./server/tools/mailer');
 
 var Lobby = require('./lobby');
+var Game = require.main.require('./server/play/game');
 var Player = require.main.require('./server/play/player');
 
 //LOCAL
 
 var setSocket = function(socket, response, uid, auth) {
 	socket.uid = uid;
-	DB.query('UPDATE users SET online_at = '+Utils.now()+', online_count = online_count + 1 WHERE id = '+uid, null);
+	socket.join('Player ' + uid);
+	socket.name = response.name;
+	Player.add(uid, socket);
 
-	var oldPlayer = Player.get(uid);
-	var player = new Player(socket, uid, response.name, oldPlayer);
-	socket.player = player;
-	socket.emit('auth', response);
+	DB.query('UPDATE users SET online_at = '+Utils.now()+', online_count = online_count + 1 WHERE id = '+uid+' RETURNING gid', null, function(users) {
+		var oldGame = users[0].gid;
+		socket.game = oldGame ? Game.get(oldGame) : null;
 
-	Lobby(socket);
+		socket.emit('auth', response);
+
+		Lobby(socket);
+	});
+
 };
 
 var authenticate = function(socket, uid, auth) {

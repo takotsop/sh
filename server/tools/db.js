@@ -130,12 +130,15 @@ module.exports = {
 		});
 	},
 
-	updatePlayers: function(userIds, state, logged) {
+	updatePlayers: function(userIds, state, gid, logged) {
 		if (logged) {
 			console.log('Update players', state, userIds);
 		}
 		if (userIds.length > 0) {
-			query('UPDATE users SET games_'+state+' = games_'+state+' + 1 WHERE id IN ('+userIds.join(',')+')');
+			if (!gid) {
+				gid = 'NULL';
+			}
+			query("UPDATE users SET games_"+state+"=games_"+state+"+1, gid='"+gid+"' WHERE id IN ("+userIds.join(',')+")");
 		}
 	},
 

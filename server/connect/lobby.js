@@ -8,24 +8,19 @@ var Game = require.main.require('./server/play/game');
 //LOCAL
 
 var joinGameById = function(socket, gid) {
-	var player = socket.player;
-	var oldGame = player.game;
+	var oldGame = socket.game;
 	if (!oldGame || oldGame.finished) {
-		var games = Game.games();
-		for (var gidx in games) {
-			var game = games[gidx];
-			if (game.gid == gid) {
-				if (game.started) {
-					return 'started';
-				}
-				if (game.isFull()) {
-					return 'full';
-				}
-				if (game.isOpen()) {
-					game.addPlayer(socket, player);
-					return true;
-				}
-				break;
+		var game = Game.get(gid);
+		if (game) {
+			if (game.started) {
+				return 'started';
+			}
+			if (game.isFull()) {
+				return 'full';
+			}
+			if (game.isOpen()) {
+				game.addPlayer(socket);
+				return true;
 			}
 		}
 	}
@@ -54,8 +49,15 @@ var joinAvailableGame = function(socket) {
 	if (!joiningGame) {
 		joiningGame = new Game(10);
 	}
-	joiningGame.addPlayer(socket, socket.player);
+	joiningGame.addPlayer(socket);
 	return true;
+};
+
+var leaveOldGame = function(socket) {
+	var oldGame = socket.game;
+	if (oldGame) {
+		oldGame.disconnect(socket);
+	}
 };
 
 //PUBLIC
@@ -63,18 +65,19 @@ var joinAvailableGame = function(socket) {
 module.exports = function(socket) {
 
 	socket.on('lobby join', function(data, callback) {
-		socket.player.leaveCurrentGame();
+		leaveOldGame(socket);
+
 		if (!joinOngoingGame(socket)) {
 			socket.join('lobby');
 		}
 	});
 
 	socket.on('room create', function(data, callback) {
-		var player = socket.player;
-		player.leaveCurrentGame();
+		leaveOldGame(socket);
+
 		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
 		var joiningGame = new Game(gameMaxSize, data.private);
-		joiningGame.addPlayer(socket, player);
+		joiningGame.addPlayer(socket);
 	});
 
 	socket.on('room quickjoin', function(data, callback) {
@@ -108,7 +111,7 @@ module.exports = function(socket) {
 	});
 
 	socket.on('feedback', function(data, callback) {
-		DB.insert('feedback', {username: socket.player.name, report_type: data.type, feedback: data.body}, null, callback);
+		DB.insert('feedback', {username: socket.name, report_type: data.type, feedback: data.body}, null, callback);
 	});
 
 };

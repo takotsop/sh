@@ -103,6 +103,14 @@ var Game = function(size, privateGame) {
 		Socket.io().to(this.gid).emit(name, data);
 	};
 
+	this.emitExcept = function(exceptUid, name, data) {
+		this.players.forEach(function(puid) {
+			if (puid != exceptUid) {
+				Player.emitTo(puid, name, data);
+			}
+		});
+	};
+
 	this.emitAction = function(name, data, secret) {
 		data.action = name;
 		if (this.finished) {
@@ -113,14 +121,10 @@ var Game = function(size, privateGame) {
 			data.roles = roles;
 		}
 		if (secret) {
-			var target = Player.get(secret.target);
-			if (target.game) {
-				target.emitToOthers('game action', data);
-				data.secret = secret;
-				target.emit('game action', data);
-			} else {
-				console.error(game.gid, 'Invalid emitAction target', secret.target, this.players);
-			}
+			var tuid = secret.target;
+			this.emitExcept(tuid, 'game action', data);
+			data.secret = secret;
+			Player.emitTo(tuid, 'game action', data);
 		} else {
 			this.emit('game action', data);
 		}
@@ -186,8 +190,8 @@ var Game = function(size, privateGame) {
 		}
 	};
 
-	this.emitStartPerspective = function(player) {
-		player.emit('lobby game data', this.gameData(player.uid));
+	this.emitStartPerspective = function(uid) {
+ 		Player.emitTo(uid, 'lobby game data', this.gameData(uid));
 	};
 
 	this.start = function() {
@@ -201,8 +205,8 @@ var Game = function(size, privateGame) {
 			var player = Player.get(puid);
 			var playerGame = player.game;
 			if (!playerGame || playerGame.gid != game.gid) {
-				removed = player.uid;
-				game.remove(player.getSocket());
+				removed = puid;
+				game.remove(player);
 			}
 		});
 		if (!this.enoughToStart()) {
@@ -223,7 +227,7 @@ var Game = function(size, privateGame) {
 
 		var playerIdData = this.players.join(',');
 		DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: playerIdData});
-		DB.updatePlayers(this.players, 'started', true);
+		DB.updatePlayers(this.players, 'started', this.gid, true);
 
 		// Assign Fascists
 		var facistsCount = Math.ceil(this.playerCount / 2) - 1;
@@ -242,9 +246,7 @@ var Game = function(size, privateGame) {
 
 		// Emit
 		this.players.forEach(function(puid) {
-			var player = Player.get(puid);
-			player.game = game;
-			game.emitStartPerspective(player);
+			game.emitStartPerspective(puid);
 		});
 	};
 
@@ -293,7 +295,7 @@ var Game = function(size, privateGame) {
 					activePlayers.push(puid);
 				}
 			});
-			DB.updatePlayers(activePlayers, 'finished', true);
+			DB.updatePlayers(activePlayers, 'finished', null, true);
 
 			this.finished = true;
 			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: Utils.now(), history: JSON.stringify(this.history), enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
@@ -342,24 +344,22 @@ var Game = function(size, privateGame) {
 	};
 
 	this.addPlayer = function(socket) {
+		var uid = socket.uid;
 		socket.leave('lobby');
 		socket.join(this.gid);
+		socket.game = this;
 
-		var player = socket.player;
-		player.game = this;
-		player.disconnected = false;
-
-		var playerState = this.playerState(player.uid);
+		var playerState = this.playerState(uid);
 		if (!playerState) {
 			var index = this.players.length;
-			this.players[index] = player.uid;
-			this.playersState[player.uid] = {index: index};
+			this.players[index] = uid;
+			this.playersState[uid] = {index: index};
 		} else {
 			playerState.quit = false;
 		}
 
 		if (this.started) {
-			this.emitStartPerspective(player);
+			this.emitStartPerspective(uid);
 		} else if (this.isFull()) {
 			this.start();
 		} else {
@@ -372,7 +372,7 @@ var Game = function(size, privateGame) {
 		if (playerState && !playerState.killed) {
 			if (quitting) {
 				playerState.quit = true;
-				DB.updatePlayers([uid], 'quit', !this.finished);
+				DB.updatePlayers([uid], 'quit', null, !this.finished);
 			}
 			playerState.killed = true;
 			this.currentCount -= 1;
@@ -401,8 +401,8 @@ var Game = function(size, privateGame) {
 	this.disconnect = function(socket) {
 		if (!this.started || this.finished) {
 			this.remove(socket);
-		} else if (socket.player) {
-			socket.player.disconnected = true;
+		} else {
+			this.playerState(socket.uid, 'disconnected', true);
 		}
 	};
 
@@ -430,9 +430,7 @@ var Game = function(size, privateGame) {
 				});
 			}
 		}
-		if (socket.player) {
-			socket.player.game = null;
-		}
+		socket.game = null;
 
 		if (!this.started) {
 			this.resetAutostart();
@@ -442,12 +440,16 @@ var Game = function(size, privateGame) {
 
 //HELPERS
 
-	this.isHitler = function(uid) {
-		return uid == this.hitlerUid;
+	this.isChancellor = function(uid) {
+		return uid == this.turn.chancellor;
 	};
 
-	this.getPlayer = function(index) {
-		return Player.get(this.players[index]);
+	this.isPresident = function(uid) {
+		return this.playerState(uid, 'index') == this.presidentIndex;
+	};
+
+	this.isHitler = function(uid) {
+		return uid == this.hitlerUid;
 	};
 
 	this.enoughToStart = function() {
@@ -462,22 +464,20 @@ var Game = function(size, privateGame) {
 		return !this.started && !this.isFull();
 	};
 
-	this.activeCount = function() {
-		var count = 0;
-		this.players.forEach(function(puid) {
-			var player = Player.get(puid);
-			if (!player.disconnected) {
-				++count;
-			}
-		});
-		return count;
-	};
-
 	return this;
 };
 
 Game.games = function() {
 	return games;
+};
+
+Game.get = function(gid) {
+	for (var gidx in games) {
+		var game = games[gidx];
+		if (game.gid == gid) {
+			return game;
+		}
+	}
 };
 
 module.exports = Game;
