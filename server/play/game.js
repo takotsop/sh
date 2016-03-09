@@ -18,42 +18,57 @@ var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
 
 var games = [];
 
-var Game = function(size, privateGame) {
-	this.gid = Utils.uid();
-	this.maxSize = size;
-	this.private = privateGame;
+var Game = function(restoreData, size, privateGame) {
+	var game = this;
+	if (restoreData) {
+		this.gid = restoreData.id;
+		this.players = restoreData.player_ids.split(',');
+		this.playersState = {};
+		this.players.forEach(function(puid, index) {
+			game.playersState[puid] = {index: index};
+		});
+		this.history = JSON.parse(restoreData.history) || [];
+		this.startIndex = restoreData.start_index;
+		this.playerCount = restoreData.player_count;
+		// this.maxSize = this.playerCount;
+		this.finished = false;
+	} else {
+		this.gid = Utils.uid();
+		this.maxSize = size;
+		this.private = privateGame;
 
-	this.generator = new SeedRandom(this.gid);
-	this.players = [];
-	this.playersState = {};
-	this.history = [];
-	this.turn = {};
+		this.players = [];
+		this.history = [];
+		this.playersState = {};
 
+		this.started = false;
+		this.autoTimer = null;
+		this.scheduledStart = null;
+
+		this.startIndex = null;
+		this.playerCount = null;
+		this.currentCount = null;
+		this.policyDeck = null;
+		this.hitlerUid = null;
+		this.power = null;
+
+		this.positionIndex = null;
+		this.specialPresident = null;
+		this.presidentIndex = null;
+
+		DB.insert('games', {id: this.gid, version: CommonConsts.COMPATIBLE_VERSION});
+	}
+
+	this.finished = false;
 	this.enactedLiberal = 0;
 	this.enactedFascist = 0;
 	this.electionTracker = 0;
 
-	this.started = false;
-	this.finished = false;
+	this.turn = {};
 
-	this.autoTimer = null;
-	this.scheduledStart = null;
+	this.generator = new SeedRandom(this.gid);
 
-	this.startIndex = null;
-	this.playerCount = null;
-	this.currentCount = null;
-	this.policyDeck = null;
-	this.hitlerUid = null;
-	this.power = null;
-
-	this.positionIndex = null;
-	this.specialPresident = null;
-	this.presidentIndex = null;
-
-	var game = this;
 	games.push(this);
-
-	DB.insert('games', {id: this.gid, version: CommonConsts.COMPATIBLE_VERSION});
 
 //PRIVATE
 
@@ -141,6 +156,9 @@ var Game = function(size, privateGame) {
 		}
 		this.players.forEach(function(uid, index) {
 			var player = Player.get(uid);
+			if (!player) {
+				player = {};
+			}
 			var playerData = {
 				uid: uid,
 				name: player.name,
@@ -194,28 +212,30 @@ var Game = function(size, privateGame) {
  		Player.emitTo(uid, 'lobby game data', this.gameData(uid));
 	};
 
-	this.start = function() {
+	this.start = function(reload) {
 		if (this.started) {
 			return;
 		}
 
-		var startingPlayerIds = this.players.slice();
-		var removed;
-		startingPlayerIds.forEach(function(puid) {
-			var player = Player.get(puid);
-			var playerGame = player.game;
-			if (!playerGame || playerGame.gid != game.gid) {
-				removed = puid;
-				game.remove(player);
+		if (!reload) {
+			var startingPlayerIds = this.players.slice();
+			var removed;
+			startingPlayerIds.forEach(function(puid) {
+				var player = Player.get(puid);
+				var playerGame = player.game;
+				if (!playerGame || playerGame.gid != game.gid) {
+					removed = puid;
+					game.remove(player);
+				}
+			});
+			if (!this.enoughToStart()) {
+				console.error(game.gid, 'Start sequence interrupted', startingPlayerIds, removed);
+				this.resetAutostart();
+				return;
 			}
-		});
-		if (!this.enoughToStart()) {
-			console.error(game.gid, 'Start sequence interrupted', startingPlayerIds, removed);
-			this.resetAutostart();
-			return;
-		}
 
-		this.cancelAutostart();
+			this.cancelAutostart();
+		}
 
 		this.started = true;
 		this.playerCount = this.players.length;
@@ -225,9 +245,11 @@ var Game = function(size, privateGame) {
 		this.presidentIndex = this.positionIndex;
 		this.shufflePolicyDeck();
 
-		var playerIdData = this.players.join(',');
-		DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: playerIdData});
-		DB.updatePlayers(this.players, 'started', this.gid, true);
+		if (!reload) {
+			var playerIdData = this.players.join(',');
+			DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: playerIdData});
+			DB.updatePlayers(this.players, 'started', this.gid, true);
+		}
 
 		// Assign Fascists
 		var facistsCount = Math.ceil(this.playerCount / 2) - 1;

@@ -28,10 +28,9 @@ var joinGameById = function(socket, gid) {
 };
 
 var joinOngoingGame = function(socket) {
-	var player = socket.player;
-	var oldGame = player.game;
+	var oldGame = socket.game;
 	if (oldGame && !oldGame.finished) {
-		oldGame.addPlayer(socket, player);
+		oldGame.addPlayer(socket);
 		return true;
 	}
 };
@@ -47,7 +46,7 @@ var joinAvailableGame = function(socket) {
 		}
 	}
 	if (!joiningGame) {
-		joiningGame = new Game(10);
+		joiningGame = new Game(null, 10);
 	}
 	joiningGame.addPlayer(socket);
 	return true;
@@ -76,7 +75,7 @@ module.exports = function(socket) {
 		leaveOldGame(socket);
 
 		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
-		var joiningGame = new Game(gameMaxSize, data.private);
+		var joiningGame = new Game(null, gameMaxSize, data.private);
 		joiningGame.addPlayer(socket);
 	});
 

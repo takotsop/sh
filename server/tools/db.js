@@ -53,6 +53,10 @@ var fetch = function(columns, table, where, params, callback) {
 	queryOne('SELECT ' + columns + ' FROM ' + table + ' WHERE ' + where + ' LIMIT 1', params, callback);
 };
 
+var fetchAll = function(columns, table, where, params, callback) {
+	query('SELECT ' + columns + ' FROM ' + table + ' WHERE ' + where, params, callback);
+};
+
 var property = function(column, table, where, params, callback) {
 	fetch(column, table, where, params, function(result) {
 		callback(result[column]);
@@ -107,6 +111,8 @@ module.exports = {
 	queryOne: queryOne,
 
 	fetch: fetch,
+
+	fetchAll: fetchAll,
 
 	property: property,
 
