@@ -1,7 +1,5 @@
 'use strict';
 
-var Player = require.main.require('./server/play/player');
-
 //MANAGE
 
 var chatAction = function(data, puid, game) {
