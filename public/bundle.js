@@ -769,11 +769,13 @@
 	};
 
 	var addChatMessage = function(data) {
-		var Players = __webpack_require__(21);
-		var message = data.msg;
-		var name = Players.get(data.uid).name;
-		App.dataDiv(data, '.chat').text(message);
-		$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+		var player = __webpack_require__(21).get(data.uid);
+		if (player) {
+			var message = data.msg;
+			var name = player.name;
+			App.playerDiv(player, '.chat').text(message);
+			$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+		}
 	};
 
 	var setChatState = function(state) {
@@ -799,7 +801,7 @@
 	});
 
 	Socket.on('typing', function(data) {
-		App.dataDiv(data, '.typing').toggle(data.on);
+		App.playerDiv(data, '.typing').toggle(data.on);
 	});
 
 	//BUTTONS
@@ -983,10 +985,6 @@
 		uidDiv: uidDiv,
 
 		playerDiv: playerDiv,
-
-		dataDiv: function(data, query) {
-			return playerDiv(data.uid, query);
-		},
 
 		enablePlayerSelection: enablePlayerSelection,
 
@@ -1203,7 +1201,7 @@
 
 
 	// module
-	exports.push([module.id, "#players {\n\twidth: 100%;\n\tmin-height: 100%;\n\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* PLAYERS */\n\n.player-slot {\n\tdisplay: flex;\n\tbox-sizing: border-box;\n\twidth: 50%;\n\tpadding: 16px;\n\theight: 104px;\n}\n\n.player-slot.left {\n\tfloat: left;\n\ttext-align: left;\n}\n\n.player-slot.right {\n\tfloat: right;\n\tflex-direction: row-reverse;\n\ttext-align: right;\n}\n\n.player-slot.choose {\n\tborder: 1px dashed #FFD556;\n\tbackground-color: rgba(255,255,255, 0.5);\n\tcursor: pointer;\n}\n.player-slot.choose:hover {\n\tborder-style: solid;\n\tbackground-color: rgba(255,255,255, 0.25);\n}\n\n.player-slot.elect .avatar {\n\tbox-shadow: 0 0 32px #FFD556;\n}\n\n.player-slot .avatar {\n\tflex-shrink: 0;\n}\n.player-slot .contents {\n\tflex-grow: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.player-slot .title {\n\tflex-shrink: 0;\n\tfloat: inherit;\n}\n.player-slot .chat {\n\tmargin: 4px 8px;\n\tfont-style: italic;\n\n\tdisplay: -webkit-box;\n\t-webkit-line-clamp: 2;\n\t-webkit-box-orient: vertical;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\tword-wrap: break-word;\n}\n\n.player-slot h2 {\n\tfont-weight: 300;\n\tmargin: 0 8px;\n\tdisplay: inline;\n\tfont-size: 1.4em;\n}\n\n.player-slot.killed {\n\topacity: 0.5;\n\tbackground-color: #E3644F;\n}\n\n.icon {\n\tdisplay: inline-block;\n}\n.typing {\n\tfont-size: 1.3em;\n}\n.talking {\n\tfont-size: 1.7em;\n\tline-height: 0;\n}\n\n.right .title {\n\tdisplay: flex;\n\tflex-direction: row-reverse;\n}\n\n/* AVATARS */\n\n.avatar {\n\tposition: relative;\n\tbox-sizing: border-box;\n\twidth: 80px;\n\theight: 80px;\n\tborder-radius: 50%;\n\tborder: 2px solid #F7E2C0;\n\n\tbackground-image: url(/images/unknown.png);\n\tbackground-size: cover;\n}\n\n.avatar .vote {\n\tposition: absolute;\n\tbottom: -2px;\n\tleft: 0;\n\tright: 0;\n\tborder: 1px solid #383633;\n\ttext-align: center;\n\tbackground-color: #F7E2C0;\n}\n\n@media (max-width: 719px) {\n\t.player-slot {\n\t\twidth: 100%;\n\t}\n}\n", ""]);
+	exports.push([module.id, "#players {\n\twidth: 100%;\n\tmin-height: 100%;\n\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* PLAYERS */\n\n.player-slot {\n\tdisplay: flex;\n\tbox-sizing: border-box;\n\twidth: 50%;\n\tpadding: 16px;\n\theight: 104px;\n}\n\n.player-slot.left {\n\tfloat: left;\n\ttext-align: left;\n}\n\n.player-slot.right {\n\tfloat: right;\n\tflex-direction: row-reverse;\n\ttext-align: right;\n}\n\n.player-slot.choose {\n\tborder: 1px dashed #FFD556;\n\tbackground-color: rgba(255,255,255, 0.5);\n\tcursor: pointer;\n}\n.player-slot.choose:hover {\n\tborder-style: solid;\n\tbackground-color: rgba(255,255,255, 0.25);\n}\n\n.player-slot.elect .avatar {\n\tbox-shadow: 0 0 32px #FFD556;\n}\n\n.player-slot .avatar {\n\tflex-shrink: 0;\n}\n.player-slot .contents {\n\tflex-grow: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.player-slot .title {\n\tflex-shrink: 0;\n\tfloat: inherit;\n}\n.player-slot .chat {\n\tmargin: 4px 8px;\n\tfont-style: italic;\n\n\tdisplay: -webkit-box;\n\t-webkit-line-clamp: 2;\n\t-webkit-box-orient: vertical;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\tword-wrap: break-word;\n}\n\n.player-slot h2 {\n\tfont-weight: 300;\n\tmargin: 0 8px;\n\tdisplay: inline;\n\tfont-size: 1.4em;\n}\n\n.player-slot.killed {\n\topacity: 0.5;\n\tbackground-color: #E3644F;\n}\n\n.icon {\n\tdisplay: inline-block;\n\tline-height: 0;\n}\n.typing {\n\tfont-size: 1.3em;\n}\n.talking {\n\tfont-size: 1.7em;\n}\n\n.right .title {\n\tdisplay: flex;\n\tflex-direction: row-reverse;\n}\n\n/* AVATARS */\n\n.avatar {\n\tposition: relative;\n\tbox-sizing: border-box;\n\twidth: 80px;\n\theight: 80px;\n\tborder-radius: 50%;\n\tborder: 2px solid #F7E2C0;\n\n\tbackground-image: url(/images/unknown.png);\n\tbackground-size: cover;\n}\n\n.avatar .vote {\n\tposition: absolute;\n\tbottom: -2px;\n\tleft: 0;\n\tright: 0;\n\tborder: 1px solid #383633;\n\ttext-align: center;\n\tbackground-color: #F7E2C0;\n}\n\n@media (max-width: 719px) {\n\t.player-slot {\n\t\twidth: 100%;\n\t}\n}\n", ""]);
 
 	// exports
 

@@ -60,10 +60,6 @@ module.exports = {
 
 	playerDiv: playerDiv,
 
-	dataDiv: function(data, query) {
-		return playerDiv(data.uid, query);
-	},
-
 	enablePlayerSelection: enablePlayerSelection,
 
 };

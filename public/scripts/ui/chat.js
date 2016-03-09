@@ -29,11 +29,13 @@ var setDirective = function(directive) {
 };
 
 var addChatMessage = function(data) {
-	var Players = require('game/players');
-	var message = data.msg;
-	var name = Players.get(data.uid).name;
-	App.dataDiv(data, '.chat').text(message);
-	$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+	var player = require('game/players').get(data.uid);
+	if (player) {
+		var message = data.msg;
+		var name = player.name;
+		App.playerDiv(player, '.chat').text(message);
+		$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+	}
 };
 
 var setChatState = function(state) {
@@ -59,7 +61,7 @@ $('#i-chat').on('keydown', function(event) {
 });
 
 Socket.on('typing', function(data) {
-	App.dataDiv(data, '.typing').toggle(data.on);
+	App.playerDiv(data, '.typing').toggle(data.on);
 });
 
 //BUTTONS
