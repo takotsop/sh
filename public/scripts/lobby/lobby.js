@@ -85,7 +85,12 @@ var connectToLobby = function() {
 
 	showLobbySection('start');
 
-	Socket.emit('lobby join');
+	var connectData = {};
+	if (Config.pageAction == 'join') {
+		connectData.join = Config.pageTarget;
+		Config.pageAction = null;
+	}
+	Socket.emit('lobby join', connectData);
 };
 
 var showLobby = function() {
