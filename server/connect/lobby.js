@@ -36,19 +36,15 @@ var joinOngoingGame = function(socket) {
 };
 
 var joinAvailableGame = function(socket) {
-	var joiningGame;
 	var games = Game.games();
 	for (var gidx in games) {
 		var game = games[gidx];
 		if (!game.private && game.isOpen()) {
-			joiningGame = game;
-			break;
+			game.addPlayer(socket);
+			return true;
 		}
 	}
-	if (!joiningGame) {
-		joiningGame = new Game(null, 10);
-	}
-	joiningGame.addPlayer(socket);
+	new Game(null, 10, false, socket);
 	return true;
 };
 
@@ -67,7 +63,7 @@ module.exports = function(socket) {
 		leaveOldGame(socket);
 
 		if (!joinOngoingGame(socket)) {
-			if (!data.join || !joinGameById(socket, data.join)) {
+			if (!data.join || joinGameById(socket, data.join) == false) {
 				socket.join('lobby');
 			}
 		}
@@ -77,8 +73,7 @@ module.exports = function(socket) {
 		leaveOldGame(socket);
 
 		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
-		var joiningGame = new Game(null, gameMaxSize, data.private);
-		joiningGame.addPlayer(socket);
+		new Game(null, gameMaxSize, data.private, socket);
 	});
 
 	socket.on('room quickjoin', function(data, callback) {

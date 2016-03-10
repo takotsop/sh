@@ -63,6 +63,17 @@ var property = function(column, table, where, params, callback) {
 	});
 };
 
+var generateGameId = function(callback) {
+	var gid = Utils.uuid(5);
+	fetch('id', 'games', 'id = $1', [gid], function(exists) {
+		if (exists) {
+			console.log('Collision', gid);
+			return generateGameId(callback);
+		}
+		callback(gid);
+	});
+};
+
 //UPSERT
 
 var update = function(table, where, columnsValues, returning, callback) {
@@ -147,5 +158,7 @@ module.exports = {
 			query("UPDATE users SET games_"+state+"=games_"+state+"+1, gid='"+gid+"' WHERE id IN ("+userIds.join(',')+")");
 		}
 	},
+
+	gid: generateGameId,
 
 };

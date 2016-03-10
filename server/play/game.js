@@ -18,10 +18,20 @@ var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
 
 var games = [];
 
-var Game = function(restoreData, size, privateGame) {
+var setup = function(game, gid, socket) {
+	game.gid = gid;
+	game.generator = new SeedRandom(gid);
+
+	games.push(game);
+
+	if (socket) {
+		game.addPlayer(socket);
+	}
+};
+
+var Game = function(restoreData, size, privateGame, socket) {
 	var game = this;
 	if (restoreData) {
-		this.gid = restoreData.id;
 		this.players = restoreData.player_ids.split(',');
 		this.playersState = {};
 		this.names = restoreData.player_names.split(',');
@@ -32,8 +42,9 @@ var Game = function(restoreData, size, privateGame) {
 		this.startIndex = restoreData.start_index;
 		this.playerCount = restoreData.player_count;
 		this.finished = false;
+
+		setup(this, restoreData.id, socket);
 	} else {
-		this.gid = Utils.uid();
 		this.maxSize = size;
 		this.private = privateGame;
 
@@ -57,7 +68,10 @@ var Game = function(restoreData, size, privateGame) {
 		this.specialPresident = null;
 		this.presidentIndex = null;
 
-		DB.insert('games', {id: this.gid, version: CommonConsts.COMPATIBLE_VERSION});
+		DB.gid(function(gid) {
+			setup(game, gid, socket);
+			DB.insert('games', {id: gid, version: CommonConsts.COMPATIBLE_VERSION});
+		});
 	}
 
 	this.finished = false;
@@ -66,10 +80,6 @@ var Game = function(restoreData, size, privateGame) {
 	this.electionTracker = 0;
 
 	this.turn = {};
-
-	this.generator = new SeedRandom(this.gid);
-
-	games.push(this);
 
 //PRIVATE
 
@@ -215,22 +225,11 @@ var Game = function(restoreData, size, privateGame) {
 		}
 
 		if (!reload) {
-			var startingPlayerIds = this.players.slice();
-			var removed;
-			startingPlayerIds.forEach(function(puid) {
-				var player = Player.get(puid); //TODO remove dependency
-				var playerGame = player.game;
-				if (!playerGame || playerGame.gid != game.gid) {
-					removed = puid;
-					game.remove(player);
-				}
-			});
 			if (!this.enoughToStart()) {
-				console.error(game.gid, 'Start sequence interrupted', startingPlayerIds, removed);
+				console.error(game.gid, 'Start sequence interrupted', this.players);
 				this.resetAutostart();
 				return;
 			}
-
 			this.cancelAutostart();
 		}
 
@@ -485,7 +484,7 @@ var Game = function(restoreData, size, privateGame) {
 	};
 
 	this.isOpen = function() {
-		return !this.started && !this.isFull();
+		return this.gid != null && !this.started && !this.isFull();
 	};
 
 	return this;

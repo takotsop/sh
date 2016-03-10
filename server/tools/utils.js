@@ -12,8 +12,8 @@ module.exports = {
 		return Math.round(Date.now() * 0.001);
 	},
 
-	uid: function() {
-		return Math.random().toString(36).substr(2, 16);
+	uuid: function(length) {
+		return Math.random().toString(36).substr(2, length || 16);
 	},
 
 	code: function() {

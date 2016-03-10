@@ -51,7 +51,7 @@ module.exports = function(socket, uid, auth) {
 	socket.on('guest signin', function(data, callback) {
 		if (!DB.exists) {
 			var uid = Utils.code();
-			var auth = Utils.uid();
+			var auth = Utils.uuid();
 			var response = {id: uid, auth_key: auth};
 			callback(response);
 			response.name = 'Guest' + uid;
@@ -69,7 +69,7 @@ module.exports = function(socket, uid, auth) {
 				insertCallback(userData);
 			} else {
 				DB.count('users', function(guestNumber) {
-					var authKey = Utils.uid() + Utils.uid();
+					var authKey = Utils.uuid() + Utils.uuid();
 					var userBegin = {guest: true, name: 'guest'+guestNumber, email: guestNumber+'@secrethitler.com', auth_key: authKey};
 					DB.insert('users', userBegin, returnForSignin, insertCallback);
 				});
@@ -148,7 +148,7 @@ module.exports = function(socket, uid, auth) {
 			if (userData) {
 				callback({error: 'This ' + (userData.name == username ? 'username' : 'email') + ' has already been taken.'});
 			} else {
-				var authKey = Utils.uid() + Utils.uid();
+				var authKey = Utils.uuid() + Utils.uuid();
 				var userBegin = {name: username, email: email, auth_key: authKey};
 				var insertCallback = function(response) {
 					console.log('Registered', response.id, username, email);
