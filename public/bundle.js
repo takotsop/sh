@@ -560,8 +560,7 @@
 
 		State.players = data.players;
 		var lobbyPlayerCount = data.players.length;
-		startTime = data.startTime;
-		if (startTime) {
+		if (data.startTime) {
 			updateCountdown();
 			countdownInterval = setInterval(updateCountdown, 1000);
 		} else {
@@ -580,7 +579,8 @@
 		var privateGame = data.private == true;
 		$('#lobby-privacy').toggle(privateGame);
 		if (privateGame) {
-			$('#lobby-private-code').text(data.gid);
+			var gid = data.gid;
+			$('#lobby-private-code').html('<a href="/join/'+gid+'" target="_blank">https://secrethitler.online/join/<strong>' + gid + '</strong></a>');
 		}
 	};
 
