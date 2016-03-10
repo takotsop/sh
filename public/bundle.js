@@ -560,7 +560,8 @@
 
 		State.players = data.players;
 		var lobbyPlayerCount = data.players.length;
-		if (data.startTime) {
+		startTime = data.startTime;
+		if (startTime) {
 			updateCountdown();
 			countdownInterval = setInterval(updateCountdown, 1000);
 		} else {
