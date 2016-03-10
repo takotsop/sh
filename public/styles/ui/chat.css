@@ -25,6 +25,10 @@
 	color: #F7E2C0;
 }
 
+#game-mat, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/
+	padding-bottom: 44px;
+}
+
 /* BUTTONS */
 
 .chat-button {
@@ -53,4 +57,14 @@
 #menu-button {
 	right: 0;
 	background-image: url(/images/menu.png);
+}
+
+.chat-container {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 640px;
+	max-width: 100%;
+	margin: auto;
 }

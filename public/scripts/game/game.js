@@ -19,6 +19,7 @@ var Policies = require('game/policies');
 
 var endGame = function(liberalWin, winMethod) {
 	if (!State.gameOver) {
+		State.started = false;
 		State.gameOver = true;
 		Chat.setDirective('GAME OVER');
 		Overlay.show('victory', {liberals: liberalWin, method: winMethod});

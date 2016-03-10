@@ -21,9 +21,13 @@ var State = require('game/state');
 //LOCAL
 
 var startGame = function(data) {
+	$('.chat-container').html('');
+	$('#chat-box').show();
+
 	Data.gameId = data.gid;
 	App.showSection('game');
 
+	State.started = true;
 	State.initializedPlay = false;
 	State.gameOver = false;
 	State.positionIndex = data.startIndex;

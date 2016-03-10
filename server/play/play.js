@@ -243,7 +243,7 @@ module.exports = function(socket) {
 			data.uid = rawData.uid;
 			recording = powerAction(action, data, puid, game);
 		}
-		if (recording) {
+		if (recording && game.started) {
 			var historyIndex = game.history.length;
 			recording.i = historyIndex;
 			game.history[historyIndex] = recording;

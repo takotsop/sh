@@ -60,16 +60,6 @@
 	letter-spacing: 0.1em;
 }
 
-#overlay-chat {
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 640px;
-	max-width: 100%;
-	margin: auto;
-}
-
 #overlay .info h1 {
 	color: #F7E2C0;
 }

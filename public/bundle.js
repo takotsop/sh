@@ -550,6 +550,7 @@
 
 		clearCountdown();
 
+		State.players = data.players;
 		var lobbyPlayerCount = data.players.length;
 		startTime = data.startTime;
 		if (startTime) {
@@ -578,9 +579,12 @@
 	var showLobbySection = function(subsection) {
 		$('#s-lobby > *').hide();
 		$('#lobby-'+subsection).show();
+		Chat.toggle(subsection == 'wait');
 	};
 
 	var connectToLobby = function() {
+		$('.chat-container').html('');
+
 		showLobbySection('start');
 
 		Socket.emit('lobby join');
@@ -752,6 +756,8 @@
 
 	var Socket = __webpack_require__(7);
 
+	var State = __webpack_require__(20);
+
 	//LOCAL
 
 	var inputState;
@@ -774,7 +780,8 @@
 			var message = data.msg;
 			var name = player.name;
 			App.playerDiv(player, '.chat').text(message);
-			$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+			var chatId = State.started ? 'overlay' : 'lobby';
+			$('#chat-container-'+chatId).append('<p><strong>' + name + ': </strong>' + message + '</p>');
 		}
 	};
 
@@ -857,6 +864,10 @@
 
 	module.exports = {
 
+		toggle: function(show) {
+			$('#chat-box').toggle(show);
+		},
+
 		setDirective: setDirective,
 
 		addMessage: addChatMessage,
@@ -909,7 +920,7 @@
 
 
 	// module
-	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n", ""]);
+	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-mat, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-container {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n", ""]);
 
 	// exports
 
@@ -1394,6 +1405,7 @@
 
 	var endGame = function(liberalWin, winMethod) {
 		if (!State.gameOver) {
+			State.started = false;
 			State.gameOver = true;
 			Chat.setDirective('GAME OVER');
 			Overlay.show('victory', {liberals: liberalWin, method: winMethod});
@@ -1563,7 +1575,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-mat {\n\tposition: relative;\n\tbox-sizing: border-box;\n\theight: 100%;\n\tmin-height: 600px;\n\tpadding-bottom: 44px;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#s-game.directive #game-mat {\n\tpadding-top: 44px;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n", ""]);
+	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-mat {\n\tposition: relative;\n\tbox-sizing: border-box;\n\theight: 100%;\n\tmin-height: 600px;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#s-game.directive #game-mat {\n\tpadding-top: 44px;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n", ""]);
 
 	// exports
 
@@ -1861,7 +1873,7 @@
 
 
 	// module
-	exports.push([module.id, "#overlay {\n\tposition: fixed;\n\ttop: 44px;\n\tleft: 0;\n\tright: 0;\n\tbottom: 44px;\n\tbackground: rgba(0, 0, 0, 0.5);\n\n\tcolor: #eaeae5;\n\ttext-align: center;\n\ttext-shadow: 0 2px 8px #393734;\n}\n\n#overlay h1 {\n\tfont-size: 4em;\n\tmargin-top: 0;\n}\n\n#overlay h2 {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n#overlay h3 {\n\tfont-size: 1.6em;\n\tfont-weight: 500;\n}\n\n#overlay h4 {\n\tmargin-bottom: 8px;\n\ttext-transform: uppercase;\n\tletter-spacing: 0.2em;\n}\n\n#version {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n/* MENU */\n\n#overlay .front {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\theight: 640px;\n\tmax-height: 100%;\n\tmargin: auto;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#overlay-menu button {\n\ttext-transform: uppercase;\n\tletter-spacing: 0.1em;\n}\n\n#overlay-chat {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n\n#overlay .info h1 {\n\tcolor: #F7E2C0;\n}\n\n#game-mat.overlay {\n\t-webkit-filter: blur(25px);\n\tfilter: blur(25px);\n/* \tfilter: blur(20px); */\n\t-webkit-transition: 0.4s all linear;\n}\n\n.avatar {\n\tmargin: auto;\n\twidth: 72px !important;\n\theight: 72px !important;\n}\n\n/* TIPS */\n\n.tip {\n\tposition: absolute;\n\tfont-size: 1.5em;\n\tfont-weight: 200;\n\tfont-style: italic;\n\tcolor: #FFD556;\n}\n.tip.top {\n\ttop: 0;\n\tleft: 20%;\n}\n.tip.bottom {\n\tbottom: 0;\n\tleft: 8%;\n}\n.tip.bottom.right {\n\tbottom: 0;\n\tright: 14px;\n}\n", ""]);
+	exports.push([module.id, "#overlay {\n\tposition: fixed;\n\ttop: 44px;\n\tleft: 0;\n\tright: 0;\n\tbottom: 44px;\n\tbackground: rgba(0, 0, 0, 0.5);\n\n\tcolor: #eaeae5;\n\ttext-align: center;\n\ttext-shadow: 0 2px 8px #393734;\n}\n\n#overlay h1 {\n\tfont-size: 4em;\n\tmargin-top: 0;\n}\n\n#overlay h2 {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n#overlay h3 {\n\tfont-size: 1.6em;\n\tfont-weight: 500;\n}\n\n#overlay h4 {\n\tmargin-bottom: 8px;\n\ttext-transform: uppercase;\n\tletter-spacing: 0.2em;\n}\n\n#version {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n/* MENU */\n\n#overlay .front {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\theight: 640px;\n\tmax-height: 100%;\n\tmargin: auto;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#overlay-menu button {\n\ttext-transform: uppercase;\n\tletter-spacing: 0.1em;\n}\n\n#overlay .info h1 {\n\tcolor: #F7E2C0;\n}\n\n#game-mat.overlay {\n\t-webkit-filter: blur(25px);\n\tfilter: blur(25px);\n/* \tfilter: blur(20px); */\n\t-webkit-transition: 0.4s all linear;\n}\n\n.avatar {\n\tmargin: auto;\n\twidth: 72px !important;\n\theight: 72px !important;\n}\n\n/* TIPS */\n\n.tip {\n\tposition: absolute;\n\tfont-size: 1.5em;\n\tfont-weight: 200;\n\tfont-style: italic;\n\tcolor: #FFD556;\n}\n.tip.top {\n\ttop: 0;\n\tleft: 20%;\n}\n.tip.bottom {\n\tbottom: 0;\n\tleft: 8%;\n}\n.tip.bottom.right {\n\tbottom: 0;\n\tright: 14px;\n}\n", ""]);
 
 	// exports
 
@@ -2431,9 +2443,13 @@
 	//LOCAL
 
 	var startGame = function(data) {
+		$('.chat-container').html('');
+		$('#chat-box').show();
+
 		Data.gameId = data.gid;
 		App.showSection('game');
 
+		State.started = true;
 		State.initializedPlay = false;
 		State.gameOver = false;
 		State.positionIndex = data.startIndex;

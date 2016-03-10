@@ -124,6 +124,8 @@
 		<button id="lobby-submit-private" class="large">submit</button>
 	</div>
 	<div id="lobby-wait">
+		<div id="chat-container-lobby" class="chat-container">
+		</div>
 		<h1>Waiting for players</h1>
 		<div id="lobby-privacy">
 			<h2>Private game</h2>
@@ -234,14 +236,8 @@
 	<div id="directive">
 	</div>
 
-	<div id="chat-box">
-		<input id="i-chat" type="text" placeholder="💬" maxlength="255" />
-		<div id="voice-button" class="chat-button">🎙</div>
-		<div id="menu-button" class="chat-button"></div>
-	</div>
-
 	<div id="overlay" style="display:none;">
-		<div id="overlay-chat">
+		<div id="chat-container-overlay" class="chat-container">
 		</div>
 		<div id="overlay-info" class="toggle-section">
 			<div class="extras"></div>
@@ -290,6 +286,12 @@
 		</div>
 	</div>
 </section>
+
+<div id="chat-box" style="display:none;">
+	<input id="i-chat" type="text" placeholder="💬" maxlength="255" />
+	<div id="voice-button" class="chat-button">🎙</div>
+	<div id="menu-button" class="chat-button"></div>
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>

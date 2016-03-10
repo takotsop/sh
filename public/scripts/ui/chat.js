@@ -12,6 +12,8 @@ var App = require('ui/app');
 
 var Socket = require('socket/socket');
 
+var State = require('game/state');
+
 //LOCAL
 
 var inputState;
@@ -34,7 +36,8 @@ var addChatMessage = function(data) {
 		var message = data.msg;
 		var name = player.name;
 		App.playerDiv(player, '.chat').text(message);
-		$('#overlay-chat').append('<p><strong>' + name + ': </strong>' + message + '</p>');
+		var chatId = State.started ? 'overlay' : 'lobby';
+		$('#chat-container-'+chatId).append('<p><strong>' + name + ': </strong>' + message + '</p>');
 	}
 };
 
@@ -116,6 +119,10 @@ $('#menu-button').on('click', function() {
 //PUBLIC
 
 module.exports = {
+
+	toggle: function(show) {
+		$('#chat-box').toggle(show);
+	},
 
 	setDirective: setDirective,
 

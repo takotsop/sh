@@ -48,6 +48,7 @@ var updateLobby = function(data) {
 
 	clearCountdown();
 
+	State.players = data.players;
 	var lobbyPlayerCount = data.players.length;
 	startTime = data.startTime;
 	if (startTime) {
@@ -76,9 +77,12 @@ var updateLobby = function(data) {
 var showLobbySection = function(subsection) {
 	$('#s-lobby > *').hide();
 	$('#lobby-'+subsection).show();
+	Chat.toggle(subsection == 'wait');
 };
 
 var connectToLobby = function() {
+	$('.chat-container').html('');
+
 	showLobbySection('start');
 
 	Socket.emit('lobby join');
