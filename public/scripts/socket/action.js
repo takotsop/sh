@@ -4,12 +4,12 @@ var Socket = require('socket/socket');
 
 //LOCAL
 
-var emitAction = function(action, data) {
+var emitAction = function(action, data, callback) {
 	if (!data) {
 		data = {};
 	}
 	data.action = action;
-	Socket.emit('game action', data);
+	Socket.emit('game action', data, callback);
 };
 
 //PUBLIC

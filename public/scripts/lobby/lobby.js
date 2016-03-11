@@ -102,8 +102,7 @@ var showLobby = function() {
 };
 
 var quitGame = function() {
-	Action.emit('quit');
-	showLobby();
+	Action.emit('quit', null, showLobby);
 };
 
 //EVENTS

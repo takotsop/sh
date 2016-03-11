@@ -409,12 +409,12 @@
 
 	'use strict';
 
-	var Config = __webpack_require__(9);
-	var Data = __webpack_require__(6);
+	var Config = __webpack_require__(6);
+	var Data = __webpack_require__(7);
 
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
-	var Lobby = __webpack_require__(10);
+	var Lobby = __webpack_require__(11);
 	var Welcome = __webpack_require__(39);
 
 	//SOCKET
@@ -449,56 +449,6 @@
 
 	'use strict';
 
-	module.exports = {
-
-		uid: localStorage.getItem('uid'),
-
-		auth: localStorage.getItem('auth'),
-
-		username: null,
-
-	};
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var SocketIO = __webpack_require__(8);
-
-	var CommonConsts = __webpack_require__(24);
-
-	var Config = __webpack_require__(9);
-	var Data = __webpack_require__(6);
-
-	//LOCAL
-
-	var params;
-	if (Data.uid && Data.auth) {
-		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth + '&v=' + CommonConsts.VERSION};
-	}
-
-	var socket = SocketIO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
-
-	//PUBLIC
-
-	module.exports = socket;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	module.exports = io;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	'use strict';
-
 	var pageLoad = window.location;
 
 	var pathItems = pageLoad.pathname.split('/');
@@ -515,29 +465,104 @@
 
 
 /***/ },
-/* 10 */
+/* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+
+		uid: localStorage.getItem('uid'),
+
+		auth: localStorage.getItem('auth'),
+
+		username: null,
+
+	};
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(11);
+	var SocketIO = __webpack_require__(9);
 
-	var $ = __webpack_require__(13);
+	var CommonConsts = __webpack_require__(10);
 
-	var Config = __webpack_require__(9);
-	var Util = __webpack_require__(14);
+	var Config = __webpack_require__(6);
+	var Data = __webpack_require__(7);
 
-	var Chat = __webpack_require__(15);
+	//LOCAL
 
-	var App = __webpack_require__(19);
+	var params;
+	if (Data.uid && Data.auth) {
+		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth + '&v=' + CommonConsts.VERSION};
+	}
+
+	var socket = SocketIO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);
+
+	//PUBLIC
+
+	module.exports = socket;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = io;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var MAJOR_VERSION = 1;
+	var MINOR_VERSION = 1;
+	var PATCH_VERSION = 1;
+
+	module.exports = {
+
+		VERSION: [MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION].join('.'),
+		COMPATIBLE_VERSION: [MAJOR_VERSION, MINOR_VERSION].join('.'),
+
+		LIBERAL: 'liberal',
+		FASCIST: 'fascist',
+		NONE: 'none',
+
+		FASCIST_POLICIES_REQUIRED: 6,
+		LIBERAL_POLICIES_REQUIRED: 5,
+
+	};
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(12);
+
+	var $ = __webpack_require__(14);
+
+	var Config = __webpack_require__(6);
+	var Util = __webpack_require__(15);
+
+	var Chat = __webpack_require__(16);
+
+	var App = __webpack_require__(20);
 
 	var Action = __webpack_require__(28);
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
 	var Welcome = __webpack_require__(39);
 
 	var Start = __webpack_require__(43);
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -622,8 +647,7 @@
 	};
 
 	var quitGame = function() {
-		Action.emit('quit');
-		showLobby();
+		Action.emit('quit', null, showLobby);
 	};
 
 	//EVENTS
@@ -702,13 +726,13 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(12);
+	var content = __webpack_require__(13);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -728,7 +752,7 @@
 	}
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(3)();
@@ -742,13 +766,13 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	module.exports = jQuery;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -763,24 +787,24 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(16);
+	__webpack_require__(17);
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
-	var SimpleWebRTC = __webpack_require__(18);
+	var SimpleWebRTC = __webpack_require__(19);
 
-	var Data = __webpack_require__(6);
+	var Data = __webpack_require__(7);
 
-	var App = __webpack_require__(19);
+	var App = __webpack_require__(20);
 
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -799,7 +823,7 @@
 	};
 
 	var addChatMessage = function(data) {
-		var player = __webpack_require__(21).get(data.uid);
+		var player = __webpack_require__(22).get(data.uid);
 		if (player) {
 			var message = data.msg;
 			var name = player.name;
@@ -910,13 +934,13 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(17);
+	var content = __webpack_require__(18);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -936,7 +960,7 @@
 	}
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(3)();
@@ -950,22 +974,22 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = SimpleWebRTC;
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
-	var Data = __webpack_require__(6);
+	var Data = __webpack_require__(7);
 
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -1027,7 +1051,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1064,24 +1088,24 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(22);
+	__webpack_require__(23);
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
-	var CommonConsts = __webpack_require__(24);
+	var CommonConsts = __webpack_require__(10);
 
-	var App = __webpack_require__(19);
+	var App = __webpack_require__(20);
 	var Cards = __webpack_require__(25);
-	var Chat = __webpack_require__(15);
+	var Chat = __webpack_require__(16);
 
 	var Action = __webpack_require__(28);
 
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//HELPERS
 
@@ -1204,13 +1228,13 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(23);
+	var content = __webpack_require__(24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -1230,7 +1254,7 @@
 	}
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(3)();
@@ -1244,31 +1268,6 @@
 
 
 /***/ },
-/* 24 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var MAJOR_VERSION = 1;
-	var MINOR_VERSION = 1;
-	var PATCH_VERSION = 1;
-
-	module.exports = {
-
-		VERSION: [MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION].join('.'),
-		COMPATIBLE_VERSION: [MAJOR_VERSION, MINOR_VERSION].join('.'),
-
-		LIBERAL: 'liberal',
-		FASCIST: 'fascist',
-		NONE: 'none',
-
-		FASCIST_POLICIES_REQUIRED: 6,
-		LIBERAL_POLICIES_REQUIRED: 5,
-
-	};
-
-
-/***/ },
 /* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1276,11 +1275,11 @@
 
 	__webpack_require__(26);
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
 	var Action = __webpack_require__(28);
 
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -1383,16 +1382,16 @@
 
 	'use strict';
 
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
 	//LOCAL
 
-	var emitAction = function(action, data) {
+	var emitAction = function(action, data, callback) {
 		if (!data) {
 			data = {};
 		}
 		data.action = action;
-		Socket.emit('game action', data);
+		Socket.emit('game action', data, callback);
 	};
 
 	//PUBLIC
@@ -1413,16 +1412,16 @@
 	__webpack_require__(30);
 	__webpack_require__(32);
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
 	var CommonGame = __webpack_require__(34);
 
-	var App = __webpack_require__(19);
+	var App = __webpack_require__(20);
 	var Cards = __webpack_require__(25);
-	var Chat = __webpack_require__(15);
+	var Chat = __webpack_require__(16);
 	var Overlay = __webpack_require__(35);
 
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 	var Policies = __webpack_require__(38);
 
 	//FINISH
@@ -1699,14 +1698,14 @@
 
 	__webpack_require__(36);
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
 	var Cards = __webpack_require__(25);
 
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
-	var Players = __webpack_require__(21);
-	var State = __webpack_require__(20);
+	var Players = __webpack_require__(22);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -1816,7 +1815,7 @@
 			confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
 		}
 		if (confirmed) {
-			__webpack_require__(10).quitToLobby();
+			__webpack_require__(11).quitToLobby();
 		}
 	});
 
@@ -1908,15 +1907,15 @@
 
 	'use strict';
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
-	var CommonConsts = __webpack_require__(24);
+	var CommonConsts = __webpack_require__(10);
 
-	var App = __webpack_require__(19);
+	var App = __webpack_require__(20);
 	var Cards = __webpack_require__(25);
-	var Chat = __webpack_require__(15);
+	var Chat = __webpack_require__(16);
 
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -2119,17 +2118,17 @@
 
 	__webpack_require__(40);
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
 	var CommonValidate = __webpack_require__(42);
 
-	var Config = __webpack_require__(9);
-	var Data = __webpack_require__(6);
+	var Config = __webpack_require__(6);
+	var Data = __webpack_require__(7);
 
-	var App = __webpack_require__(19);
-	var Chat = __webpack_require__(15);
+	var App = __webpack_require__(20);
+	var Chat = __webpack_require__(16);
 
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
 	//LOCAL
 
@@ -2446,23 +2445,23 @@
 
 	'use strict';
 
-	var $ = __webpack_require__(13);
+	var $ = __webpack_require__(14);
 
-	var CommonConsts = __webpack_require__(24);
+	var CommonConsts = __webpack_require__(10);
 	var CommonGame = __webpack_require__(34);
 
-	var Data = __webpack_require__(6);
+	var Data = __webpack_require__(7);
 
-	var App = __webpack_require__(19);
+	var App = __webpack_require__(20);
 	var Cards = __webpack_require__(25);
 	var Overlay = __webpack_require__(35);
 
 	var Process = __webpack_require__(44);
 
 	var Game = __webpack_require__(29);
-	var Players = __webpack_require__(21);
+	var Players = __webpack_require__(22);
 	var Policies = __webpack_require__(38);
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 
@@ -2604,15 +2603,15 @@
 
 	'use strict';
 
-	var Socket = __webpack_require__(7);
+	var Socket = __webpack_require__(8);
 
 	var Cards = __webpack_require__(25);
-	var Chat = __webpack_require__(15);
+	var Chat = __webpack_require__(16);
 
 	var Game = __webpack_require__(29);
-	var Players = __webpack_require__(21);
+	var Players = __webpack_require__(22);
 	var Policies = __webpack_require__(38);
-	var State = __webpack_require__(20);
+	var State = __webpack_require__(21);
 
 	//LOCAL
 

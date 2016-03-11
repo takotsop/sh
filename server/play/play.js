@@ -8,7 +8,7 @@ var chatAction = function(data, puid, game) {
 	return data;
 };
 
-var quitAction = function(data, puid, game) {
+var quitAction = function(data, puid, game, callback) {
 	var wasPresident = game.isPresident(puid);
 	var wasChancellor = game.isChancellor(puid);
 	var wasHitler = game.isHitler(puid);
@@ -21,6 +21,9 @@ var quitAction = function(data, puid, game) {
 		}
 		if (advance) {
 			game.advanceTurn();
+		}
+		if (callback) {
+			callback();
 		}
 		return game.emitAction('abandoned', {uid: puid, hitler: wasHitler, advance: advance});
 	}
@@ -252,7 +255,7 @@ var processAction = function(game, data) {
 
 module.exports = function(socket) {
 
-	socket.on('game action', function(rawData) {
+	socket.on('game action', function(rawData, callback) {
 		var action = rawData.action;
 		var game = socket.game;
 		var puid = socket.uid;
@@ -263,7 +266,7 @@ module.exports = function(socket) {
 		var data = {action: action};
 		var recording, saving = true;
 		if (action == 'quit') {
-			recording = quitAction(data, puid, game, socket);
+			recording = quitAction(data, puid, game, callback);
 		} else if (action == 'chat') {
 			data.msg = rawData.msg.substr(0, 255);
 			recording = chatAction(data, puid, game);
