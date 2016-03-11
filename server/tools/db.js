@@ -149,7 +149,7 @@ module.exports = {
 
 	updatePlayers: function(userIds, state, gid, logged) {
 		if (logged) {
-			console.log('Update players', state, userIds);
+			console.log('Update players', state, gid, userIds);
 		}
 		if (userIds.length > 0) {
 			if (!gid) {

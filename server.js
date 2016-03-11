@@ -26,4 +26,4 @@ Socket.init(http);
 
 http.listen(portNumber);
 
-console.log('Secret Hitler Online v' + CommonConsts.VERSION + ' ' + (process.env.NODE_ENV || 'TESTING') + ' on port ' + portNumber);
+console.log('Secret Hitler Online v' + CommonConsts.VERSION + ' ' + (process.env.NODE_ENV || 'TESTING') + ' on port ' + portNumber + '\n');

@@ -63,7 +63,7 @@ module.exports = function(socket) {
 		leaveOldGame(socket);
 
 		if (!joinOngoingGame(socket)) {
-			if (!data.join || joinGameById(socket, data.join) == false) {
+			if (!data || !data.join || joinGameById(socket, data.join) == false) {
 				socket.join('lobby');
 			}
 		}

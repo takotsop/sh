@@ -324,11 +324,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (!this.finished) {
 			console.log(game.gid, 'FIN', liberals, method);
 
-			var activePlayers = [];
-			this.players.forEach(function(puid) {
-				if (!game.playerState(puid, 'quit')) {
-					activePlayers.push(puid);
-				}
+			var activePlayers = this.players.filter(function(puid) {
+				return !game.playerState(puid, 'quit');
 			});
 			DB.updatePlayers(activePlayers, 'finished', null, true);
 

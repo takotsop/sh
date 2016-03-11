@@ -253,7 +253,7 @@ var processAction = function(game, data) {
 	}
 };
 
-module.exports = function(socket) {
+var Play = function(socket) {
 
 	socket.on('game action', function(rawData, callback) {
 		var action = rawData.action;
@@ -296,8 +296,10 @@ module.exports = function(socket) {
 
 };
 
-module.exports.process = function(game) {
+Play.process = function(game) {
 	game.history.forEach(function(item) {
 		processAction(game, item);
 	});
 };
+
+module.exports = Play;
