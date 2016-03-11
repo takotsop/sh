@@ -435,10 +435,12 @@ var Game = function(restoreData, size, privateGame, socket) {
 		}
 	};
 
-	this.remove = function(socket) {
-		socket.leave(this.gid);
+	this.remove = function(socket, uid) {
+		if (socket) {
+			socket.leave(this.gid);
+			uid = socket.uid;
+		}
 
-		var uid = socket.uid;
 		var playerState = this.playerState(uid);
 		if (!playerState || playerState.quit) {
 			return false;
@@ -454,15 +456,19 @@ var Game = function(restoreData, size, privateGame, socket) {
 			if (this.players.length == 0) {
 				this.removeSelf();
 			} else {
-				this.names = this.names.filter(function(name) {
-					return name != socket.name;
-				});
+				if (socket) {
+					this.names = this.names.filter(function(name) {
+						return name != socket.name;
+					});
+				}
 				this.players.forEach(function(puid, pidx) {
 					game.playerState(puid, 'index', pidx);
 				});
 			}
 		}
-		socket.game = null;
+		if (socket) {
+			socket.game = null;
+		}
 
 		if (!this.started) {
 			this.resetAutostart();

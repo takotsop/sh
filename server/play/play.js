@@ -8,11 +8,11 @@ var chatAction = function(data, puid, game) {
 	return data;
 };
 
-var quitAction = function(data, puid, game, socket) {
+var quitAction = function(data, puid, game) {
 	var wasPresident = game.isPresident(puid);
 	var wasChancellor = game.isChancellor(puid);
 	var wasHitler = game.isHitler(puid);
-	if (game.remove(socket)) {
+	if (game.remove(null, puid)) {
 		var advance;
 		if (wasPresident) {
 			advance = true;
@@ -225,7 +225,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 var processAction = function(game, data) {
 	var action = data.action;
 	if (action == 'abandoned') {
-		quitAction(data, data.uid, game, socket);
+		quitAction(data, data.uid, game);
 	} else if (action == 'chat') {
 		chatAction(data, data.uid, game);
 	} else if (action == 'chancellor chosen') {
