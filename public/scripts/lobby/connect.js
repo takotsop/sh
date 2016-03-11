@@ -1,5 +1,6 @@
 'use strict';
 
+var Config = require('util/config');
 var Data = require('util/data');
 
 var Socket = require('socket/socket');
@@ -26,6 +27,8 @@ Socket.on('auth', function(data) {
 });
 
 Socket.on('reload', function(data) {
-	window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements.');
+	if (!Config.TESTING) { 
+		window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements.');
+	}
 	window.location.reload();
 });

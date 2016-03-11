@@ -409,6 +409,7 @@
 
 	'use strict';
 
+	var Config = __webpack_require__(9);
 	var Data = __webpack_require__(6);
 
 	var Socket = __webpack_require__(7);
@@ -435,7 +436,9 @@
 	});
 
 	Socket.on('reload', function(data) {
-		window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements.');
+		if (!Config.TESTING) { 
+			window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements.');
+		}
 		window.location.reload();
 	});
 
