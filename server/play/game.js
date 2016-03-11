@@ -330,7 +330,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			DB.updatePlayers(activePlayers, 'finished', null, true);
 
 			this.finished = true;
-			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: Utils.now(), history: JSON.stringify(this.history), enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
+			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: Utils.now(), history: JSON.stringify(this.history), history_count: this.history.length, enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
 			this.removeSelf();
 		}
 	};
@@ -481,7 +481,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	this.addToHistory = function(step, save) {
 		this.history.push(step);
 		if (save) {
-			DB.update('games', "id = '"+this.gid+"'", {history: JSON.stringify(this.history)});
+			DB.update('games', "id = '"+this.gid+"'", {history: JSON.stringify(this.history), history_count: this.history.length});
 		}
 	};
 
