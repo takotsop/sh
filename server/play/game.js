@@ -70,7 +70,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 		DB.gid(function(gid) {
 			setup(game, gid, socket);
-			DB.insert('games', {id: gid, version: CommonConsts.COMPATIBLE_VERSION});
+			DB.insert('games', {id: gid, version: CommonConsts.VERSION, compatible_version: CommonConsts.COMPATIBLE_VERSION});
 		});
 	}
 
