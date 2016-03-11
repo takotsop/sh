@@ -13,6 +13,8 @@ var io;
 module.exports = {
 
 	init: function(http) {
+		DB.delete('games', 'state IS NULL');
+
 		DB.update('users', 'online_count > 0', {online_count: 0});
 
 		DB.fetchAll('id, start_index, player_count, player_ids, player_names, history', 'games', 'state = 1 AND compatible_version = $1', [CommonConsts.COMPATIBLE_VERSION], function(games) {
