@@ -32,6 +32,7 @@ var setup = function(game, gid, socket) {
 var Game = function(restoreData, size, privateGame, socket) {
 	var game = this;
 	if (restoreData) {
+		this.replaying = true;
 		this.players = restoreData.player_ids.split(',');
 		this.playersState = {};
 		this.names = restoreData.player_names.split(',');
@@ -219,12 +220,12 @@ var Game = function(restoreData, size, privateGame, socket) {
  		Player.emitTo(uid, 'lobby game data', this.gameData(uid));
 	};
 
-	this.start = function(reload) {
+	this.start = function() {
 		if (this.started) {
 			return;
 		}
 
-		if (!reload) {
+		if (!this.replaying) {
 			if (!this.enoughToStart()) {
 				console.error(game.gid, 'Start sequence interrupted', this.players);
 				this.resetAutostart();
@@ -241,7 +242,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.setPresidentIndex(this.positionIndex);
 		this.shufflePolicyDeck();
 
-		if (!reload) {
+		if (!this.replaying) {
 			var idsData = this.players.join(',');
 			var namesData = this.names.join(',');
 			DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: idsData, player_names: namesData});
@@ -271,6 +272,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (this.history) {
 			require.main.require('./server/play/play').process(game);
 		}
+		this.replaying = false;
 	};
 
 	this.getFascistPower = function() {
@@ -401,7 +403,9 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (playerState && !playerState.killed) {
 			if (quitting) {
 				playerState.quit = true;
-				DB.updatePlayers([uid], 'quit', null, !this.finished);
+				if (!this.replaying) {
+					DB.updatePlayers([uid], 'quit', null, !this.finished);
+				}
 			}
 			playerState.killed = true;
 			this.currentCount -= 1;

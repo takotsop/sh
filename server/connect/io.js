@@ -20,7 +20,7 @@ module.exports = {
 				var Game = require.main.require('./server/play/game');
 				games.forEach(function(gameData) {
 					var game = new Game(gameData);
-					game.start(true);
+					game.start();
 				});
 			}
 		});
