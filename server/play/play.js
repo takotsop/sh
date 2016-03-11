@@ -1,11 +1,22 @@
 'use strict';
 
+var Utils = require.main.require('./server/tools/utils');
+
 //MANAGE
 
 var chatAction = function(data, puid, game) {
-	data.uid = puid;
-	data = game.emitAction('chat', data);
-	return data;
+	var lastMessage = game.playerState(puid, 'chatMessage');
+	var lastMessageTime = game.playerState(puid, 'chatTime');
+	var now = Utils.now();
+	var message = data.msg;
+	if (message != lastMessage && (!lastMessageTime || now - lastMessageTime > 1)) {
+		game.playerState(puid, 'chatMessage', message);
+		game.playerState(puid, 'chatTime', now);
+
+		data.uid = puid;
+		data = game.emitAction('chat', data);
+		return data;	
+	}
 };
 
 var quitAction = function(data, puid, game, callback) {
