@@ -33,11 +33,7 @@ var quitAction = function(data, puid, game, callback) {
 
 var chancellorAction = function(data, puid, cuid, game) {
 	if (game.turn.chancellor) {
-		console.error(game.gid, 'Chancellor already chosen for ' + puid);
-		return;
-	}
-	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
-		console.error(game.gid, 'Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
+		console.log(game.gid, 'Chancellor already chosen for ' + puid);
 		return;
 	}
 	if (puid == cuid) {
@@ -46,6 +42,10 @@ var chancellorAction = function(data, puid, cuid, game) {
 	}
 	if (!game.isPresident(puid)) {
 		console.error(game.gid, 'President selects chancellor', game.turn.president, puid, cuid);
+		return;
+	}
+	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
+		console.error(game.gid, 'Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
 		return;
 	}
 	var targetState = game.playerState(cuid);
@@ -62,7 +62,7 @@ var chancellorAction = function(data, puid, cuid, game) {
 
 var voteAction = function(data, puid, game) {
 	if (game.turn.voted) {
-		console.error(game.gid, 'Vote already complete');
+		console.log(game.gid, 'Vote already complete');
 		return;
 	}
 	var doneVoting = true;
