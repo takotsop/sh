@@ -428,7 +428,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			return g.gid != gid;
 		});
 		if (!this.finished) {
-			DB.query("DELETE FROM games WHERE id = '"+gid+"'");
+			DB.delete('games', 'id = $1', [gid]);
 		}
 	};
 

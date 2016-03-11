@@ -131,6 +131,10 @@ module.exports = {
 
 	insert: insert,
 
+	delete: function(table, where, params, callback) {
+		query('DELETE FROM ' + table + ' WHERE ' + where, params, callback);
+	},
+
 	upsert: function(table, updateWhere, updateColsVals, returning, insertColsVals, callback) {
 		update(table, updateWhere, updateColsVals, returning, function(updated) {
 			if (updated) {
