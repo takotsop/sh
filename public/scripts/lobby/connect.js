@@ -24,3 +24,8 @@ Socket.on('auth', function(data) {
 		Lobby.show();
 	}
 });
+
+Socket.on('reload', function(data) {
+	window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements.');
+	window.location.reload();
+});

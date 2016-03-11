@@ -434,6 +434,11 @@
 		}
 	});
 
+	Socket.on('reload', function(data) {
+		window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements.');
+		window.location.reload();
+	});
+
 
 /***/ },
 /* 6 */
@@ -460,6 +465,8 @@
 
 	var SocketIO = __webpack_require__(8);
 
+	var CommonConsts = __webpack_require__(24);
+
 	var Config = __webpack_require__(9);
 	var Data = __webpack_require__(6);
 
@@ -467,7 +474,7 @@
 
 	var params;
 	if (Data.uid && Data.auth) {
-		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
+		params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth + '&v=' + CommonConsts.VERSION};
 	}
 
 	var socket = SocketIO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);

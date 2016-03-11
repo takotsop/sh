@@ -2,6 +2,8 @@
 
 var SocketIO = require('socket.io');
 
+var CommonConsts = require('common/constants');
+
 var Config = require('util/config');
 var Data = require('util/data');
 
@@ -9,7 +11,7 @@ var Data = require('util/data');
 
 var params;
 if (Data.uid && Data.auth) {
-	params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth};
+	params = {query: 'uid=' + Data.uid + '&auth=' + Data.auth + '&v=' + CommonConsts.VERSION};
 }
 
 var socket = SocketIO(Config.TESTING ? 'http://localhost:8004' : 'https://secrethitler.online', params);

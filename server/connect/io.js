@@ -29,8 +29,11 @@ module.exports = {
 
 		io.use(function(socket, next) {
 			var query = socket.handshake.query;
-			require('./signin')(socket, parseInt(query.uid), query.auth);
-
+			if (query.v == undefined || query.v == CommonConsts.VERSION) {
+				require('./signin')(socket, parseInt(query.uid), query.auth);
+			} else {
+				socket.emit('reload', {v: CommonConsts.VERSION});
+			}
 			next();
 		});
 
