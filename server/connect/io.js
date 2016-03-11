@@ -27,10 +27,14 @@ module.exports = {
 
 		io = SocketIO(http);
 
-		io.on('connection', function(socket) {
+		io.use(function(socket, next) {
 			var query = socket.handshake.query;
-
 			require('./signin')(socket, parseInt(query.uid), query.auth);
+
+			next();
+		});
+
+		io.on('connection', function(socket) {
 			require.main.require('./server/play/play')(socket);
 
 			socket.on('disconnect', function() {
