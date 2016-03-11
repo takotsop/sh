@@ -35,9 +35,9 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.replaying = true;
 		this.players = restoreData.player_ids.split(',');
 		this.playersState = {};
-		this.names = restoreData.player_names.split(',');
+		var names = restoreData.player_names.split(',');
 		this.players.forEach(function(puid, index) {
-			game.playersState[puid] = {index: index};
+			game.playersState[puid] = {index: index, name: names[index]};
 		});
 		this.history = restoreData.history || [];
 		this.startIndex = restoreData.start_index;
@@ -50,7 +50,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.private = privateGame;
 
 		this.players = [];
-		this.names = [];
 		this.history = [];
 		this.playersState = {};
 
@@ -101,6 +100,12 @@ var Game = function(restoreData, size, privateGame, socket) {
 			this.policyDeck[i] = i < liberalsRemaining ? CommonConsts.LIBERAL : CommonConsts.FASCIST;
 		}
 		this.policyDeck = this.shuffle(this.policyDeck);
+	};
+
+	this.playersStateMap = function(key) {
+		return this.players.map(function(puid) {
+			return game.playerState(puid, key);
+		});
 	};
 
 //POLICIES
@@ -169,7 +174,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.players.forEach(function(uid, index) {
 			var playerData = {
 				uid: uid,
-				name: game.names[index],
+				name: game.playerState(uid, 'name'),
 				index: index,
 			};
 			if (perspectiveUid) {
@@ -244,7 +249,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 		if (!this.replaying) {
 			var idsData = this.players.join(',');
-			var namesData = this.names.join(',');
+			var namesData = this.playersStateMap('name').join(',');
 			DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: idsData, player_names: namesData});
 			DB.updatePlayers(this.players, 'started', this.gid, true);
 		}
@@ -383,8 +388,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (!playerState) {
 			var index = this.players.length;
 			this.players[index] = uid;
-			this.names[index] = socket.name;
-			this.playersState[uid] = {index: index};
+			this.playersState[uid] = {index: index, name: socket.name};
 		} else {
 			playerState.quit = false;
 		}
@@ -460,11 +464,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 			if (this.players.length == 0) {
 				this.removeSelf();
 			} else {
-				if (socket) {
-					this.names = this.names.filter(function(name) {
-						return name != socket.name;
-					});
-				}
 				this.players.forEach(function(puid, pidx) {
 					game.playerState(puid, 'index', pidx);
 				});
