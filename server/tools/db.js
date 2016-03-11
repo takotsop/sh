@@ -152,10 +152,12 @@ module.exports = {
 			console.log('Update players', state, gid, userIds);
 		}
 		if (userIds.length > 0) {
-			if (!gid) {
+			if (gid) {
+				gid = "'" + gid + "'";
+			 } else {
 				gid = 'NULL';
 			}
-			query("UPDATE users SET games_"+state+"=games_"+state+"+1, gid='"+gid+"' WHERE id IN ("+userIds.join(',')+")");
+			query("UPDATE users SET games_"+state+"=games_"+state+"+1, gid="+gid+" WHERE id IN ("+userIds.join(',')+")");
 		}
 	},
 
