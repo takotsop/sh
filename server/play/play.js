@@ -28,12 +28,11 @@ var quitAction = function(data, puid, game, socket) {
 
 //PLAY
 
-var chancellorAction = function(data, puid, game) {
+var chancellorAction = function(data, puid, cuid, game) {
 	if (game.turn.chancellor) {
 		console.error(game.gid, 'Chancellor already chosen for ' + puid);
 		return;
 	}
-	var cuid = data.uid;
 	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
 		console.error(game.gid, 'Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
 		return;
@@ -43,7 +42,7 @@ var chancellorAction = function(data, puid, game) {
 		return;
 	}
 	if (!game.isPresident(puid)) {
-		console.error(game.gid, 'President selects chancellor', puid, cuid, '|', game.playerState(puid, 'index'), game.presidentIndex);
+		console.error(game.gid, 'President selects chancellor', game.turn.president, puid, cuid);
 		return;
 	}
 	var targetState = game.playerState(cuid);
@@ -63,30 +62,41 @@ var voteAction = function(data, puid, game) {
 		console.error(game.gid, 'Vote already complete');
 		return;
 	}
-	if (game.playerState(puid, 'killed')) {
-		return;
-	}
-	game.playerState(puid, 'vote', data.up);
 	var doneVoting = true;
-	game.players.forEach(function(puid) {
-		var playerState = game.playerState(puid);
-		if (!playerState.killed && playerState.vote == null) {
-			doneVoting = false;
+	if (puid) {
+		if (game.playerState(puid, 'killed')) {
+			return;
 		}
-	});
+		game.playerState(puid, 'vote', data.up);
+
+		game.players.forEach(function(puid) {
+			var playerState = game.playerState(puid);
+			if (!playerState.killed && playerState.vote == null) {
+				doneVoting = false;
+			}
+		});
+	}
 	if (doneVoting) {
 		game.turn.voted = true;
 
 		var supporters = [];
 		var supportCount = 0;
-		game.players.forEach(function(puid, idx) {
-			var playerState = game.playerState(puid);
-			supporters[idx] = playerState.vote;
-			if (playerState.vote) {
-				++supportCount;
-			}
-			delete playerState.vote;
-		});
+		if (puid) {
+			game.players.forEach(function(uid, idx) {
+				var playerState = game.playerState(uid);
+				supporters[idx] = playerState.vote;
+				if (playerState.vote) {
+					++supportCount;
+				}
+				delete playerState.vote;
+			});
+		} else {
+			data.supporters.forEach(function(supporting) {
+				if (supporting) {
+					++supportCount;
+				}
+			});
+		}
 		var elected = supportCount > Math.floor(game.currentCount / 2);
 		var forced, secret, isHitler;
 		if (elected) {
@@ -135,7 +145,7 @@ var policyAction = function(data, puid, game) {
 			data = game.emitAction('discarded', data, secret);
 			return data;
 		}
-	} else if (puid == game.turn.chancellor) {
+	} else if (game.isChancellor(puid)) {
 		if (game.turn.presidentDiscard == null) {
 			console.error(game.gid, 'President has not yet discarded a policy');
 			return;
@@ -147,6 +157,7 @@ var policyAction = function(data, puid, game) {
 				data = game.emitAction('veto requested', data);
 				return data;
 			}
+			console.error(game.gid, 'Veto not enabled', game.canVeto, game.turn.vetoRequested);
 		} else {
 			game.turn.chancellorAction = true;
 			game.turn.presidentDiscard = null;
@@ -162,25 +173,24 @@ var policyAction = function(data, puid, game) {
 			return data;
 		}
 	} else {
-		console.error(game.gid, 'Invalid policy action', puid, data);
+		console.error(game.gid, 'Invalid policy action', puid, game.turn.president, game.turn.chancellor, data);
 	}
 };
 
 //POWERS
 
-var powerAction = function(action, data, puid, game) {
+var powerAction = function(action, data, puid, tuid, game) {
 	if (game.isPresident(puid) && game.power == action) {
-		if (action.indexOf('veto') > -1) {
+		if (data.canVeto || action.indexOf('veto') > -1) {
 			data.canVeto = true;
 			game.canVeto = true;
 		}
 		if (action.indexOf('peek') > -1) {
-			data = game.emitAction('peeked', data);
+			data = game.emitAction('peek', data);
 		} else {
-			if (puid == data.uid) {
+			if (puid == tuid) {
 				return;
 			}
-			var tuid = data.uid;
 			if (action.indexOf('investigate') > -1) {
 				if (game.playerState(tuid, 'investigated')) {
 					return;
@@ -188,9 +198,9 @@ var powerAction = function(action, data, puid, game) {
 				var targetParty = game.playerState(tuid, 'allegiance') == 0 ? 0 : 1;
 				var secret = {target: game.presidentElect, party: targetParty};
 				game.playerState(tuid, 'investigated', true);
-				data = game.emitAction('investigated', data, secret);
+				data = game.emitAction('investigate', data, secret);
 			} else if (action.indexOf('election') > -1) {
-				if (game.turn.chancellor == data.uid) {
+				if (game.isChancellor(data.uid)) {
 					return;
 				}
 				game.specialPresident = game.playerState(tuid, 'index');
@@ -201,16 +211,44 @@ var powerAction = function(action, data, puid, game) {
 					return;
 				}
 				data.hitler = wasHitler;
-				data = game.emitAction('killed', data);
+				data = game.emitAction('bullet', data);
 			}
 		}
 		game.advanceTurn();
 		return data;
 	}
-	console.error(game.gid, 'Invalid power', game.isPresident(puid), game.power, action);
+	console.error(game.gid, 'Invalid power', puid, tuid, game.turn.president, game.power, action);
 };
 
 //PUBLIC
+
+var processAction = function(game, data) {
+	var action = data.action;
+	if (action == 'abandoned') {
+		quitAction(data, data.uid, game, socket);
+	} else if (action == 'chat') {
+		chatAction(data, data.uid, game);
+	} else if (action == 'chancellor chosen') {
+		chancellorAction(data, data.president, data.chancellor, game);
+	} else if (action == 'voted') {
+		voteAction(data, null, game);
+	} else if (action == 'discarded') {
+		policyAction(data, game.turn.president, game);
+	} else if (action == 'enacted') {
+		policyAction(data, game.turn.chancellor, game);
+	} else if (action == 'veto requested') {
+		policyAction(data, game.turn.chancellor, game);
+	} else if (action == 'vetoed') {
+		policyAction(data, game.turn.president, game);
+	} else if (action == 'veto overridden') {
+		policyAction(data, game.turn.president, game);
+	} else {
+		if (data.canVeto) {
+			action += ' veto';
+		}
+		powerAction(action, data, game.turn.president, data.uid, game);
+	}
+};
 
 module.exports = function(socket) {
 
@@ -223,15 +261,16 @@ module.exports = function(socket) {
 			return;
 		}
 		var data = {action: action};
-		var recording;
+		var recording, saving = true;
 		if (action == 'quit') {
 			recording = quitAction(data, puid, game, socket);
 		} else if (action == 'chat') {
 			data.msg = rawData.msg.substr(0, 255);
 			recording = chatAction(data, puid, game);
+			saving = false;
 		} else if (action == 'chancellor') {
 			data.uid = rawData.uid;
-			recording = chancellorAction(data, puid, game);
+			recording = chancellorAction(data, puid, data.uid, game);
 		} else if (action == 'vote') {
 			data.up = rawData.up;
 			recording = voteAction(data, puid, game);
@@ -241,12 +280,10 @@ module.exports = function(socket) {
 			recording = policyAction(data, puid, game);
 		} else {
 			data.uid = rawData.uid;
-			recording = powerAction(action, data, puid, game);
+			recording = powerAction(action, data, puid, data.uid, game);
 		}
 		if (recording && game.started) {
-			var historyIndex = game.history.length;
-			recording.i = historyIndex;
-			game.history[historyIndex] = recording;
+			game.addToHistory(recording, saving);
 		}
 	});
 
@@ -254,4 +291,10 @@ module.exports = function(socket) {
 		socket.game.emitExcept(socket, 'typing', {uid: socket.uid, on: data.on});
 	});
 
+};
+
+module.exports.process = function(game) {
+	game.history.forEach(function(item) {
+		processAction(game, item);
+	});
 };

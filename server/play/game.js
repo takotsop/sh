@@ -38,7 +38,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.players.forEach(function(puid, index) {
 			game.playersState[puid] = {index: index};
 		});
-		this.history = JSON.parse(restoreData.history) || [];
+		this.history = restoreData.history || [];
 		this.startIndex = restoreData.start_index;
 		this.playerCount = restoreData.player_count;
 		this.finished = false;
@@ -238,7 +238,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.currentCount = this.playerCount;
 		this.startIndex = this.random(this.playerCount);
 		this.positionIndex = this.startIndex;
-		this.presidentIndex = this.positionIndex;
+		this.setPresidentIndex(this.positionIndex);
 		this.shufflePolicyDeck();
 
 		if (!reload) {
@@ -267,6 +267,10 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.players.forEach(function(puid) {
 			game.emitStartPerspective(puid);
 		});
+
+		if (this.history) {
+			require.main.require('./server/play/play').process(game);
+		}
 	};
 
 	this.getFascistPower = function() {
@@ -275,17 +279,22 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 //STATE
 
+	this.setPresidentIndex = function(index) {
+		this.presidentIndex = index;
+		this.turn.president = this.players[index];
+	};	
+
 	this.advanceTurn = function() {
 		if (this.finished) {
 			return;
 		}
 		this.turn = {};
 		if (this.specialPresident != null) {
-			this.presidentIndex = this.specialPresident;
+			this.setPresidentIndex(this.specialPresident);
 			this.specialPresident = null;
 		} else {
 			this.positionIndex = CommonGame.getNextPresident(this.playerCount, this.players, this.positionIndex, this.playersState);
-			this.presidentIndex = this.positionIndex;
+			this.setPresidentIndex(this.positionIndex);
 		}
 		this.power = null;
 	};
@@ -463,12 +472,19 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 //HELPERS
 
+	this.addToHistory = function(step, save) {
+		this.history.push(step);
+		if (save) {
+			DB.update('games', "id = '"+this.gid+"'", {history: JSON.stringify(this.history)});
+		}
+	};
+
 	this.isChancellor = function(uid) {
 		return uid == this.turn.chancellor;
 	};
 
 	this.isPresident = function(uid) {
-		return this.playerState(uid, 'index') == this.presidentIndex;
+		return uid == this.turn.president;
 	};
 
 	this.isHitler = function(uid) {

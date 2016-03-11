@@ -36,11 +36,11 @@ var processAction = function(data, fastForward) {
 		if (data.canVeto) {
 			State.canVeto = true;
 		}
-		if (action == 'peeked') {
+		if (action == 'peek') {
 			Policies.returnPreviewed();
 		} else {
 			var target = Players.get(data.uid);
-			if (action == 'investigated') {
+			if (action == 'investigate') {
 				target.investigated = true;
 				if (State.isLocalPresident()) {
 					Players.displayAvatar(target, data.secret.party);
@@ -48,7 +48,7 @@ var processAction = function(data, fastForward) {
 				Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
 			} else if (action == 'special election') {
 				State.specialPresidentIndex = target.index;
-			} else if (action == 'killed') {
+			} else if (action == 'bullet') {
 				Players.kill(target, data.hitler, false);
 			}
 		}

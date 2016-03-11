@@ -78,7 +78,7 @@ var showOverlay = function(type, data) {
 			} else if (data.method == 'hitler quit') {
 				inner += 'The Liberals successfully scared Hitler out of his Thumb Bunker (quit the game)';
 			} else if (State.playerCount <= 3) {
-				if (data.method == 'killed') {
+				if (data.method == 'bullet') {
 					inner += 'Hitler successfully killed one of the two Liberal players';
 				} else if (data.method == 'quit') {
 					inner += 'A Liberal quit the game, leaving too few players remaining :(';

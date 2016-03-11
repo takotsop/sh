@@ -1765,7 +1765,7 @@
 				} else if (data.method == 'hitler quit') {
 					inner += 'The Liberals successfully scared Hitler out of his Thumb Bunker (quit the game)';
 				} else if (State.playerCount <= 3) {
-					if (data.method == 'killed') {
+					if (data.method == 'bullet') {
 						inner += 'Hitler successfully killed one of the two Liberal players';
 					} else if (data.method == 'quit') {
 						inner += 'A Liberal quit the game, leaving too few players remaining :(';
@@ -2630,11 +2630,11 @@
 			if (data.canVeto) {
 				State.canVeto = true;
 			}
-			if (action == 'peeked') {
+			if (action == 'peek') {
 				Policies.returnPreviewed();
 			} else {
 				var target = Players.get(data.uid);
-				if (action == 'investigated') {
+				if (action == 'investigate') {
 					target.investigated = true;
 					if (State.isLocalPresident()) {
 						Players.displayAvatar(target, data.secret.party);
@@ -2642,7 +2642,7 @@
 					Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
 				} else if (action == 'special election') {
 					State.specialPresidentIndex = target.index;
-				} else if (action == 'killed') {
+				} else if (action == 'bullet') {
 					Players.kill(target, data.hitler, false);
 				}
 			}
