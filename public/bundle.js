@@ -2635,6 +2635,7 @@
 			} else {
 				var target = Players.get(data.uid);
 				if (action == 'investigated') {
+					target.investigated = true;
 					if (State.isLocalPresident()) {
 						Players.displayAvatar(target, data.secret.party);
 					}
