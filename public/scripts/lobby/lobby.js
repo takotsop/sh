@@ -175,6 +175,7 @@ $('#lobby-button-join-private').on('click', function() {
 $('#lobby-button-signout').on('click', function() {
 	var confirmed = window.confirm('Are you sure you want to sign out of your account?');
 	if (confirmed) {
+		Config.manual = true;
 		Welcome.hideSplash();
 		Welcome.showSignin();
 	}

@@ -41,7 +41,7 @@ var showSignin = function() {
 
 	$('#i-signin-email').focus();
 
-	if (Config.TESTING && localStorage.getItem('manual') == null) {
+	if (Config.TESTING && (!Config.manual && localStorage.getItem('manual') == null)) {
 		setTimeout(function() {
 			$('#start-playing').click();
 			$('#guest-signin').click();
