@@ -233,7 +233,7 @@ Socket.on('lobby games stats', function(data) {
 		var showsDetails = onlineCount > 1;
 		$('#lobby-count-details').toggle(showsDetails);
 		if (showsDetails) {
-			$('#lobby-count-playing').text(data.players.playing);
+			$('#lobby-count-playing').text(Util.pluralize(data.players.playing, 'in game'));
 			$('#lobby-count-lobby').text(data.players.lobby);
 		}
 		$('#lobby-count-online').text(Util.pluralize(onlineCount, 'player'));
