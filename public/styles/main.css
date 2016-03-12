@@ -4,15 +4,10 @@
 /* Liberal	#78CAD7 #2E6C87 */
 /* Fascist	#E3644F #9C0701 */
 
-html {
+body {
 	width: 100%;
 	height: 100%;
-}
-
-body {
 	margin: 0;
-	width: inherit;
-	height: inherit;
 	background-color: #eaeae5;
 	font-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;
 
