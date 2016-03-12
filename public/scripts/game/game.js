@@ -49,7 +49,7 @@ var advanceTurn = function() {
 	if (State.gameOver) {
 		return;
 	}
-	if (State.specialPresidentIndex) {
+	if (State.specialPresidentIndex != null) {
 		State.presidentIndex = State.specialPresidentIndex;
 		State.specialPresidentIndex = null;
 	} else {
