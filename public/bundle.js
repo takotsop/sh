@@ -522,7 +522,7 @@
 
 	var MAJOR_VERSION = 1;
 	var MINOR_VERSION = 1;
-	var PATCH_VERSION = 4;
+	var PATCH_VERSION = 5;
 
 	module.exports = {
 
