@@ -431,7 +431,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			playerState.killed = true;
 			this.currentCount -= 1;
 
-			if (this.isHitler(uid)) {
+			if (!this.finished && this.isHitler(uid)) {
 				this.finish(true, quitting ? 'hitler quit' : 'hitler');
 			} else if (this.currentCount <= 2) {
 				this.removeSelf();
@@ -472,7 +472,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		}
 		if (this.started) {
 			playerState.quit = true;
-			this.kill(uid, true);
+			this.kill(uid, !this.finished);
 		} else {
 			this.players = this.players.filter(function(puid) {
 				return puid != uid;
