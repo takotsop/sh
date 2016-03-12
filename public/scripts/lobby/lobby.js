@@ -45,9 +45,9 @@ var gameTimeout = function(enabled) {
 		afkInterval = null;
 	}
 	if (enabled && !State.started) {
-		var waitDuration = $('#lobby-wait-afk').css('display') == 'none' ? 59 : 29;
+		var waitDuration = Util.hidden('#lobby-wait-afk') ? 59 : 29;
 		afkInterval = setTimeout(function() {
-			if ($('#lobby-wait-afk').css('display') == 'none') {
+			if (Util.hidden('#lobby-wait-afk')) {
 				$('#lobby-wait-afk').show();
 				Socket.emit('lobby afk');
 				gameTimeout(true);
@@ -102,7 +102,7 @@ var updateLobby = function(data) {
 };
 
 var showLobbySection = function(subsection, forced) {
-	if (!forced && $('#lobby-'+subsection).css('display') != 'none') {
+	if (!forced && !Util.hidden('#lobby-'+subsection)) {
 		return;
 	}
 

@@ -590,9 +590,9 @@
 			afkInterval = null;
 		}
 		if (enabled && !State.started) {
-			var waitDuration = $('#lobby-wait-afk').css('display') == 'none' ? 59 : 29;
+			var waitDuration = Util.hidden('#lobby-wait-afk') ? 59 : 29;
 			afkInterval = setTimeout(function() {
-				if ($('#lobby-wait-afk').css('display') == 'none') {
+				if (Util.hidden('#lobby-wait-afk')) {
 					$('#lobby-wait-afk').show();
 					Socket.emit('lobby afk');
 					gameTimeout(true);
@@ -647,7 +647,7 @@
 	};
 
 	var showLobbySection = function(subsection, forced) {
-		if (!forced && $('#lobby-'+subsection).css('display') != 'none') {
+		if (!forced && !Util.hidden('#lobby-'+subsection)) {
 			return;
 		}
 
@@ -862,9 +862,11 @@
 
 /***/ },
 /* 15 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var $ = __webpack_require__(14);
 
 	module.exports = {
 
@@ -877,6 +879,10 @@
 				countable += 's';
 			}
 			return amount + ' ' + countable;
+		},
+
+		hidden: function(selector) {
+			return $(selector).css('display') == 'none';
 		},
 
 	};

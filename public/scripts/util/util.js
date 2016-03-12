@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 module.exports = {
 
 	timestamp: function() {
@@ -11,6 +13,10 @@ module.exports = {
 			countable += 's';
 		}
 		return amount + ' ' + countable;
+	},
+
+	hidden: function(selector) {
+		return $(selector).css('display') == 'none';
 	},
 
 };
