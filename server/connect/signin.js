@@ -144,9 +144,9 @@ module.exports = function(socket, uid, auth) {
 			return;
 		}
 
-		DB.fetch('id, name', 'users', 'name = $1 OR email = $2', [username, email], function(userData) {
+		var completeRegistration = function(userData) {
 			if (userData) {
-				callback({error: 'This ' + (userData.name == username ? 'username' : 'email') + ' has already been taken.'});
+				callback({error: 'This ' + (userData.email == email ? 'email' : 'username') + ' has already been taken'});
 			} else {
 				var authKey = Utils.uuid() + Utils.uuid();
 				var userBegin = {name: username, email: email, auth_key: authKey};
@@ -156,6 +156,17 @@ module.exports = function(socket, uid, auth) {
 					callback(response);
 				};
 				DB.insert('users', userBegin, returnForSignin, insertCallback);
+			}
+		};
+
+		var existingFields = 'name, email';
+		DB.fetch(existingFields, 'users', 'name = $1 OR email = $2', [username, email], function(existingUser) {
+			if (existingUser) {
+				completeRegistration(existingUser);
+			} else {
+				DB.fetch(existingFields, 'users', 'name = $1', [CommonUtil.removeWhitespace(username)], function(existingUser) {
+					completeRegistration(existingUser);
+				});
 			}
 		});
 	});
