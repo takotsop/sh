@@ -42,7 +42,6 @@ var emitLobby = function(target) {
 	var onlineCount = 0, playingCount = 0, lobbyCount = 0;
 	for (var sid in playerSockets) {
 		var socket = playerSockets[sid];
-		console.log(sid, socket.game);
 		onlineCount += 1;
 		if (socket.game) {
 			if (!socket.game.finished) {
