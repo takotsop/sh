@@ -44,24 +44,24 @@ var quitAction = function(data, puid, game, callback) {
 
 var chancellorAction = function(data, puid, cuid, game) {
 	if (game.turn.chancellor) {
-		console.log(game.gid, 'Chancellor already chosen for ' + puid);
+		game.error('Chancellor already chosen', puid);
 		return;
 	}
 	if (puid == cuid) {
-		console.error(game.gid, 'Enchancell self', game.playerState(puid, 'index'), game.presidentIndex);
+		game.error('Enchancell self', puid, [game.playerState(puid, 'index'), game.presidentIndex]);
 		return;
 	}
 	if (!game.isPresident(puid)) {
-		console.error(game.gid, 'President selects chancellor', puid, game.turn.president, cuid);
+		game.error('President selects chancellor', puid, [game.turn.president, cuid]);
 		return;
 	}
 	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
-		console.error(game.gid, 'Chancellor selected involved in prior election', cuid, game.presidentElect, game.chancellorElect);
+		game.error('Chancellee involved in prior election', puid, [cuid, game.presidentElect, game.chancellorElect]);
 		return;
 	}
 	var targetState = game.playerState(cuid);
 	if (!targetState || targetState.killed) {
-		console.error(game.gid, 'Chancellee killed', targetState);
+		game.error('Chancellee killed', puid, targetState);
 		return;
 	}
 
@@ -73,7 +73,7 @@ var chancellorAction = function(data, puid, cuid, game) {
 
 var voteAction = function(data, puid, game) {
 	if (game.turn.voted) {
-		console.log(game.gid, 'Vote already complete');
+		game.error('Vote already complete', puid);
 		return;
 	}
 	var doneVoting = true;
@@ -161,7 +161,7 @@ var policyAction = function(data, puid, game) {
 		}
 	} else if (game.isChancellor(puid)) {
 		if (game.turn.presidentDiscard == null) {
-			console.error(game.gid, 'President has not yet discarded a policy');
+			game.error('President has not yet discarded a policy', puid);
 			return;
 		}
 		if (data.veto != null) {
@@ -171,7 +171,7 @@ var policyAction = function(data, puid, game) {
 				data = game.emitAction('veto requested', data);
 				return data;
 			}
-			console.error(game.gid, 'Veto not enabled', game.canVeto, game.turn.vetoRequested);
+			game.error('Veto not enabled', puid, [game.canVeto, game.turn.vetoRequested]);
 		} else {
 			game.turn.chancellorAction = true;
 			game.turn.presidentDiscard = null;
@@ -187,7 +187,7 @@ var policyAction = function(data, puid, game) {
 			return data;
 		}
 	} else {
-		console.error(game.gid, 'Invalid policy action', puid, game.turn.president, game.turn.chancellor, data);
+		game.error('Invalid policy action', puid, [game.turn.president, game.turn.chancellor, data]);
 	}
 };
 
@@ -203,12 +203,12 @@ var powerAction = function(action, data, puid, tuid, game) {
 			data = game.emitAction('peek', data);
 		} else {
 			if (puid == tuid) {
-				console.error(game.gid, 'Self action', action, puid, tuid);
+				game.error('Self action', puid, [action, tuid]);
 				return;
 			}
 			if (action.indexOf('investigate') > -1) {
 				if (game.playerState(tuid, 'investigated')) {
-					console.error(game.gid, 'Already investigated', puid, tuid);
+					game.error('Already investigated', puid, [tuid]);
 					return;
 				}
 				var targetParty = game.playerState(tuid, 'allegiance') == 0 ? 0 : 1;
@@ -217,7 +217,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 				data = game.emitAction('investigate', data, secret);
 			} else if (action.indexOf('election') > -1) {
 				if (game.isChancellor(data.uid)) {
-					console.error(game.gid, 'Chancellor cannot become Special President', puid, tuid, game.turn.chancellor);
+					game.error('Chancellor cannot become Special President', puid, [tuid, game.turn.chancellor]);
 					return;
 				}
 				game.specialPresidentIndex = game.playerState(tuid, 'index');
@@ -225,7 +225,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 			} else if (action.indexOf('bullet') > -1) {
 				var wasHitler = game.isHitler(tuid);
 				if (!game.kill(tuid, false)) {
-					console.error(game.gid, 'Could not kill', puid, tuid, game.playerState(tuid));
+					game.error('Could not kill', puid, [tuid, game.playerState(tuid)]);
 					return;
 				}
 				data.hitler = wasHitler;
@@ -235,7 +235,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 		game.advanceTurn();
 		return data;
 	}
-	console.error(game.gid, 'Invalid power', puid, tuid, game.turn.president, game.power, action);
+	game.error('Invalid power', puid, [tuid, game.turn.president, game.power, action]);
 };
 
 //PUBLIC
@@ -275,7 +275,7 @@ var Play = function(socket) {
 		var game = socket.game;
 		var puid = socket.uid;
 		if (!game || game.playerState(puid) == null) {
-			console.error('Socket action invalid game', puid, action, game);
+			console.error('Socket action invalid game', puid, [action, game]);
 			return;
 		}
 		var data = {action: action};

@@ -160,6 +160,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 		} else {
 			this.emit('game action', data);
 		}
+		this.lastAction = data;
+		this.lastError = null;
 		return data;
 	};
 
@@ -477,6 +479,22 @@ var Game = function(restoreData, size, privateGame, socket) {
 	};
 
 //HELPERS
+
+	this.error = function(description, puid, data) {
+		if (description == this.lastError) {
+			if (this.lastAction) {
+				console.error('GE', this.gid, puid, description, data);
+				console.log(this.lastAction, '\n');
+				this.lastAction = null;
+				Player.emitTo(puid, 'action error', description);
+			} else {
+				this.emit('action error', description);
+			}
+			this.lastError = null;
+		} else {
+			this.lastError = description;
+		}
+	};
 
 	this.addToHistory = function(step, save) {
 		this.history.push(step);
