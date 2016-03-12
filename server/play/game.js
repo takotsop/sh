@@ -65,7 +65,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.power = null;
 
 		this.positionIndex = null;
-		this.specialPresident = null;
+		this.specialPresidentIndex = null;
 		this.presidentIndex = null;
 
 		DB.gid(function(gid) {
@@ -296,9 +296,9 @@ var Game = function(restoreData, size, privateGame, socket) {
 			return;
 		}
 		this.turn = {};
-		if (this.specialPresident != null) {
-			this.setPresidentIndex(this.specialPresident);
-			this.specialPresident = null;
+		if (this.specialPresidentIndex != null) {
+			this.setPresidentIndex(this.specialPresidentIndex);
+			this.specialPresidentIndex = null;
 		} else {
 			this.positionIndex = CommonGame.getNextPresident(this.playerCount, this.players, this.positionIndex, this.playersState);
 			this.setPresidentIndex(this.positionIndex);

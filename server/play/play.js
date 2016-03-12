@@ -220,7 +220,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 					console.error(game.gid, 'Chancellor cannot become Special President', puid, tuid, game.turn.chancellor);
 					return;
 				}
-				game.specialPresident = game.playerState(tuid, 'index');
+				game.specialPresidentIndex = game.playerState(tuid, 'index');
 				data = game.emitAction('special election', data);
 			} else if (action.indexOf('bullet') > -1) {
 				var wasHitler = game.isHitler(tuid);
