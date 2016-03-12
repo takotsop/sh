@@ -2,6 +2,8 @@
 
 var Postgres = require('pg');
 
+var CommonUtil = require.main.require('./common/util');
+
 var Config = require('./config');
 var Utils = require('./utils');
 
@@ -77,7 +79,7 @@ var generateGameId = function(callback) {
 //UPSERT
 
 var update = function(table, where, columnsValues, returning, callback) {
-	columnsValues.updated_at = Utils.now();
+	columnsValues.updated_at = CommonUtil.now();
 
 	var columns = [], values = [], placeholders = [];
 	var index = 0;
@@ -92,7 +94,7 @@ var update = function(table, where, columnsValues, returning, callback) {
 };
 
 var insert = function(table, columnsValues, returning, callback) {
-	var now = Utils.now();
+	var now = CommonUtil.now();
 	if (!columnsValues.created_at) {
 		columnsValues.created_at = now;
 	}

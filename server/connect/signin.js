@@ -1,5 +1,6 @@
 'use strict';
 
+var CommonUtil = require.main.require('./common/util');
 var CommonValidate = require.main.require('./common/validate');
 
 var Utils = require.main.require('./server/tools/utils');
@@ -17,7 +18,7 @@ var setSocket = function(socket, response, uid, auth) {
 	socket.name = response.name;
 	Player.add(uid, socket);
 
-	DB.query('UPDATE users SET online_at = '+Utils.now()+', online_count = online_count + 1 WHERE id = '+uid+' RETURNING gid', null, function(users) {
+	DB.query('UPDATE users SET online_at = '+CommonUtil.now()+', online_count = online_count + 1 WHERE id = '+uid+' RETURNING gid', null, function(users) {
 		var oldGame = users[0].gid;
 		socket.game = oldGame ? Game.get(oldGame) : null;
 
@@ -88,7 +89,7 @@ module.exports = function(socket, uid, auth) {
 			return;
 		}
 
-		var now = Utils.now();
+		var now = CommonUtil.now();
 		DB.fetch('id, name, email, auth_key, passcode, passcode_time', 'users', 'email = $1', [email], function(userData) {
 			if (userData) {
 				var key = userData.passcode;
@@ -113,7 +114,7 @@ module.exports = function(socket, uid, auth) {
 		var passkey = data.pass;
 		DB.fetch('id, name, auth_key', 'users', 'email = $1 AND passcode = $2', [email, passkey], function(userData) {
 			if (userData) {
-				var now = Utils.now();
+				var now = CommonUtil.now();
 				if (now - userData.passcode_time > 1800) {
 					callback({error: 'Passkey expired. Please redo the process for a new key and try again.'});
 				} else {

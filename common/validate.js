@@ -1,5 +1,9 @@
 'use strict';
 
+var CommonUtil = require('./util');
+
+//PUBLIC
+
 module.exports = {
 
 	// Email
@@ -50,11 +54,11 @@ module.exports = {
 			return 'Username must only consist of letters, numbers, and up to one space';
 		}
 
-		var invalidStartStrings = ['guest', 'admin', 'mod'];
-		var lowercaseUsername = username.toLowerCase();
+		var invalidStartStrings = ['guest', 'admin', 'mod', 'hitler'];
+		var lowercaseNowhitespaceUsername = CommonUtil.removeWhitespace(username.toLowerCase());
 		for (var idx in invalidStartStrings) {
 			var check = invalidStartStrings[idx];
-			if (lowercaseUsername.indexOf(check) === 0) {
+			if (lowercaseNowhitespaceUsername.indexOf(check) === 0) {
 				return 'Your username may not start with "'+check+'"';
 			}
 		}

@@ -4,6 +4,8 @@ var MAJOR_VERSION = 1;
 var MINOR_VERSION = 1;
 var PATCH_VERSION = 7;
 
+//PUBLIC
+
 module.exports = {
 
 	VERSION: [MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION].join('.'),

@@ -4,6 +4,8 @@ require('styles/lobby/lobby');
 
 var $ = require('jquery');
 
+var CommonUtil = require('common/util');
+
 var Config = require('util/config');
 var Util = require('util/util');
 
@@ -31,7 +33,7 @@ var clearCountdown = function() {
 };
 
 var updateCountdown = function() {
-	var secondsRemaining = startTime - Util.timestamp();
+	var secondsRemaining = startTime - CommonUtil.now();
 	if (secondsRemaining < 0) {
 		clearCountdown();
 	} else {

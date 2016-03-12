@@ -524,6 +524,8 @@
 	var MINOR_VERSION = 1;
 	var PATCH_VERSION = 7;
 
+	//PUBLIC
+
 	module.exports = {
 
 		VERSION: [MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION].join('.'),
@@ -548,6 +550,8 @@
 	__webpack_require__(12);
 
 	var $ = __webpack_require__(14);
+
+	var CommonUtil = __webpack_require__(45);
 
 	var Config = __webpack_require__(6);
 	var Util = __webpack_require__(15);
@@ -576,7 +580,7 @@
 	};
 
 	var updateCountdown = function() {
-		var secondsRemaining = startTime - Util.timestamp();
+		var secondsRemaining = startTime - CommonUtil.now();
 		if (secondsRemaining < 0) {
 			clearCountdown();
 		} else {
@@ -879,10 +883,6 @@
 	var $ = __webpack_require__(14);
 
 	module.exports = {
-
-		timestamp: function() {
-			return Math.round(Date.now() * 0.001);
-		},
 
 		pluralize: function(amount, countable) {
 			if (amount != 1) {
@@ -2480,9 +2480,13 @@
 
 /***/ },
 /* 42 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var CommonUtil = __webpack_require__(45);
+
+	//PUBLIC
 
 	module.exports = {
 
@@ -2534,11 +2538,11 @@
 				return 'Username must only consist of letters, numbers, and up to one space';
 			}
 
-			var invalidStartStrings = ['guest', 'admin', 'mod'];
-			var lowercaseUsername = username.toLowerCase();
+			var invalidStartStrings = ['guest', 'admin', 'mod', 'hitler'];
+			var lowercaseNowhitespaceUsername = CommonUtil.removeWhitespace(username.toLowerCase());
 			for (var idx in invalidStartStrings) {
 				var check = invalidStartStrings[idx];
-				if (lowercaseUsername.indexOf(check) === 0) {
+				if (lowercaseNowhitespaceUsername.indexOf(check) === 0) {
 					return 'Your username may not start with "'+check+'"';
 				}
 			}
@@ -2794,6 +2798,25 @@
 	module.exports = {
 
 		history: processHistory,
+
+	};
+
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+
+		now: function() {
+			return Math.round(Date.now() * 0.001);
+		},
+
+		removeWhitespace: function(string) {
+			return string.replace(/\s+/g, '');
+		},
 
 	};
 

@@ -240,7 +240,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 		if (this.enoughToStart()) {
 			var startDelay = Utils.TESTING ? 3 : 30;
-			this.scheduledStart = Utils.now() + startDelay;
+			this.scheduledStart = CommonUtil.now() + startDelay;
 
 			this.autoTimer = setTimeout(function() {
 				game.start();
@@ -288,7 +288,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (!this.replaying) {
 			var idsData = this.players.join(',');
 			var namesData = this.playersStateMap('name').join(',');
-			DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: Utils.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: idsData, player_names: namesData});
+			DB.update('games', "id = '"+this.gid+"'", {state: 1, started_at: CommonUtil.now(), start_index: this.startIndex, player_count: this.playerCount, player_ids: idsData, player_names: namesData});
 			DB.updatePlayers(this.players, 'started', this.gid, true);
 		}
 
@@ -368,7 +368,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			DB.updatePlayers(activePlayers, 'finished', null, true);
 
 			this.finished = true;
-			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: Utils.now(), history: JSON.stringify(this.history), history_count: this.history.length, enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
+			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: CommonUtil.now(), history: JSON.stringify(this.history), history_count: this.history.length, enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
 			this.removeSelf();
 		}
 	};

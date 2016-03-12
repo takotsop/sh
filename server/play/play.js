@@ -1,13 +1,13 @@
 'use strict';
 
-var Utils = require.main.require('./server/tools/utils');
+var CommonUtil = require.main.require('./common/util');
 
 //MANAGE
 
 var chatAction = function(data, puid, game) {
 	var lastMessage = game.playerState(puid, 'chatMessage');
 	var lastMessageTime = game.playerState(puid, 'chatTime');
-	var now = Utils.now();
+	var now = CommonUtil.now();
 	var message = data.msg;
 	if (message != lastMessage && (!lastMessageTime || now - lastMessageTime > 1)) {
 		game.playerState(puid, 'chatMessage', message);
