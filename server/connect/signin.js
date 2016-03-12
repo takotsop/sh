@@ -14,7 +14,6 @@ var Player = require.main.require('./server/play/player');
 
 var setSocket = function(socket, response, uid, auth) {
 	socket.uid = uid;
-	socket.join('Player ' + uid);
 	socket.name = response.name;
 	Player.add(uid, socket);
 
