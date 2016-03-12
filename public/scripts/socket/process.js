@@ -70,6 +70,10 @@ var processHistory = function(history) {
 
 Socket.on('game action', processAction);
 
+Socket.on('action error', function(data) {
+	window.alert('Unable to perform that last action: ' + data + '. Please try reloading the page and trying again.\n\nOtherwise, your game may be an in state where you can\'t continue. If so, please file a bug with the relevant information so I can get it fixed! You can do so via the "FEEDBACK" button in the game\'s menu. Thank you!');
+});
+
 //PUBLIC
 
 module.exports = {
