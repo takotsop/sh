@@ -88,7 +88,7 @@
 
 
 	// module
-	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
+	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\t\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
 
 	// exports
 
@@ -564,9 +564,9 @@
 	var Start = __webpack_require__(43);
 	var State = __webpack_require__(21);
 
-	//LOCAL
+	//TIMERS
 
-	var countdownInterval, startTime;
+	var countdownInterval, startTime, afkInterval;
 
 	var clearCountdown = function() {
 		if (countdownInterval) {
@@ -584,8 +584,34 @@
 		}
 	};
 
+	var gameTimeout = function(enabled) {
+		if (afkInterval) {
+			clearInterval(afkInterval);
+			afkInterval = null;
+		}
+		if (enabled && !State.started) {
+			var waitDuration = $('#lobby-wait-afk').css('display') == 'none' ? 59 : 29;
+			afkInterval = setTimeout(function() {
+				if ($('#lobby-wait-afk').css('display') == 'none') {
+					$('#lobby-wait-afk').show();
+					Socket.emit('lobby afk');
+					gameTimeout(true);
+				} else {
+					$('#lobby-wait-afk').hide();
+					connectToLobby();
+					window.alert('You\'ve been taken back to the main lobby due to inactivity.');
+				}
+			}, waitDuration * 1000);
+		} else {
+			$('#lobby-wait-afk').hide();
+		}
+	};
+
+	//LOCAL
+
 	var updateLobby = function(data) {
 		if (data.started) {
+			gameTimeout(false);
 			Start.play(data);
 			return;
 		}
@@ -601,7 +627,7 @@
 			countdownInterval = setInterval(updateCountdown, 1000);
 		} else {
 			var playersNeeded = 5 - lobbyPlayerCount;
-			$('#lobby-countdown').text(playersNeeded + ' more...');
+			$('#lobby-countdown').text('waiting for ' + playersNeeded + ' more...');
 		}
 
 		$('#lobby-player-summary').text(lobbyPlayerCount + ' of ' + data.maxSize);
@@ -620,16 +646,23 @@
 		}
 	};
 
-	var showLobbySection = function(subsection) {
+	var showLobbySection = function(subsection, forced) {
+		if (!forced && $('#lobby-'+subsection).css('display') != 'none') {
+			return;
+		}
+
 		$('#s-lobby > *').hide();
 		$('#lobby-'+subsection).show();
-		Chat.toggle(subsection == 'wait');
+
+		var isGameLobby = subsection == 'wait';
+		Chat.toggle(isGameLobby);
+		gameTimeout(isGameLobby);
 	};
 
 	var connectToLobby = function() {
 		$('.chat-container').html('');
 
-		showLobbySection('start');
+		showLobbySection('start', true);
 
 		var connectData = {};
 		if (Config.pageAction == 'join') {
@@ -712,6 +745,11 @@
 		joinGame($(this).data('gid'), 'start');
 	});
 
+	$('#lobby-wait-afk').on('click', function() {
+		gameTimeout(false);
+		gameTimeout(true);
+	});
+
 	//SOCKET
 
 	Socket.on('lobby games list', function(games) {
@@ -726,11 +764,31 @@
 
 	Socket.on('lobby game data', updateLobby);
 
+	//WINDOW
+
 	window.onbeforeunload = function() {
 		if (!Config.TESTING && !State.gameOver) {
 			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 		}
 	};
+
+	window.onbeforeunload = function() {
+		if (!Config.TESTING && !State.gameOver) {
+			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
+		}
+	};
+
+	window.focus = function() {
+		gameTimeout(true);
+	};
+
+	$(window.document).on('click', function() {
+		gameTimeout(true);
+	});
+
+	$(window.document).on('keypress', function() {
+		gameTimeout(true);
+	});
 
 	//PUBLIC
 
@@ -778,7 +836,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: #F7E2C0;\n\tcursor: pointer;\n}\n", ""]);
+	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: #F7E2C0;\n\tcursor: pointer;\n}\n\n#lobby-wait-afk {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tbackground-color: rgba(227, 100, 79, 0.75);\n\tz-index: 9001;\n}\n", ""]);
 
 	// exports
 

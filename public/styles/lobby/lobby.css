@@ -12,3 +12,13 @@
 	background-color: #F7E2C0;
 	cursor: pointer;
 }
+
+#lobby-wait-afk {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(227, 100, 79, 0.75);
+	z-index: 9001;
+}

@@ -19,9 +19,9 @@ var Welcome = require('lobby/welcome');
 var Start = require('game/start');
 var State = require('game/state');
 
-//LOCAL
+//TIMERS
 
-var countdownInterval, startTime;
+var countdownInterval, startTime, afkInterval;
 
 var clearCountdown = function() {
 	if (countdownInterval) {
@@ -39,8 +39,34 @@ var updateCountdown = function() {
 	}
 };
 
+var gameTimeout = function(enabled) {
+	if (afkInterval) {
+		clearInterval(afkInterval);
+		afkInterval = null;
+	}
+	if (enabled && !State.started) {
+		var waitDuration = $('#lobby-wait-afk').css('display') == 'none' ? 59 : 29;
+		afkInterval = setTimeout(function() {
+			if ($('#lobby-wait-afk').css('display') == 'none') {
+				$('#lobby-wait-afk').show();
+				Socket.emit('lobby afk');
+				gameTimeout(true);
+			} else {
+				$('#lobby-wait-afk').hide();
+				connectToLobby();
+				window.alert('You\'ve been taken back to the main lobby due to inactivity.');
+			}
+		}, waitDuration * 1000);
+	} else {
+		$('#lobby-wait-afk').hide();
+	}
+};
+
+//LOCAL
+
 var updateLobby = function(data) {
 	if (data.started) {
+		gameTimeout(false);
 		Start.play(data);
 		return;
 	}
@@ -56,7 +82,7 @@ var updateLobby = function(data) {
 		countdownInterval = setInterval(updateCountdown, 1000);
 	} else {
 		var playersNeeded = 5 - lobbyPlayerCount;
-		$('#lobby-countdown').text(playersNeeded + ' more...');
+		$('#lobby-countdown').text('waiting for ' + playersNeeded + ' more...');
 	}
 
 	$('#lobby-player-summary').text(lobbyPlayerCount + ' of ' + data.maxSize);
@@ -75,16 +101,23 @@ var updateLobby = function(data) {
 	}
 };
 
-var showLobbySection = function(subsection) {
+var showLobbySection = function(subsection, forced) {
+	if (!forced && $('#lobby-'+subsection).css('display') != 'none') {
+		return;
+	}
+
 	$('#s-lobby > *').hide();
 	$('#lobby-'+subsection).show();
-	Chat.toggle(subsection == 'wait');
+
+	var isGameLobby = subsection == 'wait';
+	Chat.toggle(isGameLobby);
+	gameTimeout(isGameLobby);
 };
 
 var connectToLobby = function() {
 	$('.chat-container').html('');
 
-	showLobbySection('start');
+	showLobbySection('start', true);
 
 	var connectData = {};
 	if (Config.pageAction == 'join') {
@@ -167,6 +200,11 @@ $('#lobby-open-games').on('click', 'li', function() {
 	joinGame($(this).data('gid'), 'start');
 });
 
+$('#lobby-wait-afk').on('click', function() {
+	gameTimeout(false);
+	gameTimeout(true);
+});
+
 //SOCKET
 
 Socket.on('lobby games list', function(games) {
@@ -181,11 +219,31 @@ Socket.on('lobby games list', function(games) {
 
 Socket.on('lobby game data', updateLobby);
 
+//WINDOW
+
 window.onbeforeunload = function() {
 	if (!Config.TESTING && !State.gameOver) {
 		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 	}
 };
+
+window.onbeforeunload = function() {
+	if (!Config.TESTING && !State.gameOver) {
+		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
+	}
+};
+
+window.focus = function() {
+	gameTimeout(true);
+};
+
+$(window.document).on('click', function() {
+	gameTimeout(true);
+});
+
+$(window.document).on('keypress', function() {
+	gameTimeout(true);
+});
 
 //PUBLIC
 

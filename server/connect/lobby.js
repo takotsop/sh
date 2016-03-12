@@ -74,6 +74,12 @@ module.exports = function(socket) {
 		}
 	});
 
+	socket.on('lobby afk', function(data, callback) {
+		if (socket.game) {
+			socket.game.resetAutostart();
+		}
+	});
+
 	socket.on('room create', function(data, callback) {
 		leaveOldGame(socket);
 
