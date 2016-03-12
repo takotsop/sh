@@ -19,12 +19,18 @@ module.exports = {
 
 		DB.fetchAll('id, start_index, player_count, player_ids, player_names, history', 'games', 'state = 1 AND compatible_version = $1', [CommonConsts.COMPATIBLE_VERSION], function(games) {
 			if (games.length > 0) {
+				var restoredCount = 0;
 				var Game = require.main.require('./server/play/game');
 				games.forEach(function(gameData) {
 					var game = new Game(gameData);
 					game.start();
+					restoredCount += 1;
 				});
+				if (restoredCount > 0) {
+					console.log('Restored ' + restoredCount + ' games from DB');
+				}
 			}
+			console.log('\n');
 		});
 
 		io = SocketIO(http);
