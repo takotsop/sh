@@ -419,9 +419,15 @@
 
 	//SOCKET
 
-	Socket.on('connect', function(data) {
+	Socket.on('connect', function() {
 		if (!Data.uid || !Data.auth) {
 			Welcome.showSignin();
+		}
+	});
+
+	Socket.on('disconnect', function() {
+		if (Lobby.connectToStart(true)) {
+			window.alert('Disconnected from server, please try joining a game again.');
 		}
 	});
 
@@ -606,7 +612,7 @@
 					gameTimeout(true);
 				} else {
 					$('#lobby-wait-afk').hide();
-					connectToLobby();
+					connectToStart();
 					window.alert('You\'ve been taken back to the main lobby due to inactivity.');
 				}
 			}, waitDuration * 1000);
@@ -667,7 +673,10 @@
 		gameTimeout(isGameLobby);
 	};
 
-	var connectToLobby = function() {
+	var connectToStart = function(ifShowing) {
+		if (ifShowing && Util.hidden('#s-lobby')) {
+			return;
+		}
 		$('.chat-container').html('');
 
 		showLobbySection('start', true);
@@ -678,13 +687,14 @@
 			Config.pageAction = null;
 		}
 		Socket.emit('lobby join', connectData);
+		return true;
 	};
 
 	var showLobby = function() {
 		State.gameOver = true;
 		Chat.voiceDisconnect();
 		App.showSection('lobby');
-		connectToLobby();
+		connectToStart();
 	};
 
 	var quitGame = function() {
@@ -702,7 +712,7 @@
 
 	//EVENTS
 
-	$('.lobby-leave').on('click', connectToLobby);
+	$('.lobby-leave').on('click', connectToStart);
 
 	$('#lobby-button-quick-play').on('click', function() {
 		showLobbySection('');
@@ -825,6 +835,8 @@
 		show: showLobby,
 
 		quitToLobby: quitGame,
+
+		connectToStart: connectToStart, 
 
 	};
 

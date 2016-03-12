@@ -10,9 +10,15 @@ var Welcome = require('lobby/welcome');
 
 //SOCKET
 
-Socket.on('connect', function(data) {
+Socket.on('connect', function() {
 	if (!Data.uid || !Data.auth) {
 		Welcome.showSignin();
+	}
+});
+
+Socket.on('disconnect', function() {
+	if (Lobby.connectToStart(true)) {
+		window.alert('Disconnected from server, please try joining a game again.');
 	}
 });
 
