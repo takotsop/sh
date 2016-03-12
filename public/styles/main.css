@@ -57,6 +57,11 @@ section {
 	color: #E3644F !important;
 }
 
+ul {
+	list-style: none;
+	padding: 0;
+}
+
 /* FORMS */
 
 input.full {

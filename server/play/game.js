@@ -21,12 +21,27 @@ var games = [];
 var setup = function(game, gid, socket) {
 	game.gid = gid;
 	game.generator = new SeedRandom(gid);
-
 	games.push(game);
 
 	if (socket) {
 		game.addPlayer(socket);
 	}
+};
+
+var emitLobby = function(target) {
+	var lobbyGames = games.filter(function(game) {
+		return !game.private && game.isOpen();
+	}).map(function(game) {
+		return {
+			gid: game.gid,
+			names: game.playersStateMap('name').join('・'),
+			size: game.maxSize,
+		};
+	});
+	if (!target) {
+		target = Socket.io().to('lobby');
+	}
+	target.emit('lobby games list', lobbyGames);
 };
 
 var Game = function(restoreData, size, privateGame, socket) {
@@ -71,6 +86,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		DB.gid(function(gid) {
 			setup(game, gid, socket);
 			DB.insert('games', {id: gid, version: CommonConsts.VERSION, compatible_version: CommonConsts.COMPATIBLE_VERSION});
+			emitLobby();
 		});
 	}
 
@@ -242,6 +258,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		}
 
 		this.started = true;
+		emitLobby();
 		this.playerCount = this.players.length;
 		this.currentCount = this.playerCount;
 		this.startIndex = this.random(this.playerCount);
@@ -398,6 +415,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			this.start();
 		} else {
 			this.resetAutostart();
+			emitLobby();
 		}
 	};
 
@@ -467,6 +485,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 					game.playerState(puid, 'index', pidx);
 				});
 			}
+			emitLobby();
 		}
 		if (socket) {
 			socket.game = null;
@@ -542,5 +561,7 @@ Game.get = function(gid) {
 		}
 	}
 };
+
+Game.emitLobby = emitLobby;
 
 module.exports = Game;

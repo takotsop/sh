@@ -89,16 +89,21 @@
 		<br>
 		<button id="lobby-button-join-private" class="large">Join private game</button>
 		<hr>
+		<ul id="lobby-open-games">
+		</ul>
+		<div id="lobby-open-games-empty">
+			<h2>No public games currently open</h2>
+			<p>To get the party started, use the "Quick join" button, or "Create game" to make a custom one!</p>
+		</div>
+		<hr>
 		<button id="lobby-button-signout" class="large">Sign out</button>
-		<br>
-		<ul id="lobby-gamelist"></ul>
 	</div>
 	<div id="lobby-create">
 		<h1>Host a custom game</h1>
 		<button class="lobby-leave large">cancel</button>
 		<hr>
 		<div>
-			<label>Game size:
+			<label>Max game size:
 				<select id="create-game-size">
 					<option>5</option>
 					<option>6</option>

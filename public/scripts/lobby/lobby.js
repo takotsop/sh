@@ -105,6 +105,15 @@ var quitGame = function() {
 	Action.emit('quit', null, showLobby);
 };
 
+var joinGame = function(gid, failDestination) {
+	Socket.emit('room join', {gid: gid}, function(response) {
+		if (response.error) {
+			window.alert('Unable to join game: ' + response.error);
+		}
+		showLobbySection(response.success ? 'wait' : failDestination);
+	});
+};
+
 //EVENTS
 
 $('.lobby-leave').on('click', connectToLobby);
@@ -151,15 +160,24 @@ $('#lobby-submit-private').on('click', function() {
 
 	$('#join-private-code').val('');
 	showLobbySection('');
-	Socket.emit('room join private', {gid: gid}, function(response) {
-		if (response.error) {
-			window.alert('Unable to join game: ' + response.error);
-		}
-		showLobbySection(response.success ? 'wait' : 'join-private');
-	});
+	joinGame(gid, 'join-private');
+});
+
+$('#lobby-open-games').on('click', 'li', function() {
+	joinGame($(this).data('gid'), 'start');
 });
 
 //SOCKET
+
+Socket.on('lobby games list', function(games) {
+	var hasGame = games.length > 0;
+	$('#lobby-open-games').toggle(hasGame);
+	$('#lobby-open-games-empty').toggle(!hasGame);
+
+	$('#lobby-open-games').html(games.reduce(function(combined, game) {
+		return combined + '<li data-gid="'+game.gid+'"><h4>'+game.size+'p Secret Hitler</h4><p>'+game.names+'</p></li>';
+	}, ''));
+});
 
 Socket.on('lobby game data', updateLobby);
 

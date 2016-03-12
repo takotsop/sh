@@ -7,6 +7,10 @@ var Game = require.main.require('./server/play/game');
 
 //LOCAL
 
+var openNewGameFor = function(startSocket, size, isPrivate) {
+	new Game(null, size, isPrivate, startSocket);
+};
+
 var joinGameById = function(socket, gid) {
 	var oldGame = socket.game;
 	if (!oldGame || oldGame.finished) {
@@ -44,7 +48,7 @@ var joinAvailableGame = function(socket) {
 			return true;
 		}
 	}
-	new Game(null, 10, false, socket);
+	openNewGameFor(socket, 10, false);
 	return true;
 };
 
@@ -61,6 +65,7 @@ module.exports = function(socket) {
 
 	socket.on('lobby join', function(data, callback) {
 		leaveOldGame(socket);
+		Game.emitLobby(socket);
 
 		if (!joinOngoingGame(socket)) {
 			if (!data || !data.join || joinGameById(socket, data.join) == false) {
@@ -73,7 +78,7 @@ module.exports = function(socket) {
 		leaveOldGame(socket);
 
 		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
-		new Game(null, gameMaxSize, data.private, socket);
+		openNewGameFor(socket, gameMaxSize, data.private);
 	});
 
 	socket.on('room quickjoin', function(data, callback) {
@@ -86,11 +91,11 @@ module.exports = function(socket) {
 		}
 	});
 
-	socket.on('room join private', function(data, callback) {
+	socket.on('room join', function(data, callback) {
 		var response = {};
 		var gid = data.gid;
 		if (!gid) {
-			response.error = 'Invalid code';
+			response.error = 'Invalid game code';
 		} else {
 			var joined = joinGameById(socket, data.gid);
 			if (joined == 'full') {

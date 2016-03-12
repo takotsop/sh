@@ -1,3 +1,15 @@
 #s-lobby {
 	text-align: center;
 }
+
+#lobby-open-games li {
+	margin: 16px;
+	padding: 8px 0;
+	background-color: #eee;
+	max-width: 640px;
+}
+
+#lobby-open-games li:hover {
+	background-color: #F7E2C0;
+	cursor: pointer;
+}
