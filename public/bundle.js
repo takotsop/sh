@@ -752,14 +752,27 @@
 
 	//SOCKET
 
-	Socket.on('lobby games list', function(games) {
-		var hasGame = games.length > 0;
-		$('#lobby-open-games').toggle(hasGame);
-		$('#lobby-open-games-empty').toggle(!hasGame);
+	Socket.on('lobby games stats', function(data) {
+		if (data.games) {
+			var hasGame = data.games.length > 0;
+			$('#lobby-open-games').toggle(hasGame);
+			$('#lobby-open-games-empty').toggle(!hasGame);
 
-		$('#lobby-open-games').html(games.reduce(function(combined, game) {
-			return combined + '<li data-gid="'+game.gid+'"><h4>'+game.size+'p Secret Hitler</h4><p>'+game.names+'</p></li>';
-		}, ''));
+			$('#lobby-open-games').html(data.games.reduce(function(combined, game) {
+				return combined + '<li data-gid="'+game.gid+'"><h4>'+game.size+'p Secret Hitler</h4><p>'+game.names+'</p></li>';
+			}, ''));
+		}
+		if (data.players) {
+			var onlineCount = data.players.online;
+			var showsDetails = onlineCount > 1;
+			$('#lobby-count-details').toggle(showsDetails);
+			if (showsDetails) {
+				$('#lobby-count-playing').text(data.players.playing);
+				$('#lobby-count-lobby').text(data.players.lobby);
+			}
+			$('#lobby-count-online').text(Util.pluralize(onlineCount, 'player'));
+
+		}
 	});
 
 	Socket.on('lobby game data', updateLobby);
@@ -857,6 +870,13 @@
 
 		timestamp: function() {
 			return Math.round(Date.now() * 0.001);
+		},
+
+		pluralize: function(amount, countable) {
+			if (amount != 1) {
+				countable += 's';
+			}
+			return amount + ' ' + countable;
 		},
 
 	};

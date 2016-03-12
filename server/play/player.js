@@ -2,17 +2,17 @@
 
 var Socket = require.main.require('./server/connect/io');
 
-var allPlayers = {};
+var uniquePlayers = {};
 
 module.exports = {
 
 	add: function(uid, socket) {
 		socket.join('player' + uid);
-		allPlayers[uid] = socket;
+		uniquePlayers[uid] = socket;
 	},
 
-	get: function(uid) {
-		return allPlayers[uid];
+	all: function() {
+		return uniquePlayers;
 	},
 
 	emitTo: function(uid, name, data) {

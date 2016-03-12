@@ -22,7 +22,6 @@ var setup = function(game, gid, socket) {
 	game.gid = gid;
 	game.generator = new SeedRandom(gid);
 	games.push(game);
-
 	if (socket) {
 		game.addPlayer(socket);
 	}
@@ -38,10 +37,31 @@ var emitLobby = function(target) {
 			size: game.maxSize,
 		};
 	});
+
+	var playerSockets = Player.all();
+	var onlineCount = 0, playingCount = 0, lobbyCount = 0;
+	for (var sid in playerSockets) {
+		var socket = playerSockets[sid];
+		console.log(sid, socket.game);
+		onlineCount += 1;
+		if (socket.game) {
+			if (!socket.game.finished) {
+				playingCount += 1;
+			}
+		} else {
+			lobbyCount += 1;
+		}
+	}
+	var players = {
+		online: onlineCount,
+		playing: playingCount,
+		lobby: lobbyCount,
+	};
+
 	if (!target) {
 		target = Socket.io().to('lobby');
 	}
-	target.emit('lobby games list', lobbyGames);
+	target.emit('lobby games stats', {games: lobbyGames, players: players});
 };
 
 var Game = function(restoreData, size, privateGame, socket) {
