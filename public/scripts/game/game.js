@@ -33,7 +33,7 @@ var playTurn = function() {
 
 	var president = State.getPresident();
 	App.playerDiv(president).addClass('elect');
-	App.enablePlayerSelection('election');
+	App.enablePlayerSelection('special election');
 
 	var directive;
 	if (State.isLocalPresident()) {

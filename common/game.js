@@ -11,7 +11,7 @@ module.exports = {
 			return gameSize >= 7 ? 'investigate' : null;
 		}
 		if (enactedFascist == 3) {
-			return gameSize >= 7 ? 'election' : 'peek';
+			return gameSize >= 7 ? 'special election' : 'peek';
 		}
 		if (enactedFascist == 4) {
 			return gameSize != 4 ? 'bullet' : null;
