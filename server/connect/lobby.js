@@ -118,7 +118,7 @@ module.exports = function(socket) {
 	});
 
 	socket.on('feedback', function(data, callback) {
-		DB.insert('feedback', {username: socket.name, report_type: data.type, feedback: data.body}, null, callback);
+		DB.insert('feedback', {user_id: socket.uid, report_type: data.type, feedback: data.body}, null, callback);
 	});
 
 };
