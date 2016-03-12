@@ -275,7 +275,7 @@ var Play = function(socket) {
 		var game = socket.game;
 		var puid = socket.uid;
 		if (!game || game.playerState(puid) == null) {
-			console.error('Socket action invalid game', puid, [action, game.playersState]);
+			console.error('Socket action invalid game', puid, [action, game ? game.playersState : game]);
 			return;
 		}
 		var data = {action: action};

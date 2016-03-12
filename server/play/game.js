@@ -1,6 +1,7 @@
 'use strict';
 
 var CommonConsts = require.main.require('./common/constants');
+var CommonUtil = require.main.require('./common/util');
 var CommonGame = require.main.require('./common/game');
 
 var SeedRandom = require('seedrandom');
