@@ -592,6 +592,10 @@
 		if (enabled && !State.started) {
 			var waitDuration = Util.hidden('#lobby-wait-afk') ? 59 : 29;
 			afkInterval = setTimeout(function() {
+				if (Util.hidden('#lobby-wait')) {
+					afkInterval = null;
+					return;
+				}
 				if (Util.hidden('#lobby-wait-afk')) {
 					$('#lobby-wait-afk').show();
 					Socket.emit('lobby afk');
@@ -792,15 +796,21 @@
 	};
 
 	window.focus = function() {
-		gameTimeout(true);
+		if (afkInterval) {
+			gameTimeout(true);
+		}
 	};
 
 	$(window.document).on('click', function() {
-		gameTimeout(true);
+		if (afkInterval) {
+			gameTimeout(true);
+		}
 	});
 
 	$(window.document).on('keypress', function() {
-		gameTimeout(true);
+		if (afkInterval) {
+			gameTimeout(true);
+		}
 	});
 
 	//PUBLIC
