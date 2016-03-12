@@ -53,7 +53,8 @@ var policyDiscarded = function(data) {
 		}
 		cards = 'policy';
 	} else {
-		directive = 'Wait for the Chancellor to enact a policy';
+		var chancellor = State.getChancellor();
+		directive = 'Wait for Chancellor <strong>' + chancellor.name + '</strong> to enact a policy';
 		cards = null;
 	}
 	Chat.setDirective(directive);
@@ -89,15 +90,15 @@ var policyEnacted = function(data) {
 				}
 			} else if (fascistPower.indexOf('election') > -1) {
 				if (State.isLocalPresident()) {
-					directive = 'Choose a presidential candidate for the next election';
+					directive = 'Select the presidential candidate for the special election';
 				} else {
-					directive = 'Wait for the president to choose the next presidential candidate';
+					directive = 'Wait for President to select the special election candidate';
 				}
 			} else if (fascistPower.indexOf('bullet') > -1) {
 				if (State.isLocalPresident()) {
 					directive = 'Choose a player to kill';
 				} else {
-					directive = 'Wait for the president to kill a player';
+					directive = 'Wait for President to kill a player';
 				}
 			}
 			Chat.setDirective(directive);
@@ -112,16 +113,16 @@ var policyEnacted = function(data) {
 
 var vetoRequest = function(data) {
 	var directive, cards;
+	var chancellor = State.getChancellor();
 	if (State.isLocalPresident()) {
-		directive = 'Confirm or override the Chancellor\'s veto request';
+		directive = 'Confirm or override Chancellor <strong>' + chancellor.name + '</strong>\'s veto request';
 		cards = 'veto';
 	} else {
 		if (State.isLocalChancellor()) {
-			var president = State.getChancellor();
-			directive = 'Awaiting confirmation from President ' + president.name;
+			var president = State.getPresident();
+			directive = 'Awaiting confirmation from President <strong>' + president.name + '</strong>';
 		} else {
-			var chancellor = State.getChancellor();
-			directive = 'Chancellor ' + chancellor.name + ' is requesting a veto, awaiting confirmation';
+			directive = 'Chancellor <strong>' + chancellor.name + '</strong> is requesting a veto, awaiting confirmation';
 		}
 		cards = null;
 	}
@@ -145,7 +146,8 @@ var previewPolicies = function(secret) {
 		cards = 'policy';
 		directive = 'Peek at the next 3 policies. Click one to continue';
 	} else {
-		directive = 'Wait for the president to peek at the next 3 policies';
+		var president = State.getPresident();
+		directive = 'Wait for President <strong>' + president.name + '</strong> to peek at the next 3 policies';
 	}
 	Chat.setDirective(directive);
 	Cards.show(cards);

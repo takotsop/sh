@@ -39,7 +39,7 @@ var playTurn = function() {
 	if (State.isLocalPresident()) {
 		directive = 'Choose your Chancellor';
 	} else {
-		directive = 'Waiting for '+president.name+' to choose their chancellor';
+		directive = 'Wait for <strong>'+president.name+'</strong> to choose their chancellor';
 	}
 	Cards.show(null);
 	Chat.setDirective(directive);
@@ -124,7 +124,8 @@ var voteCompleted = function(data) {
 			cards = 'policy';
 			directive = 'Choose a policy to <strong>discard</strong>';
 		} else {
-			directive = 'Wait for the president to discard a policy';
+			var president = State.getPresident();
+			directive = 'Wait for President <strong>' + president.name + '</strong> to discard a policy';
 		}
 		Chat.setDirective(directive);
 	} else {
