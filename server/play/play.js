@@ -52,7 +52,7 @@ var chancellorAction = function(data, puid, cuid, game) {
 		return;
 	}
 	if (!game.isPresident(puid)) {
-		console.error(game.gid, 'President selects chancellor', game.turn.president, puid, cuid);
+		console.error(game.gid, 'President selects chancellor', puid, game.turn.president, cuid);
 		return;
 	}
 	if (cuid == game.chancellorElect || (game.playerCount > 5 && cuid == game.presidentElect)) {
@@ -203,10 +203,12 @@ var powerAction = function(action, data, puid, tuid, game) {
 			data = game.emitAction('peek', data);
 		} else {
 			if (puid == tuid) {
+				console.error(game.gid, 'Self action', action, puid, tuid);
 				return;
 			}
 			if (action.indexOf('investigate') > -1) {
 				if (game.playerState(tuid, 'investigated')) {
+					console.error(game.gid, 'Already investigated', puid, tuid);
 					return;
 				}
 				var targetParty = game.playerState(tuid, 'allegiance') == 0 ? 0 : 1;
@@ -215,6 +217,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 				data = game.emitAction('investigate', data, secret);
 			} else if (action.indexOf('election') > -1) {
 				if (game.isChancellor(data.uid)) {
+					console.error(game.gid, 'Chancellor cannot become Special President', puid, tuid, game.turn.chancellor);
 					return;
 				}
 				game.specialPresident = game.playerState(tuid, 'index');
@@ -222,6 +225,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 			} else if (action.indexOf('bullet') > -1) {
 				var wasHitler = game.isHitler(tuid);
 				if (!game.kill(tuid, false)) {
+					console.error(game.gid, 'Could not kill', puid, tuid, game.playerState(tuid));
 					return;
 				}
 				data.hitler = wasHitler;
