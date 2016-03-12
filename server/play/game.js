@@ -154,6 +154,10 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (!count) {
 			count = 3;
 		}
+		if (this.policyDeck == null) {
+			console.error(this.gid, 'Policy deck null', this.history.length);
+			this.shufflePolicyDeck();
+		}
 		var policies = this.policyDeck.splice(0, count);
 		if (this.policyDeck.length < 3) {
 			this.shufflePolicyDeck();
