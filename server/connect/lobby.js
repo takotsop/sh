@@ -43,7 +43,7 @@ var joinAvailableGame = function(socket) {
 	var games = Game.games();
 	for (var gidx in games) {
 		var game = games[gidx];
-		if (!game.private && game.isOpen()) {
+		if (game.isOpenPublic()) {
 			game.addPlayer(socket);
 			return true;
 		}

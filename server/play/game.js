@@ -30,7 +30,7 @@ var setup = function(game, gid, socket) {
 
 var emitLobby = function(target) {
 	var lobbyGames = games.filter(function(game) {
-		return !game.private && game.isOpen();
+		return game.isOpenPublic();
 	}).map(function(game) {
 		return {
 			gid: game.gid,
@@ -568,6 +568,10 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 	this.isOpen = function() {
 		return this.gid != null && !this.started && !this.isFull();
+	};
+
+	this.isOpenPublic = function() {
+		return !this.private && this.isOpen();
 	};
 
 	return this;
