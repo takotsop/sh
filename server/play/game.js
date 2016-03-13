@@ -431,7 +431,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		var uid = socket.uid;
 		socket.leave('lobby');
 		socket.join(this.gid);
-		socket.game = this;
+		Player.setGame(socket, this);
 
 		var playerState = this.playerState(uid);
 		if (!playerState) {
@@ -521,8 +521,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			emitLobby();
 		}
 		if (socket) {
-			socket.game = null;
-			Player.data(uid, 'joining', null);
+			Player.setGame(socket, null);
 		}
 
 		if (!this.started) {

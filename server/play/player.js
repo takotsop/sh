@@ -44,4 +44,12 @@ module.exports = {
 		}
 	},
 
+	setGame: function(socket, game) {
+		socket.game = game;
+		this.data(socket.uid, 'gid', game ? game.gid : null);
+		if (!game) {
+			this.data(socket.uid, 'joining', null);
+		}
+	},
+
 };

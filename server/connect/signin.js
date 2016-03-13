@@ -20,7 +20,9 @@ var setSocket = function(socket, response, uid, auth) {
 
 	DB.query('UPDATE users SET online_at = '+CommonUtil.now()+', online_count = online_count + 1 WHERE id = '+uid+' RETURNING gid', null, function(users) {
 		var oldGame = users[0].gid;
-		socket.game = oldGame ? Game.get(oldGame) : null;
+		if (oldGame) {
+			Player.setGame(socket, Game.get(oldGame));
+		}
 
 		socket.emit('auth', response);
 
