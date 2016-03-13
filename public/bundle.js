@@ -880,7 +880,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: #F7E2C0;\n\tcursor: pointer;\n}\n\n#lobby-wait-afk {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tbackground-color: rgba(227, 100, 79, 0.95);\n\tz-index: 9001;\n}\n", ""]);
+	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: rgba(156, 7, 1, 0.1);;\n\tcursor: pointer;\n}\n\n#lobby-wait-afk {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tbackground-color: rgba(227, 100, 79, 0.95);\n\tz-index: 9001;\n}\n", ""]);
 
 	// exports
 

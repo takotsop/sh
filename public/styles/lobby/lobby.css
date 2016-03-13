@@ -9,7 +9,7 @@
 }
 
 #lobby-open-games li:hover {
-	background-color: #F7E2C0;
+	background-color: rgba(156, 7, 1, 0.1);;
 	cursor: pointer;
 }
 
