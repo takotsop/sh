@@ -44,10 +44,10 @@ var emitLobby = function(target) {
 		var playerSockets = Player.all();
 		var onlineCount = 0, playingCount = 0, lobbyCount = 0;
 		for (var sid in playerSockets) {
-			var socket = playerSockets[sid];
 			onlineCount += 1;
+			var socket = playerSockets[sid];
 			if (socket.game) {
-				if (!socket.game.finished) {
+				if (socket.game.started && !socket.game.finished) {
 					playingCount += 1;
 				}
 			} else {
