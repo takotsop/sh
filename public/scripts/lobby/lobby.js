@@ -283,6 +283,6 @@ module.exports = {
 
 	quitToLobby: quitGame,
 
-	connectToStart: connectToStart, 
+	connectToStart: connectToStart,
 
 };

@@ -54,7 +54,7 @@ module.exports = {
 			return 'Username must only consist of letters, numbers, and up to one space';
 		}
 
-		var invalidStartStrings = ['guest', 'admin', 'mod', 'hitler'];
+		var invalidStartStrings = ['guest', 'admin', 'hitler'];
 		var lowercaseNowhitespaceUsername = CommonUtil.removeWhitespace(username.toLowerCase());
 		for (var idx in invalidStartStrings) {
 			var check = invalidStartStrings[idx];

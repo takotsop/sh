@@ -150,12 +150,11 @@ module.exports = function(socket, uid, auth) {
 			} else {
 				var authKey = Utils.uuid() + Utils.uuid();
 				var userBegin = {name: username, email: email, auth_key: authKey};
-				var insertCallback = function(response) {
+				DB.insert('users', userBegin, returnForSignin, function(response) {
 					console.log('Registered', response.id, username, email);
 					authenticate(socket, response.id, response.auth_key);
 					callback(response);
-				};
-				DB.insert('users', userBegin, returnForSignin, insertCallback);
+				});
 			}
 		};
 

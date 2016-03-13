@@ -88,7 +88,7 @@
 
 
 	// module
-	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\t\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
+	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
 
 	// exports
 
@@ -442,7 +442,7 @@
 	});
 
 	Socket.on('reload', function(data) {
-		if (!Config.TESTING) { 
+		if (!Config.TESTING) {
 			window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements and bug fixes.');
 		}
 		window.location.reload();
@@ -836,7 +836,7 @@
 
 		quitToLobby: quitGame,
 
-		connectToStart: connectToStart, 
+		connectToStart: connectToStart,
 
 	};
 
@@ -2554,7 +2554,7 @@
 				return 'Username must only consist of letters, numbers, and up to one space';
 			}
 
-			var invalidStartStrings = ['guest', 'admin', 'mod', 'hitler'];
+			var invalidStartStrings = ['guest', 'admin', 'hitler'];
 			var lowercaseNowhitespaceUsername = CommonUtil.removeWhitespace(username.toLowerCase());
 			for (var idx in invalidStartStrings) {
 				var check = invalidStartStrings[idx];

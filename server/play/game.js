@@ -271,7 +271,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (this.started) {
 			return;
 		}
-
 		if (!this.replaying) {
 			if (!this.enoughToStart()) {
 				console.error(game.gid, 'Start sequence interrupted', this.players);
@@ -282,7 +281,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 		}
 
 		this.started = true;
-		emitLobby();
 		this.playerCount = this.players.length;
 		this.currentCount = this.playerCount;
 		this.startIndex = this.random(this.playerCount);
@@ -321,6 +319,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 			require.main.require('./server/play/play').process(game);
 		}
 		this.replaying = false;
+
+		emitLobby();
 	};
 
 	this.getFascistPower = function() {
@@ -332,7 +332,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	this.setPresidentIndex = function(index) {
 		this.presidentIndex = index;
 		this.turn.president = this.players[index];
-	};	
+	};
 
 	this.advanceTurn = function() {
 		if (this.finished) {

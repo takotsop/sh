@@ -33,7 +33,7 @@ Socket.on('auth', function(data) {
 });
 
 Socket.on('reload', function(data) {
-	if (!Config.TESTING) { 
+	if (!Config.TESTING) {
 		window.alert('Secret Hitler Online has been updated to v'+data.v+'! Automatically reloading the page to download the latest improvements and bug fixes.');
 	}
 	window.location.reload();

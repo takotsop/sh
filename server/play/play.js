@@ -15,7 +15,7 @@ var chatAction = function(data, puid, game) {
 
 		data.uid = puid;
 		data = game.emitAction('chat', data);
-		return data;	
+		return data;
 	}
 };
 
