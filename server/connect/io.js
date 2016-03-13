@@ -51,7 +51,11 @@ module.exports = {
 			socket.on('disconnect', function() {
 				var uid = socket.uid;
 				if (uid) {
-					DB.query('UPDATE users SET online_count = online_count - 1 WHERE id = '+uid+' AND online_count > 0', null);
+					DB.queryOne('UPDATE users SET online_count = online_count - 1 WHERE id = '+uid+' AND online_count > 0 RETURNING online_count', null, function(user) {
+						if (user.online_count == 0) {
+							require.main.require('./server/play/player').remove(uid);
+						}
+					});
 				}
 				if (socket.game) {
 					socket.game.disconnect(socket);

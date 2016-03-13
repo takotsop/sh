@@ -11,6 +11,10 @@ module.exports = {
 		uniquePlayers[uid] = socket;
 	},
 
+	remove: function(uid) {
+		delete uniquePlayers[uid];
+	},
+
 	all: function() {
 		return uniquePlayers;
 	},
