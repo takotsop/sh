@@ -674,7 +674,7 @@
 	};
 
 	var connectToStart = function(ifShowing) {
-		if (ifShowing && Util.hidden('#s-lobby')) {
+		if (ifShowing && (Util.hidden('#s-lobby') || !Util.hidden('#lobby-start'))) {
 			return;
 		}
 		$('.chat-container').html('');
