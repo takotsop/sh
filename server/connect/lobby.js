@@ -4,6 +4,7 @@ var DB = require.main.require('./server/tools/db');
 var Utils = require.main.require('./server/tools/utils');
 
 var Game = require.main.require('./server/play/game');
+var Player = require.main.require('./server/play/player');
 
 //LOCAL
 
@@ -48,8 +49,7 @@ var joinAvailableGame = function(socket) {
 			return true;
 		}
 	}
-	openNewGameFor(socket, 10, false);
-	return true;
+	return false;
 };
 
 var leaveOldGame = function(socket) {
@@ -81,20 +81,26 @@ module.exports = function(socket) {
 	});
 
 	socket.on('room create', function(data, callback) {
-		leaveOldGame(socket);
-
-		var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
-		openNewGameFor(socket, gameMaxSize, data.private);
+		if (!Player.data(socket.uid, 'joining')) {
+			leaveOldGame(socket);
+			var gameMaxSize = Utils.rangeCheck(data.size, 5, 10, 10);
+			openNewGameFor(socket, gameMaxSize, data.private);
+		}
 	});
 
 	socket.on('room quickjoin', function(data, callback) {
-		if (!joinOngoingGame(socket)) {
-			var response = {};
-			if (joinAvailableGame(socket)) {
+		var response = {};
+		if (joinOngoingGame(socket)) {
+			response.gid = socket.game.gid;
+		} else {
+			if (!Player.data(socket.uid, 'joining')) {
 				response.success = true;
+				if (!joinAvailableGame(socket)) {
+					openNewGameFor(socket, 10, false);
+				}
 			}
-			callback(response);
 		}
+		callback(response);
 	});
 
 	socket.on('room join', function(data, callback) {

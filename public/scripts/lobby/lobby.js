@@ -149,6 +149,7 @@ var quitGame = function() {
 };
 
 var joinGame = function(gid, failDestination) {
+	showLobbySection('');
 	Socket.emit('room join', {gid: gid}, function(response) {
 		if (response.error) {
 			window.alert('Unable to join game: ' + response.error);
@@ -164,7 +165,11 @@ $('.lobby-leave').on('click', connectToStart);
 $('#lobby-button-quick-play').on('click', function() {
 	showLobbySection('');
 	Socket.emit('room quickjoin', null, function(response) {
-		showLobbySection(response.success ? 'wait' : 'start');
+		if (response.gid) {
+			console.log('Quick rejoin', response);
+		} else {
+			showLobbySection(response.success ? 'wait' : 'start');
+		}
 	});
 });
 
@@ -203,7 +208,6 @@ $('#lobby-submit-private').on('click', function() {
 	}
 
 	$('#join-private-code').val('');
-	showLobbySection('');
 	joinGame(gid, 'join-private');
 });
 

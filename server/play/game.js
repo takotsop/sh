@@ -106,7 +106,13 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.specialPresidentIndex = null;
 		this.presidentIndex = null;
 
+		if (socket) {
+			Player.data(socket.uid, 'joining', true);
+		}
 		DB.gid(function(gid) {
+			if (socket) {
+				Player.data(socket.uid, 'joining', false);
+			}
 			setup(game, gid, socket);
 			DB.insert('games', {id: gid, version: CommonConsts.VERSION, compatible_version: CommonConsts.COMPATIBLE_VERSION});
 			emitLobby();
@@ -516,6 +522,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		}
 		if (socket) {
 			socket.game = null;
+			Player.data(uid, 'joining', null);
 		}
 
 		if (!this.started) {
