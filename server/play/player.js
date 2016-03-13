@@ -3,16 +3,21 @@
 var Socket = require.main.require('./server/connect/io');
 
 var uniquePlayers = {};
+var playersData = {};
 
 module.exports = {
 
 	add: function(uid, socket) {
 		socket.join('player' + uid);
 		uniquePlayers[uid] = socket;
+		if (!playersData[uid]) {
+			playersData[uid] = {};
+		}
 	},
 
 	remove: function(uid) {
 		delete uniquePlayers[uid];
+		delete playersData[uid];
 	},
 
 	all: function() {
@@ -21,6 +26,22 @@ module.exports = {
 
 	emitTo: function(uid, name, data) {
 		Socket.io().to('player' + uid).emit(name, data);
+	},
+
+	data: function(uid, key, value) {
+		var playerData = playersData[uid];
+		if (!playerData) {
+			console.log('Invalid uid', uid, key, value);
+			return;
+		}
+		if (value === undefined) {
+			return playerData[key];
+		}
+		if (value === null) {
+			delete playerData[key];
+		} else {
+			playerData[key] = value;
+		}
 	},
 
 };
