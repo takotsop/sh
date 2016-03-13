@@ -154,12 +154,14 @@ var policyAction = function(data, puid, game) {
 					return data;
 				}
 			}
-		} else {
+		} else if (game.turn.policies) {
 			game.turn.presidentDiscard = data.policyIndex;
 			delete game.turn.policies[data.policyIndex];
 			var secret = {target: game.chancellorElect, policies: game.turn.policies};
 			data = game.emitAction('discarded', data, secret);
 			return data;
+		} else {
+			game.error('Policies not passed from chancellor', puid, [game.turn]);
 		}
 	} else if (game.isChancellor(puid)) {
 		if (game.turn.presidentDiscard == null) {
