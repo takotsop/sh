@@ -535,8 +535,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 	this.error = function(description, puid, data) {
 		if (description == this.lastError) {
 			if (this.lastAction) {
-				console.error('GE', this.gid, puid, description, data);
-				console.log(this.lastAction, '\n');
+				console.error('\nGE', this.gid, puid, description, data);
+				console.log(this.lastAction + '\n');
 				this.lastAction = null;
 				Player.emitTo(puid, 'action error', description);
 			} else {
@@ -597,6 +597,17 @@ Game.get = function(gid) {
 			return game;
 		}
 	}
+};
+
+Game.existsFor = function(socket) {
+	if (socket.game == null) {
+		var sharedGid = Player.data(socket.uid, 'gid');
+		if (!sharedGid) {
+			return Player.data(socket.uid, 'joining');
+		}
+		socket.game = Game.get(sharedGid);
+	}
+	return socket.game != null;
 };
 
 Game.emitLobby = emitLobby;

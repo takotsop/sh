@@ -2,6 +2,8 @@
 
 var CommonUtil = require.main.require('./common/util');
 
+var Game = require.main.require('./server/play/game');
+
 //MANAGE
 
 var chatAction = function(data, puid, game) {
@@ -272,12 +274,17 @@ var Play = function(socket) {
 
 	socket.on('game action', function(rawData, callback) {
 		var action = rawData.action;
-		var game = socket.game;
 		var puid = socket.uid;
-		if (!game || game.playerState(puid) == null) {
-			console.error('Socket action invalid game', puid, [action, game ? game.playersState : game]);
+		if (!Game.existsFor(socket)) {
+			console.error('\nSocket action invalid game', puid, action);
 			return;
 		}
+		var game = socket.game;
+		if (!game || game.playerState(puid) == null) {
+			console.error('\nSocket action invalid state', puid, action, game ? [game.history.length, game.players, game.playersState] : 'joining');
+			return;
+		}
+
 		var data = {action: action};
 		var recording, saving = true;
 		if (action == 'quit') {
@@ -306,7 +313,14 @@ var Play = function(socket) {
 	});
 
 	socket.on('typing', function(data) {
-		socket.game.emitExcept(socket, 'typing', {uid: socket.uid, on: data.on});
+		if (!Game.existsFor(socket)) {
+			console.error('\nSocket action invalid game', socket.uid, 'typing');
+			return;
+		}
+		var game = socket.game;
+		if (game) {
+			game.emitExcept(socket, 'typing', {uid: socket.uid, on: data.on});
+		}
 	});
 
 };
