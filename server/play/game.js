@@ -18,6 +18,7 @@ var Player = require.main.require('./server/play/player');
 var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
 
 var games = [];
+var lobbyGames, lobbyPlayers;
 
 var setup = function(game, gid, socket) {
 	game.gid = gid;
@@ -29,39 +30,41 @@ var setup = function(game, gid, socket) {
 };
 
 var emitLobby = function(target) {
-	var lobbyGames = games.filter(function(game) {
-		return game.isOpenPublic();
-	}).map(function(game) {
-		return {
-			gid: game.gid,
-			names: game.playersStateMap('name').join('・'),
-			size: game.maxSize,
-		};
-	});
+	if (!target) {
+		lobbyGames = games.filter(function(game) {
+			return game.isOpenPublic();
+		}).map(function(game) {
+			return {
+				gid: game.gid,
+				names: game.playersStateMap('name').join('・'),
+				size: game.maxSize,
+			};
+		});
 
-	var playerSockets = Player.all();
-	var onlineCount = 0, playingCount = 0, lobbyCount = 0;
-	for (var sid in playerSockets) {
-		var socket = playerSockets[sid];
-		onlineCount += 1;
-		if (socket.game) {
-			if (!socket.game.finished) {
-				playingCount += 1;
+		var playerSockets = Player.all();
+		var onlineCount = 0, playingCount = 0, lobbyCount = 0;
+		for (var sid in playerSockets) {
+			var socket = playerSockets[sid];
+			onlineCount += 1;
+			if (socket.game) {
+				if (!socket.game.finished) {
+					playingCount += 1;
+				}
+			} else {
+				lobbyCount += 1;
 			}
-		} else {
-			lobbyCount += 1;
 		}
+		lobbyPlayers = {
+			online: onlineCount,
+			playing: playingCount,
+			lobby: lobbyCount,
+		};
 	}
-	var players = {
-		online: onlineCount,
-		playing: playingCount,
-		lobby: lobbyCount,
-	};
 
 	if (!target) {
 		target = Socket.io().to('lobby');
 	}
-	target.emit('lobby games stats', {games: lobbyGames, players: players});
+	target.emit('lobby games stats', {games: lobbyGames, players: lobbyPlayers});
 };
 
 var Game = function(restoreData, size, privateGame, socket) {
