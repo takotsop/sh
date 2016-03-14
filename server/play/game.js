@@ -104,7 +104,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 		this.positionIndex = null;
 		this.specialPresidentIndex = null;
-		this.presidentIndex = null;
 
 		if (socket) {
 			Player.data(socket.uid, 'joining', true);
@@ -339,7 +338,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 //STATE
 
 	this.setPresidentIndex = function(index) {
-		this.presidentIndex = index;
 		this.turn.president = this.players[index];
 	};
 

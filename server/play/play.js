@@ -46,11 +46,11 @@ var quitAction = function(data, puid, game, callback) {
 
 var chancellorAction = function(data, puid, cuid, game) {
 	if (game.turn.chancellor) {
-		game.error('Chancellor already chosen', puid);
+		game.error('Chancellor already chosen', puid, [cuid, game.turn.chancellor]);
 		return;
 	}
 	if (puid == cuid) {
-		game.error('Enchancell self', puid, [game.playerState(puid, 'index'), game.presidentIndex]);
+		game.error('Enchancell self', puid, [game.playerState(puid, 'index'), game.positionIndex]);
 		return;
 	}
 	if (!game.isPresident(puid)) {
@@ -116,7 +116,7 @@ var voteAction = function(data, puid, game) {
 		var elected = supportCount > Math.floor(game.currentCount / 2);
 		var forced, secret, isHitler;
 		if (elected) {
-			game.presidentElect = game.players[game.presidentIndex];
+			game.presidentElect = game.turn.president;
 			game.chancellorElect = game.turn.chancellor;
 
 			game.turn.policies = game.getTopPolicies();
