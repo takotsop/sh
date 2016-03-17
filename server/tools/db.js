@@ -158,11 +158,6 @@ module.exports = {
 			console.log('Update players', state, gid, userIds);
 		}
 		if (userIds.length > 0) {
-			if (gid) {
-				gid = "'" + gid + "'";
-			 } else {
-				gid = 'NULL';
-			}
 			var now = CommonUtil.now();
 			query("UPDATE users SET games_"+state+"=games_"+state+"+1, gid=$1, online_at=$2, updated_at=$3 WHERE id IN ("+userIds.join(',')+")", [gid, now, now]);
 		}
