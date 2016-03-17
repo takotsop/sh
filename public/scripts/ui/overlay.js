@@ -4,6 +4,8 @@ require('styles/ui/overlay');
 
 var $ = require('jquery');
 
+var CommonGame = require('common/game');
+
 var Cards = require('ui/cards');
 
 var Socket = require('socket/socket');
@@ -41,9 +43,11 @@ var showOverlay = function(type, data) {
 		extras += '<div class="tip bottom">⤹ chat box</div>';
 		extras += '<div class="tip bottom right">menu⤵︎</div>';
 
-		inner += '<h2><em>welcome to...</em></h2><h1>Secret Hitler</h1>';
-		inner += '<h3>Your secret role this game is: <strong>'+State.localRole()+'</strong></h3>';
+		inner += '<h2><em>your secret role:</em></h2>';
 		inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
+		inner += '<h1>'+State.localRole()+'</h1>';
+		var fascistsCount = CommonGame.fascistsCount(State.playerCount) + ' fascists';
+		inner += '<h4>'+State.playerCount+' players ('+fascistsCount+')</h4>';
 		inner += '<p>';
 
 		inner += 'Your objective is to ';
