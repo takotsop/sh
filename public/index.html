@@ -55,8 +55,7 @@
 		<div id="s-signin-email" class="sd-signin">
 			<form id="signin-start-form">
 				<h2>Enter your email to begin:</h2>
-				<p class="detail">(a valid email is required to sign back in later)</p>
-				<input class="full input-signin" id="i-signin-email" type="email" placeholder="example@email.com" /> <div class="input-error mini">Invalid email, please try again</div>
+				<input class="full input-signin" id="i-signin-email" type="email" placeholder="example@email.com" maxlength="254" /> <div class="input-error mini">Invalid email, please try again</div>
 				<button type="submit" class="large">submit</button>
 			</form>
 			<p>Alternatively, use a guest account to try it out:</p>
@@ -72,10 +71,10 @@
 		<div id="s-signin-username" class="sd-signin">
 			<h2>Welcome, <span class="signin-email-address">a@a.a</span>!</h2>
 			<h3 class="faint">Wrong email? <button class="signin-restart">try again</button></h3>
+			<p class="detail">(take care, a valid email is required to sign back in later)</p>
 
 			<input class="full input-signin" id="i-signin-username" placeholder="username" maxlength="12" /> <div class="input-error mini"></div>
-			<h3 class="faint">Provide 4 - 12 letters, numbers, and underscores</h3>
-			<h3 class="faint">Prefer your Twitch chat name if possible</h3>
+			<h3 class="faint">Provide 4 - 12 letters, numbers, and up to one space</h3>
 		</div>
 	</div>
 </section>
