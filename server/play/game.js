@@ -272,7 +272,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	};
 
 	this.emitStartPerspective = function(uid) {
- 		Player.emitTo(uid, 'lobby game data', this.gameData(uid));
+		Player.emitTo(uid, 'lobby game data', this.gameData(uid));
 	};
 
 	this.start = function() {
