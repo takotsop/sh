@@ -6,13 +6,16 @@ var SocketIO = require('socket.io');
 
 var DB = require.main.require('./server/tools/db');
 
-//PUBLIC
-
 var io;
+
+//PUBLIC
 
 module.exports = {
 
 	init: function(http) {
+
+		// db
+
 		DB.delete('games', 'state IS NULL');
 
 		DB.update('users', 'online_count > 0', {online_count: 0});
@@ -32,6 +35,8 @@ module.exports = {
 			}
 			console.log('\n');
 		});
+
+		// io
 
 		io = SocketIO(http);
 
@@ -65,8 +70,8 @@ module.exports = {
 		});
 	},
 
-	io: function() {
-		return io;
+	to: function(room) {
+		return io.to(room);
 	},
 
 };

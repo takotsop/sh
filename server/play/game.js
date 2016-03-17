@@ -62,7 +62,7 @@ var emitLobby = function(target) {
 	}
 
 	if (!target) {
-		target = Socket.io().to('lobby');
+		target = Socket.to('lobby');
 	}
 	target.emit('lobby games stats', {games: lobbyGames, players: lobbyPlayers});
 };
@@ -180,7 +180,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 //LOBBY
 
 	this.emit = function(name, data) {
-		Socket.io().to(this.gid).emit(name, data);
+		Socket.to(this.gid).emit(name, data);
 	};
 
 	this.emitExcept = function(exceptUid, name, data) {

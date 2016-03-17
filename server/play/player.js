@@ -25,7 +25,7 @@ module.exports = {
 	},
 
 	emitTo: function(uid, name, data) {
-		Socket.io().to('player' + uid).emit(name, data);
+		Socket.to('player' + uid).emit(name, data);
 	},
 
 	data: function(uid, key, value) {
