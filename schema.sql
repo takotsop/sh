@@ -57,7 +57,8 @@ CREATE TABLE feedback (
     report_type text,
     feedback text,
     created_at integer NOT NULL,
-    updated_at integer NOT NULL
+    updated_at integer NOT NULL,
+    user_id integer
 );
 
 
@@ -100,7 +101,9 @@ CREATE TABLE games (
     liberal_victory boolean,
     win_method text,
     version text,
-    player_names text
+    player_names text,
+    compatible_version text,
+    history_count integer
 );
 
 
@@ -199,6 +202,14 @@ ALTER TABLE ONLY users
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: feedback_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY feedback
+    ADD CONSTRAINT feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
