@@ -20,7 +20,7 @@ var MINIMUM_GAME_SIZE = Utils.TESTING ? 3 : 5;
 var games = [];
 var lobbyGames, lobbyPlayers;
 
-var setup = function(game, gid, socket) {
+var conpleteSetup = function(game, gid, socket) {
 	game.gid = gid;
 	game.generator = new SeedRandom(gid);
 	games.push(game);
@@ -43,9 +43,9 @@ var emitLobby = function(target) {
 
 		var playerSockets = Player.all();
 		var onlineCount = 0, playingCount = 0, lobbyCount = 0;
-		for (var sid in playerSockets) {
+		for (var suid in playerSockets) {
+			var socket = playerSockets[suid];
 			onlineCount += 1;
-			var socket = playerSockets[sid];
 			if (socket.game) {
 				if (socket.game.started && !socket.game.finished) {
 					playingCount += 1;
@@ -82,7 +82,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.playerCount = restoreData.player_count;
 		this.finished = false;
 
-		setup(this, restoreData.id, socket);
+		conpleteSetup(this, restoreData.id, socket);
 	} else {
 		this.maxSize = size;
 		this.private = privateGame;
@@ -112,7 +112,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			if (socket) {
 				Player.data(socket.uid, 'joining', false);
 			}
-			setup(game, gid, socket);
+			conpleteSetup(game, gid, socket);
 			DB.insert('games', {id: gid, version: CommonConsts.VERSION, compatible_version: CommonConsts.COMPATIBLE_VERSION});
 			emitLobby();
 		});
@@ -127,8 +127,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 //PRIVATE
 
-	this.random = function(max) {
-		return Utils.rngInt(this.generator, max);
+	this.random = function(span) {
+		return Utils.rngInt(this.generator, span);
 	};
 
 	this.shuffle = function(array) {

@@ -35,8 +35,8 @@ module.exports = {
 
 //RANDOM
 
-	rngInt: function(generator, max) {
-		return Math.abs(rng(generator)) % max;
+	rngInt: function(generator, span) {
+		return Math.abs(rng(generator)) % span;
 	},
 
 	randomize: function(generator, array) {
