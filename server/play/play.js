@@ -277,13 +277,13 @@ var Play = function(socket) {
 	socket.on('game action', function(rawData, callback) {
 		var action = rawData.action;
 		var puid = socket.uid;
-		if (!Game.existsFor(socket)) {
-			console.error('\nSocket action invalid game', puid, action);
+		if (!Game.existsFor(socket) || !socket.game) {
+			console.error('\nSocket action invalid game', puid, action, Game.existsFor(socket));
 			return;
 		}
 		var game = socket.game;
-		if (!game || game.playerState(puid) == null) {
-			console.error('\nSocket action invalid state', puid, action, game ? [game.history.length, game.players, game.playersState] : 'joining');
+		if (game.playerState(puid) == null) {
+			game.error('Socket invalid for game', puid, [action, game.history.length, game.players, game.playersState]);
 			return;
 		}
 
