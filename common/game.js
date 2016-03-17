@@ -38,4 +38,8 @@ module.exports = {
 		return startIndex;
 	},
 
+	fascistsCount: function(gameSize) {
+		return Math.ceil(gameSize / 2) - 1;
+	},
+
 };

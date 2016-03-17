@@ -304,7 +304,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		}
 
 		// Assign Fascists
-		var facistsCount = Math.ceil(this.playerCount / 2) - 1;
+		var facistsCount = CommonGame.fascistsCount(this.playerCount);
 		var fascistIndicies = [2];
 		for (var i = 1; i < this.playerCount; ++i) {
 			fascistIndicies[i] = i < facistsCount ? 1 : 0;
