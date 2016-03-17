@@ -2532,8 +2532,23 @@
 		// Email
 
 		email: function(email) {
+			if (email.length < 6) {
+				return 'Invalid email address';
+			}
+			if (email.length > 254) {
+				return 'Invalid email address';
+			}
 			var regexEmailSections = /\S+@\S+\.\S+/;
 			if (!regexEmailSections.test(email)) {
+				return 'Invalid email address';
+			}
+			var emailSplit = email.split('@');
+			var emailLocal = emailSplit[0];
+			if (!emailLocal || emailLocal.length > 64) {
+				return 'Invalid email address';
+			}
+			var emailDomain = emailSplit[1];
+			if (!emailDomain || emailDomain.length < 4) {
 				return 'Invalid email address';
 			}
 		},
