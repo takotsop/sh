@@ -159,7 +159,7 @@ module.exports = {
 		}
 		if (userIds.length > 0) {
 			var now = CommonUtil.now();
-			query("UPDATE users SET games_"+state+"=games_"+state+"+1, gid=$1, online_at=$2, updated_at=$3 WHERE id IN ("+userIds.join(',')+")", [gid, now, now]);
+			query('UPDATE users SET games_'+state+'=games_'+state+'+1, gid=$1, online_at=$2, updated_at=$3 WHERE id IN ('+userIds.join(',')+')', [gid, now, now]);
 		}
 	},
 

@@ -7,7 +7,8 @@ var Utils = require.main.require('./server/tools/utils');
 var DB = require.main.require('./server/tools/db');
 var Mailer = require.main.require('./server/tools/mailer');
 
-var Lobby = require('./lobby');
+var Lobby = require.main.require('./server/connect/lobby');
+
 var Game = require.main.require('./server/play/game');
 var Player = require.main.require('./server/play/player');
 

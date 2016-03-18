@@ -4,7 +4,7 @@ require('styles/ui/chat');
 
 var $ = require('jquery');
 
-var SimpleWebRTC = require("simplewebrtc");
+var SimpleWebRTC = require('simplewebrtc');
 
 var Data = require('util/data');
 
