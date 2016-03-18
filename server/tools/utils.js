@@ -1,16 +1,8 @@
 'use strict';
 
-var rng = function(generator) {
-	return generator.int32();
-};
-
 module.exports = {
 
 	TESTING: process.env.NODE_ENV != 'production',
-
-	now: function() {
-		return Math.round(Date.now() * 0.001);
-	},
 
 	uuid: function(length) {
 		return Math.random().toString(36).substr(2, length || 16);
@@ -21,7 +13,7 @@ module.exports = {
 	},
 
 	rangeCheck: function(number, min, max, defaultValue) {
-		if (!number) {
+		if (number == null) {
 			return defaultValue;
 		}
 		if (number < min) {
@@ -36,7 +28,7 @@ module.exports = {
 //RANDOM
 
 	rngInt: function(generator, span) {
-		return Math.abs(rng(generator)) % span;
+		return Math.abs(generator.int32()) % span;
 	},
 
 	randomize: function(generator, array) {
