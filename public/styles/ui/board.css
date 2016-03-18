@@ -8,9 +8,9 @@
 	margin: auto;
 
 	width: 720px;
-	max-width: 100vw;
+	max-width: 100vmin;
 	height: 480px;
-	max-height: 67vw;
+	max-height: 67vmin;
 }
 
 #board {
