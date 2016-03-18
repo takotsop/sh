@@ -13,7 +13,7 @@ var Player = require.main.require('./server/play/player');
 
 //LOCAL
 
-var setSocket = function(socket, response, uid, auth) {
+var setSocket = function(socket, response, uid) {
 	socket.uid = uid;
 	socket.name = response.name;
 	Player.add(uid, socket);
@@ -34,7 +34,7 @@ var setSocket = function(socket, response, uid, auth) {
 var authenticate = function(socket, uid, auth) {
 	DB.fetch('name, email', 'users', 'id = $1 AND auth_key = $2', [uid, auth], function(response) {
 		if (response) {
-			setSocket(socket, response, uid, auth);
+			setSocket(socket, response, uid);
 		} else {
 			socket.emit('auth', {invalid: true});
 		}
@@ -58,7 +58,7 @@ module.exports = function(socket, uid, auth) {
 			callback(response);
 			response.name = 'Guest' + uid;
 			response.email = response.name + '@secrethitler.com';
-			setSocket(socket, response, uid, auth);
+			setSocket(socket, response, uid);
 			return;
 		}
 
