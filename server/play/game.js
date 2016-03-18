@@ -534,7 +534,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (description == this.lastError) {
 			if (this.lastAction) {
 				console.error('\nGE', this.gid, puid, description, data);
-				console.log(this.lastAction + '\n');
+				console.log(this.lastAction, '\n');
 				this.lastAction = null;
 				Player.emitTo(puid, 'action error', description);
 			} else {
