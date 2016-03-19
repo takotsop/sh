@@ -2576,6 +2576,10 @@
 
 	var CommonUtil = __webpack_require__(15);
 
+	var preprocess = function(value) {
+		return value.trim();
+	};
+
 	//PUBLIC
 
 	module.exports = {
@@ -2605,7 +2609,7 @@
 		},
 
 		emailProcess: function(value) {
-			return value.trim();
+			return preprocess(value);
 		},
 
 		// Passkey
@@ -2621,7 +2625,7 @@
 		},
 
 		passkeyProcess: function(value) {
-			return value.trim();
+			return preprocess(value);
 		},
 
 		// Username
@@ -2643,6 +2647,11 @@
 				return 'Username must only consist of letters, numbers, and up to one space';
 			}
 
+			var splitBySpaces = username.split(' ');
+			if (splitBySpaces.length > 2) {
+				return 'Username must not have more than one space';
+			}
+
 			var invalidStartStrings = ['guest', 'admin', 'hitler'];
 			var lowercaseNowhitespaceUsername = CommonUtil.removeWhitespace(username.toLowerCase());
 			for (var idx in invalidStartStrings) {
@@ -2654,7 +2663,7 @@
 		},
 
 		usernameProcess: function(value) {
-			return value.replace(/\s\s+/g, ' ').trim();
+			return preprocess(value.replace(/\s\s+/g, ' '));
 		},
 
 	};
