@@ -1,10 +1,14 @@
 'use strict';
 
+var Util = require('util/util');
+
+//PUBLIC
+
 module.exports = {
 
-	uid: localStorage.getItem('uid'),
+	uid: Util.storage('uid'),
 
-	auth: localStorage.getItem('auth'),
+	auth: Util.storage('auth'),
 
 	username: null,
 

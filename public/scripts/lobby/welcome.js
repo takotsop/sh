@@ -8,6 +8,7 @@ var CommonValidate = require('common/validate');
 
 var Config = require('util/config');
 var Data = require('util/data');
+var Util = require('util/util');
 
 var App = require('ui/app');
 var Chat = require('ui/chat');
@@ -28,8 +29,8 @@ var hideWelcomeSplash = function() {
 var showSignin = function() {
 	Data.uid = null;
 	Data.auth = null;
-	localStorage.removeItem('uid');
-	localStorage.removeItem('auth');
+	Util.storage('uid', null);
+	Util.storage('auth', null);
 
 	$('.input-error').hide();
 
@@ -41,7 +42,7 @@ var showSignin = function() {
 
 	$('#i-signin-email').focus();
 
-	if (Config.TESTING && (!Config.manual && localStorage.getItem('manual') == null)) {
+	if (Config.TESTING && (!Config.manual && Util.storage('manual') == null)) {
 		setTimeout(function() {
 			$('#start-playing').click();
 			$('#guest-signin').click();
@@ -57,8 +58,8 @@ var finishSignin = function(response) {
 
 	Data.uid = response.id;
 	Data.auth = response.auth_key;
-	localStorage.setItem('uid', Data.uid);
-	localStorage.setItem('auth', Data.auth);
+	Util.storage('uid', Data.uid);
+	Util.storage('auth', Data.auth);
 };
 
 var signinError = function(name, errorText) {

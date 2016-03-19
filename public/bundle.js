@@ -472,15 +472,19 @@
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
+	var Util = __webpack_require__(16);
+
+	//PUBLIC
+
 	module.exports = {
 
-		uid: localStorage.getItem('uid'),
+		uid: Util.storage('uid'),
 
-		auth: localStorage.getItem('auth'),
+		auth: Util.storage('auth'),
 
 		username: null,
 
@@ -929,6 +933,17 @@
 
 		hidden: function(selector) {
 			return $(selector).css('display') == 'none';
+		},
+
+		storage: function(key, value) {
+			if (value === undefined) {
+				return window.localStorage.getItem(key);
+			}
+			if (value === null) {
+				window.localStorage.removeItem(key);
+				return;
+			}
+			window.localStorage.setItem(key, value);
 		},
 
 	};
@@ -2283,6 +2298,7 @@
 
 	var Config = __webpack_require__(6);
 	var Data = __webpack_require__(7);
+	var Util = __webpack_require__(16);
 
 	var App = __webpack_require__(21);
 	var Chat = __webpack_require__(17);
@@ -2303,8 +2319,8 @@
 	var showSignin = function() {
 		Data.uid = null;
 		Data.auth = null;
-		localStorage.removeItem('uid');
-		localStorage.removeItem('auth');
+		Util.storage('uid', null);
+		Util.storage('auth', null);
 
 		$('.input-error').hide();
 
@@ -2316,7 +2332,7 @@
 
 		$('#i-signin-email').focus();
 
-		if (Config.TESTING && (!Config.manual && localStorage.getItem('manual') == null)) {
+		if (Config.TESTING && (!Config.manual && Util.storage('manual') == null)) {
 			setTimeout(function() {
 				$('#start-playing').click();
 				$('#guest-signin').click();
@@ -2332,8 +2348,8 @@
 
 		Data.uid = response.id;
 		Data.auth = response.auth_key;
-		localStorage.setItem('uid', Data.uid);
-		localStorage.setItem('auth', Data.auth);
+		Util.storage('uid', Data.uid);
+		Util.storage('auth', Data.auth);
 	};
 
 	var signinError = function(name, errorText) {

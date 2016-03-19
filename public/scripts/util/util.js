@@ -15,4 +15,15 @@ module.exports = {
 		return $(selector).css('display') == 'none';
 	},
 
+	storage: function(key, value) {
+		if (value === undefined) {
+			return window.localStorage.getItem(key);
+		}
+		if (value === null) {
+			window.localStorage.removeItem(key);
+			return;
+		}
+		window.localStorage.setItem(key, value);
+	},
+
 };
