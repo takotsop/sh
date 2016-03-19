@@ -1,8 +1,12 @@
 'use strict';
 
+//SETUP
+
 var pageLoad = window.location;
 
 var pathItems = pageLoad.pathname.split('/');
+
+//PUBLIC
 
 module.exports = {
 
