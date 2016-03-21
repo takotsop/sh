@@ -124,7 +124,11 @@ module.exports = function(socket) {
 	});
 
 	socket.on('feedback', function(data, callback) {
-		DB.insert('feedback', {user_id: socket.uid, username: socket.name, report_type: data.type, feedback: data.body}, null, callback);
+		var gid;
+		if (socket.game) {
+			gid = socket.game.gid;
+		}
+		DB.insert('feedback', {user_id: socket.uid, game_id: gid, username: socket.name, report_type: data.type, feedback: data.body}, null, callback);
 	});
 
 };
