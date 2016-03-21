@@ -1905,6 +1905,8 @@
 
 	var Socket = __webpack_require__(8);
 
+	var Util = __webpack_require__(16);
+
 	var Players = __webpack_require__(23);
 	var State = __webpack_require__(22);
 
@@ -1941,8 +1943,9 @@
 			inner += '<h2><em>your secret role:</em></h2>';
 			inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
 			inner += '<h1>'+State.localRole()+'</h1>';
-			var fascistsCount = CommonGame.fascistsCount(State.playerCount) + ' fascists';
-			inner += '<h4>'+State.playerCount+' players ('+fascistsCount+')</h4>';
+			var fascistsCount = CommonGame.fascistsCount(State.playerCount) - 1;
+			var fascistsDescription = Util.pluralize(fascistsCount, 'Fascist') + ' + Hitler';
+			inner += '<h4>'+State.playerCount+' players (' + fascistsDescription + ')</h4>';
 			inner += '<p>';
 
 			inner += 'Your objective is to ';
