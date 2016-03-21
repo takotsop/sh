@@ -24,7 +24,7 @@ var chatAction = function(data, puid, game) {
 var quitAction = function(data, puid, game, callback) {
 	var wasPresident = game.isPresident(puid);
 	var wasChancellor = game.isChancellor(puid);
-	var wasHitler = game.isHitler(puid);
+
 	if (game.remove(null, puid)) {
 		var advance;
 		if (wasPresident) {
@@ -38,7 +38,8 @@ var quitAction = function(data, puid, game, callback) {
 		if (callback) {
 			callback();
 		}
-		return game.emitAction('abandoned', {uid: puid, hitler: wasHitler, advance: advance});
+		var fuehrerRemaining = game.fuehrerRemaining();
+		return game.emitAction('abandoned', {uid: puid, hitler: fuehrerRemaining, advance: advance});
 	}
 };
 
@@ -114,7 +115,7 @@ var voteAction = function(data, puid, game) {
 			});
 		}
 		var elected = supportCount > Math.floor(game.currentCount / 2);
-		var forced, secret, isHitler;
+		var forced, secret, isFuehrer;
 		if (elected) {
 			game.presidentElect = game.turn.president;
 			game.chancellorElect = game.turn.chancellor;
@@ -122,14 +123,16 @@ var voteAction = function(data, puid, game) {
 			game.turn.policies = game.getTopPolicies();
 			secret = {target: game.presidentElect, policies: game.turn.policies};
 
-			if (game.enactedFascist >= 3 && game.isHitler(game.chancellorElect)) {
-				isHitler = true;
-				game.finish(false, 'hitler');
+			if (game.enactedFascist >= 3) {
+				isFuehrer = game.isFuehrer(game.chancellorElect);
+				if (isFuehrer) {
+					game.finish(false, 'hitler');
+				}
 			}
 		} else {
 			forced = game.failedElection();
 		}
-		var voteData = {supporters: supporters, elected: elected, forced: forced, hitler: isHitler};
+		var voteData = {supporters: supporters, elected: elected, forced: forced, hitler: isFuehrer};
 		voteData = game.emitAction('voted', voteData, secret);
 		return voteData;
 	}
@@ -227,12 +230,12 @@ var powerAction = function(action, data, puid, tuid, game) {
 				game.specialPresidentIndex = game.playerState(tuid, 'index');
 				data = game.emitAction('special election', data);
 			} else if (action.indexOf('bullet') > -1) {
-				var wasHitler = game.isHitler(tuid);
+				var wasFuehrer = game.isFuehrer(tuid);
 				if (!game.kill(tuid, false)) {
 					game.error('Could not kill', puid, [tuid, game.playerState(tuid)]);
 					return;
 				}
-				data.hitler = wasHitler;
+				data.hitler = wasFuehrer;
 				data = game.emitAction('bullet', data);
 			}
 		}

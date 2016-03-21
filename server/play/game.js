@@ -99,7 +99,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.playerCount = null;
 		this.currentCount = null;
 		this.policyDeck = null;
-		this.hitlerUid = null;
 		this.power = null;
 
 		this.positionIndex = null;
@@ -219,7 +218,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		var showFascists;
 		if (perspectiveUid) {
 			var perspectiveAllegiance = this.playerState(perspectiveUid, 'allegiance');
-			showFascists = perspectiveAllegiance == 1 || (perspectiveAllegiance == 2 && this.playerCount <= 6);
+			showFascists = perspectiveAllegiance == 1 || (perspectiveAllegiance >= 2 && this.playerCount <= 6);
 		}
 		this.players.forEach(function(uid, index) {
 			var playerData = {
@@ -313,9 +312,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.players.forEach(function(puid, pidx) {
 			var allegiance = fascistIndicies[pidx];
 			game.playerState(puid, 'allegiance', allegiance);
-			if (allegiance == 2) {
-				game.hitlerUid = puid;
-			}
 		});
 
 		// Emit
@@ -462,7 +458,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 			playerState.killed = true;
 			this.currentCount -= 1;
 
-			if (!this.finished && this.isHitler(uid)) {
+			if (!this.finished && this.isFuehrer(uid)) {
 				this.finish(true, quitting ? 'hitler quit' : 'hitler');
 			} else if (this.currentCount <= 2) {
 				this.removeSelf();
@@ -534,7 +530,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 		if (description == this.lastError) {
 			if (this.lastAction) {
 				console.error('\nGE', this.gid, puid, description, data);
-				console.log(this.lastAction, '\n');
+				console.log(this.lastAction);
+				console.log('');
 				this.lastAction = null;
 				Player.emitTo(puid, 'action error', description);
 			} else {
@@ -561,8 +558,18 @@ var Game = function(restoreData, size, privateGame, socket) {
 		return uid == this.turn.president;
 	};
 
-	this.isHitler = function(uid) {
-		return uid == this.hitlerUid;
+	this.fuehrerRemaining = function() {
+		for (var pidx in this.players) {
+			var puid = this.players[pidx];
+			if (this.isFuehrer(puid) && !this.playerState(puid)) {
+				return true;
+			}
+		}
+	};
+
+	this.isFuehrer = function(uid) {
+		var allegiance = this.playerState(uid, 'allegiance');
+		return allegiance && allegiance >= 2 ? allegiance : false;
 	};
 
 	this.enoughToStart = function() {

@@ -31,7 +31,7 @@ var allegianceClass = function(allegiance) {
 		ac = CommonConsts.LIBERAL;
 	} else {
 		ac = CommonConsts.FASCIST;
-		if (allegiance == 2) {
+		if (allegiance >= 2) {
 			ac += ' hitler';
 		}
 	}
@@ -42,7 +42,7 @@ var displayAvatar = function(player, allegiance) {
 	App.playerDiv(player, '.avatar').addClass(allegianceClass(allegiance));
 };
 
-var killPlayer = function(player, hitler, quit) {
+var killPlayer = function(player, isFuehrer, quit) {
 	if (!player.killed) {
 		player.killed = true;
 		App.playerDiv(player).removeClass('choose');
@@ -51,7 +51,7 @@ var killPlayer = function(player, hitler, quit) {
 
 		if (!State.gameOver) {
 			var Game = require('game/game');
-			if (hitler) {
+			if (isFuehrer) {
 				Game.end(true, quit ? 'hitler quit' : 'hitler');
 			} else if (State.currentCount <= 2) {
 				if (State.playerCount <= 3) {

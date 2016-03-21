@@ -1318,7 +1318,7 @@
 			ac = CommonConsts.LIBERAL;
 		} else {
 			ac = CommonConsts.FASCIST;
-			if (allegiance == 2) {
+			if (allegiance >= 2) {
 				ac += ' hitler';
 			}
 		}
@@ -1329,7 +1329,7 @@
 		App.playerDiv(player, '.avatar').addClass(allegianceClass(allegiance));
 	};
 
-	var killPlayer = function(player, hitler, quit) {
+	var killPlayer = function(player, isFuehrer, quit) {
 		if (!player.killed) {
 			player.killed = true;
 			App.playerDiv(player).removeClass('choose');
@@ -1338,7 +1338,7 @@
 
 			if (!State.gameOver) {
 				var Game = __webpack_require__(30);
-				if (hitler) {
+				if (isFuehrer) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
 				} else if (State.currentCount <= 2) {
 					if (State.playerCount <= 3) {
