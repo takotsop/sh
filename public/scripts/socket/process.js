@@ -5,6 +5,8 @@ var Socket = require('socket/socket');
 var Cards = require('ui/cards');
 var Chat = require('ui/chat');
 
+var Util = require('util/util');
+
 var Game = require('game/game');
 var Players = require('game/players');
 var Policies = require('game/policies');
@@ -38,6 +40,7 @@ var processAction = function(data, fastForward) {
 		}
 		if (action == 'peek') {
 			Policies.returnPreviewed();
+			Chat.addAction('peeked the next three policies', State.getPresident());
 		} else {
 			var target = Players.get(data.uid);
 			if (action == 'investigate') {
@@ -45,11 +48,12 @@ var processAction = function(data, fastForward) {
 				if (State.isLocalPresident()) {
 					Players.displayAvatar(target, data.secret.party);
 				}
-				Chat.addAction('investigated ' + target.name, State.getPresident());
+				Chat.addAction('investigated ' + Util.nameSpan(target), State.getPresident());
 			} else if (action == 'special election') {
 				State.specialPresidentIndex = target.index;
 			} else if (action == 'bullet') {
 				Players.kill(target, data.hitler, false);
+				Chat.addAction('killed ' + Util.nameSpan(target), State.getPresident());
 			}
 		}
 		Cards.show(null);

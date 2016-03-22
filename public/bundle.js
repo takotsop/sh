@@ -2894,6 +2894,8 @@
 	var Cards = __webpack_require__(26);
 	var Chat = __webpack_require__(17);
 
+	var Util = __webpack_require__(8);
+
 	var Game = __webpack_require__(30);
 	var Players = __webpack_require__(23);
 	var Policies = __webpack_require__(39);
@@ -2927,6 +2929,7 @@
 			}
 			if (action == 'peek') {
 				Policies.returnPreviewed();
+				Chat.addAction('peeked the next three policies', State.getPresident());
 			} else {
 				var target = Players.get(data.uid);
 				if (action == 'investigate') {
@@ -2934,11 +2937,12 @@
 					if (State.isLocalPresident()) {
 						Players.displayAvatar(target, data.secret.party);
 					}
-					Chat.addAction('investigated ' + target.name, State.getPresident());
+					Chat.addAction('investigated ' + Util.nameSpan(target), State.getPresident());
 				} else if (action == 'special election') {
 					State.specialPresidentIndex = target.index;
 				} else if (action == 'bullet') {
 					Players.kill(target, data.hitler, false);
+					Chat.addAction('killed ' + Util.nameSpan(target), State.getPresident());
 				}
 			}
 			Cards.show(null);
