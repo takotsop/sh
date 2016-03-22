@@ -31,18 +31,24 @@ var setDirective = function(directive) {
 };
 
 var insertMessage = function(player, message, isAction) {
-	App.playerDiv(player, '.chat').text(message);
-	var chatId = State.started ? 'game' : 'lobby';
 	var prefix;
-	var allegiance = player.allegiance || 'unknown';
-	if (isAction) {
-		prefix = '<p class="detail '+allegiance+'">' + player.name + ' ';
+	if (player) {
+		App.playerDiv(player, '.chat').text(message);
+
+		var allegiance = player.allegiance || 'unknown';
+		if (isAction) {
+			prefix = '<p class="detail '+allegiance+'">' + player.name + ' ';
+		} else {
+			prefix = '<p><strong class="'+allegiance+' danger">' + player.name + ':</strong> ';
+		}
 	} else {
-		prefix = '<p><strong class="'+allegiance+' danger">' + player.name + ':</strong> ';
+		prefix = '<p class="detail unknown">';
 	}
 
+	var messageHtml = prefix + message + '</p>';
+	var chatId = State.started ? 'game' : 'lobby';
 	var chatContainer = $('#chat-container-' + chatId);
-	chatContainer.append(prefix + message + '</p>');
+	chatContainer.append(messageHtml);
 	chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
 };
 
@@ -53,7 +59,7 @@ var addChatMessage = function(data) {
 	}
 };
 
-var addChatAction = function(player, message) {
+var addChatAction = function(message, player) {
 	insertMessage(player, message, true);
 };
 

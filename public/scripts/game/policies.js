@@ -8,6 +8,8 @@ var App = require('ui/app');
 var Cards = require('ui/cards');
 var Chat = require('ui/chat');
 
+var Util = require('util/util');
+
 var State = require('game/state');
 
 //LOCAL
@@ -54,7 +56,7 @@ var policyDiscarded = function(data) {
 		cards = 'policy';
 	} else {
 		var chancellor = State.getChancellor();
-		directive = 'Wait for Chancellor <strong>' + chancellor.name + '</strong> to enact a policy';
+		directive = 'Wait for Chancellor ' + Util.nameSpan(chancellor) + ' to enact a policy';
 		cards = null;
 	}
 	Chat.setDirective(directive);
@@ -70,7 +72,11 @@ var policyEnacted = function(data) {
 	Cards.show(null);
 	State.chatDisabled = false;
 	Game.resetElectionTracker();
-	var fascistPower = enactPolicy(data.policy);
+
+	var policyType = data.policy;
+	Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="'+policyType+' danger">' + policyType + '</strong> policy');
+
+	var fascistPower = enactPolicy(policyType);
 	if (State.gameOver) {
 		return;
 	}
@@ -115,14 +121,14 @@ var vetoRequest = function(data) {
 	var directive, cards;
 	var chancellor = State.getChancellor();
 	if (State.isLocalPresident()) {
-		directive = 'Confirm or override Chancellor <strong>' + chancellor.name + '</strong>\'s veto request';
+		directive = 'Confirm or override Chancellor ' + Util.nameSpan(chancellor) + '\'s veto request';
 		cards = 'veto';
 	} else {
 		if (State.isLocalChancellor()) {
 			var president = State.getPresident();
-			directive = 'Awaiting confirmation from President <strong>' + president.name + '</strong>';
+			directive = 'Awaiting confirmation from President ' + Util.nameSpan(president.name);
 		} else {
-			directive = 'Chancellor <strong>' + chancellor.name + '</strong> is requesting a veto, awaiting confirmation';
+			directive = 'Chancellor ' + Util.nameSpan(chancellor.name) + ' is requesting a veto, awaiting confirmation';
 		}
 		cards = null;
 	}
@@ -147,7 +153,7 @@ var previewPolicies = function(secret) {
 		directive = 'Peek at the next 3 policies. Click one to continue';
 	} else {
 		var president = State.getPresident();
-		directive = 'Wait for President <strong>' + president.name + '</strong> to peek at the next 3 policies';
+		directive = 'Wait for President ' + Util.nameSpan(president) + ' to peek at the next 3 policies';
 	}
 	Chat.setDirective(directive);
 	Cards.show(cards);

@@ -22,3 +22,7 @@
 	background-color: rgba(227, 100, 79, 0.95);
 	z-index: 9001;
 }
+
+#chat-container-lobby strong {
+	color: inherit;
+}

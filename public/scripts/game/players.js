@@ -10,6 +10,8 @@ var App = require('ui/app');
 var Cards = require('ui/cards');
 var Chat = require('ui/chat');
 
+var Util = require('util/util');
+
 var Action = require('socket/action');
 
 var State = require('game/state');
@@ -70,7 +72,7 @@ var killPlayer = function(player, isFuehrer, quit) {
 var abandonedPlayer = function(data) {
 	var player = getPlayer(data.uid);
 	killPlayer(player, data.hitler, true);
-	Chat.addAction(player, 'left the game');
+	Chat.addAction('left the game', player);
 
 	if (data.advance) {
 		require('game/game').advanceTurn();
@@ -108,7 +110,7 @@ var chancellorChosen = function(data) {
 		directive = 'Vote';
 		cards = 'vote';
 	}
-	Chat.setDirective(directive + ' on President <strong>'+president.name+'</strong> and Chancellor <strong>'+chancellor.name+'</strong>');
+	Chat.setDirective(directive + ' on President ' + Util.nameSpan(president) + ' and Chancellor ' + Util.nameSpan(chancellor));
 	Cards.show(cards);
 };
 

@@ -35,6 +35,11 @@ module.exports = {
 		return amount + ' ' + countable;
 	},
 
+	nameSpan: function(player) {
+		var allegiance = player.allegiance || 'unknown';
+		return '<strong class="'+allegiance+'">' + player.name + '</strong>';
+	},
+
 	hidden: function(selector) {
 		return $(selector).css('display') == 'none';
 	},

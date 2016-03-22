@@ -12,6 +12,8 @@ var Cards = require('ui/cards');
 var Chat = require('ui/chat');
 var Overlay = require('ui/overlay');
 
+var Util = require('util/util');
+
 var State = require('game/state');
 var Policies = require('game/policies');
 
@@ -39,7 +41,7 @@ var playTurn = function() {
 	if (State.isLocalPresident()) {
 		directive = 'Choose your Chancellor';
 	} else {
-		directive = 'Wait for <strong>'+president.name+'</strong> to choose their chancellor';
+		directive = 'Wait for ' + Util.nameSpan(president) + ' to choose their chancellor';
 	}
 	Cards.show(null);
 	Chat.setDirective(directive);
@@ -94,10 +96,14 @@ var failedGovernment = function(forced, explanation) {
 	var directive = explanation + ', ';
 	if (State.electionTracker == 0) {
 		directive += '3 failed elections enacts the top policy on the deck D:';
-	} else if (State.electionTracker == 2) {
-		directive += 'one more and the top policy on the deck will be enacted!';
+		Chat.addAction('Failed 3 governments ('+forced+' enacted)');
 	} else {
-		directive += 'advancing the election tracker and passing on the presidency';
+		Chat.addAction('Failed government ('+State.electionTracker+' of 3)');
+		if (State.electionTracker == 2) {
+			directive += 'one more and the top policy on the deck will be enacted!';
+		} else {
+			directive += 'advancing the election tracker and passing on the presidency';
+		}
 	}
 	Chat.setDirective(directive);
 	advanceTurn();
@@ -124,8 +130,7 @@ var voteCompleted = function(data) {
 			cards = 'policy';
 			directive = 'Choose a policy to <strong>discard</strong>';
 		} else {
-			var president = State.getPresident();
-			directive = 'Wait for President <strong>' + president.name + '</strong> to discard a policy';
+			directive = 'Wait for President ' + Util.nameSpan(State.getPresident()) + ' to discard a policy';
 		}
 		Chat.setDirective(directive);
 	} else {

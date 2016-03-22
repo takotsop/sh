@@ -536,6 +536,11 @@
 			return amount + ' ' + countable;
 		},
 
+		nameSpan: function(player) {
+			var allegiance = player.allegiance || 'unknown';
+			return '<strong class="'+allegiance+'">' + player.name + '</strong>';
+		},
+
 		hidden: function(selector) {
 			return $(selector).css('display') == 'none';
 		},
@@ -956,7 +961,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: rgba(156, 7, 1, 0.1);;\n\tcursor: pointer;\n}\n\n#lobby-wait-afk {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tbackground-color: rgba(227, 100, 79, 0.95);\n\tz-index: 9001;\n}\n", ""]);
+	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: rgba(156, 7, 1, 0.1);;\n\tcursor: pointer;\n}\n\n#lobby-wait-afk {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tbackground-color: rgba(227, 100, 79, 0.95);\n\tz-index: 9001;\n}\n\n#chat-container-lobby strong {\n\tcolor: inherit;\n}\n", ""]);
 
 	// exports
 
@@ -1017,18 +1022,24 @@
 	};
 
 	var insertMessage = function(player, message, isAction) {
-		App.playerDiv(player, '.chat').text(message);
-		var chatId = State.started ? 'game' : 'lobby';
 		var prefix;
-		var allegiance = player.allegiance || 'unknown';
-		if (isAction) {
-			prefix = '<p class="detail '+allegiance+'">' + player.name + ' ';
+		if (player) {
+			App.playerDiv(player, '.chat').text(message);
+
+			var allegiance = player.allegiance || 'unknown';
+			if (isAction) {
+				prefix = '<p class="detail '+allegiance+'">' + player.name + ' ';
+			} else {
+				prefix = '<p><strong class="'+allegiance+' danger">' + player.name + ':</strong> ';
+			}
 		} else {
-			prefix = '<p><strong class="'+allegiance+' danger">' + player.name + ':</strong> ';
+			prefix = '<p class="detail unknown">';
 		}
 
+		var messageHtml = prefix + message + '</p>';
+		var chatId = State.started ? 'game' : 'lobby';
 		var chatContainer = $('#chat-container-' + chatId);
-		chatContainer.append(prefix + message + '</p>');
+		chatContainer.append(messageHtml);
 		chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
 	};
 
@@ -1039,7 +1050,7 @@
 		}
 	};
 
-	var addChatAction = function(player, message) {
+	var addChatAction = function(message, player) {
 		insertMessage(player, message, true);
 	};
 
@@ -1315,6 +1326,8 @@
 	var Cards = __webpack_require__(26);
 	var Chat = __webpack_require__(17);
 
+	var Util = __webpack_require__(8);
+
 	var Action = __webpack_require__(29);
 
 	var State = __webpack_require__(22);
@@ -1375,7 +1388,7 @@
 	var abandonedPlayer = function(data) {
 		var player = getPlayer(data.uid);
 		killPlayer(player, data.hitler, true);
-		Chat.addAction(player, 'left the game');
+		Chat.addAction('left the game', player);
 
 		if (data.advance) {
 			__webpack_require__(30).advanceTurn();
@@ -1413,7 +1426,7 @@
 			directive = 'Vote';
 			cards = 'vote';
 		}
-		Chat.setDirective(directive + ' on President <strong>'+president.name+'</strong> and Chancellor <strong>'+chancellor.name+'</strong>');
+		Chat.setDirective(directive + ' on President ' + Util.nameSpan(president) + ' and Chancellor ' + Util.nameSpan(chancellor));
 		Cards.show(cards);
 	};
 
@@ -1636,6 +1649,8 @@
 	var Chat = __webpack_require__(17);
 	var Overlay = __webpack_require__(36);
 
+	var Util = __webpack_require__(8);
+
 	var State = __webpack_require__(22);
 	var Policies = __webpack_require__(39);
 
@@ -1663,7 +1678,7 @@
 		if (State.isLocalPresident()) {
 			directive = 'Choose your Chancellor';
 		} else {
-			directive = 'Wait for <strong>'+president.name+'</strong> to choose their chancellor';
+			directive = 'Wait for ' + Util.nameSpan(president) + ' to choose their chancellor';
 		}
 		Cards.show(null);
 		Chat.setDirective(directive);
@@ -1718,10 +1733,14 @@
 		var directive = explanation + ', ';
 		if (State.electionTracker == 0) {
 			directive += '3 failed elections enacts the top policy on the deck D:';
-		} else if (State.electionTracker == 2) {
-			directive += 'one more and the top policy on the deck will be enacted!';
+			Chat.addAction('Failed 3 governments ('+forced+' enacted)');
 		} else {
-			directive += 'advancing the election tracker and passing on the presidency';
+			Chat.addAction('Failed government ('+State.electionTracker+' of 3)');
+			if (State.electionTracker == 2) {
+				directive += 'one more and the top policy on the deck will be enacted!';
+			} else {
+				directive += 'advancing the election tracker and passing on the presidency';
+			}
 		}
 		Chat.setDirective(directive);
 		advanceTurn();
@@ -1748,8 +1767,7 @@
 				cards = 'policy';
 				directive = 'Choose a policy to <strong>discard</strong>';
 			} else {
-				var president = State.getPresident();
-				directive = 'Wait for President <strong>' + president.name + '</strong> to discard a policy';
+				directive = 'Wait for President ' + Util.nameSpan(State.getPresident()) + ' to discard a policy';
 			}
 			Chat.setDirective(directive);
 		} else {
@@ -1923,6 +1941,7 @@
 	var CommonGame = __webpack_require__(35);
 
 	var Cards = __webpack_require__(26);
+	var Chat = __webpack_require__(17);
 
 	var Socket = __webpack_require__(10);
 
@@ -1987,6 +2006,8 @@
 				inner += '<h3>Sorry, too many players quit the game to continue :(</h3>';
 			} else {
 				var winName = liberalVictory ? 'Liberal' : 'Fascist';
+				Chat.addAction(winName + ' win!');
+
 				inner += '<h1>'+winName+'s win!</h1>';
 				inner += '<h3>';
 				if (data.method == 'policies') {
@@ -2142,6 +2163,8 @@
 	var Cards = __webpack_require__(26);
 	var Chat = __webpack_require__(17);
 
+	var Util = __webpack_require__(8);
+
 	var State = __webpack_require__(22);
 
 	//LOCAL
@@ -2188,7 +2211,7 @@
 			cards = 'policy';
 		} else {
 			var chancellor = State.getChancellor();
-			directive = 'Wait for Chancellor <strong>' + chancellor.name + '</strong> to enact a policy';
+			directive = 'Wait for Chancellor ' + Util.nameSpan(chancellor) + ' to enact a policy';
 			cards = null;
 		}
 		Chat.setDirective(directive);
@@ -2204,7 +2227,11 @@
 		Cards.show(null);
 		State.chatDisabled = false;
 		Game.resetElectionTracker();
-		var fascistPower = enactPolicy(data.policy);
+
+		var policyType = data.policy;
+		Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="'+policyType+' danger">' + policyType + '</strong> policy');
+
+		var fascistPower = enactPolicy(policyType);
 		if (State.gameOver) {
 			return;
 		}
@@ -2249,14 +2276,14 @@
 		var directive, cards;
 		var chancellor = State.getChancellor();
 		if (State.isLocalPresident()) {
-			directive = 'Confirm or override Chancellor <strong>' + chancellor.name + '</strong>\'s veto request';
+			directive = 'Confirm or override Chancellor ' + Util.nameSpan(chancellor) + '\'s veto request';
 			cards = 'veto';
 		} else {
 			if (State.isLocalChancellor()) {
 				var president = State.getPresident();
-				directive = 'Awaiting confirmation from President <strong>' + president.name + '</strong>';
+				directive = 'Awaiting confirmation from President ' + Util.nameSpan(president.name);
 			} else {
-				directive = 'Chancellor <strong>' + chancellor.name + '</strong> is requesting a veto, awaiting confirmation';
+				directive = 'Chancellor ' + Util.nameSpan(chancellor.name) + ' is requesting a veto, awaiting confirmation';
 			}
 			cards = null;
 		}
@@ -2281,7 +2308,7 @@
 			directive = 'Peek at the next 3 policies. Click one to continue';
 		} else {
 			var president = State.getPresident();
-			directive = 'Wait for President <strong>' + president.name + '</strong> to peek at the next 3 policies';
+			directive = 'Wait for President ' + Util.nameSpan(president) + ' to peek at the next 3 policies';
 		}
 		Chat.setDirective(directive);
 		Cards.show(cards);
@@ -2907,7 +2934,7 @@
 					if (State.isLocalPresident()) {
 						Players.displayAvatar(target, data.secret.party);
 					}
-					Chat.addAction(State.getPresident(), 'investigated ' + target.name);
+					Chat.addAction('investigated ' + target.name, State.getPresident());
 				} else if (action == 'special election') {
 					State.specialPresidentIndex = target.index;
 				} else if (action == 'bullet') {

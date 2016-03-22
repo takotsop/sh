@@ -45,7 +45,7 @@ var processAction = function(data, fastForward) {
 				if (State.isLocalPresident()) {
 					Players.displayAvatar(target, data.secret.party);
 				}
-				Chat.addAction(State.getPresident(), 'investigated ' + target.name);
+				Chat.addAction('investigated ' + target.name, State.getPresident());
 			} else if (action == 'special election') {
 				State.specialPresidentIndex = target.index;
 			} else if (action == 'bullet') {

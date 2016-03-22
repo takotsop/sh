@@ -7,6 +7,7 @@ var $ = require('jquery');
 var CommonGame = require('common/game');
 
 var Cards = require('ui/cards');
+var Chat = require('ui/chat');
 
 var Socket = require('socket/socket');
 
@@ -71,6 +72,8 @@ var showOverlay = function(type, data) {
 			inner += '<h3>Sorry, too many players quit the game to continue :(</h3>';
 		} else {
 			var winName = liberalVictory ? 'Liberal' : 'Fascist';
+			Chat.addAction(winName + ' win!');
+
 			inner += '<h1>'+winName+'s win!</h1>';
 			inner += '<h3>';
 			if (data.method == 'policies') {
