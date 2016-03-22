@@ -88,7 +88,7 @@
 
 
 	// module
-	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
+	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tbackground-color: #eaeae5;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n.scrolling {\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
 
 	// exports
 
@@ -412,9 +412,9 @@
 	var Config = __webpack_require__(6);
 	var Data = __webpack_require__(7);
 
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
-	var Lobby = __webpack_require__(11);
+	var Lobby = __webpack_require__(13);
 	var Welcome = __webpack_require__(40);
 
 	//SOCKET
@@ -480,7 +480,7 @@
 
 	'use strict';
 
-	var Util = __webpack_require__(16);
+	var Util = __webpack_require__(8);
 
 	//PUBLIC
 
@@ -501,9 +501,77 @@
 
 	'use strict';
 
-	var SocketIO = __webpack_require__(9);
+	var $ = __webpack_require__(9);
 
-	var CommonConsts = __webpack_require__(10);
+	var Config = __webpack_require__(6);
+
+	//SETUP
+
+	var storageAvailable = window.localStorage != null;
+	if (storageAvailable) {
+		try {
+			var availableKey = 'storage_available';
+			window.localStorage.setItem(availableKey, availableKey);
+			window.localStorage.removeItem(availableKey);
+		} catch (e) {
+			storageAvailable = false;
+			console.error(e);
+			if (!Config.TESTING) {
+				window.alert('Local storage unavailable! Your signin information cannot be retrieved, or saved for next time you open the page. You may have private browsing enabled, or set a storage quota that is too small for the site to function.');
+			}
+		}
+	} else {
+		console.error('Local storage undefined');
+		window.alert('Local storage unavailable! Your signin information cannot be retrieved, or saved for next time you open the page. Please make sure you are running the latest version of your browser, or allow local storage if it is disabled.');
+	}
+
+	//PUBLIC
+
+	module.exports = {
+
+		pluralize: function(amount, countable) {
+			if (amount != 1) {
+				countable += 's';
+			}
+			return amount + ' ' + countable;
+		},
+
+		hidden: function(selector) {
+			return $(selector).css('display') == 'none';
+		},
+
+		storage: function(key, value) {
+			if (!storageAvailable) {
+				return null; //TODO fallback
+			}
+			if (value === undefined) {
+				return window.localStorage.getItem(key);
+			}
+			if (value === null) {
+				window.localStorage.removeItem(key);
+				return;
+			}
+			window.localStorage.setItem(key, value);
+		},
+
+	};
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = jQuery;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var SocketIO = __webpack_require__(11);
+
+	var CommonConsts = __webpack_require__(12);
 
 	var Config = __webpack_require__(6);
 	var Data = __webpack_require__(7);
@@ -523,13 +591,13 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = io;
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -556,26 +624,26 @@
 
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(12);
+	__webpack_require__(14);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
-	var CommonUtil = __webpack_require__(15);
+	var CommonUtil = __webpack_require__(16);
 
 	var Config = __webpack_require__(6);
-	var Util = __webpack_require__(16);
+	var Util = __webpack_require__(8);
 
 	var Chat = __webpack_require__(17);
 
 	var App = __webpack_require__(21);
 
 	var Action = __webpack_require__(29);
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
 	var Welcome = __webpack_require__(40);
 
@@ -854,13 +922,13 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(13);
+	var content = __webpack_require__(15);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(4)(content, {});
@@ -880,7 +948,7 @@
 	}
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(3)();
@@ -894,13 +962,7 @@
 
 
 /***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	module.exports = jQuery;
-
-/***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -919,68 +981,6 @@
 
 
 /***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var $ = __webpack_require__(14);
-
-	var Config = __webpack_require__(6);
-
-	//SETUP
-
-	var storageAvailable = window.localStorage != null;
-	if (storageAvailable) {
-		try {
-			var availableKey = 'storage_available';
-			window.localStorage.setItem(availableKey, availableKey);
-			window.localStorage.removeItem(availableKey);
-		} catch (e) {
-			storageAvailable = false;
-			console.error(e);
-			if (!Config.TESTING) {
-				window.alert('Local storage unavailable! Your signin information cannot be retrieved, or saved for next time you open the page. You may have private browsing enabled, or set a storage quota that is too small for the site to function.');
-			}
-		}
-	} else {
-		console.error('Local storage undefined');
-		window.alert('Local storage unavailable! Your signin information cannot be retrieved, or saved for next time you open the page. Please make sure you are running the latest version of your browser, or allow local storage if it is disabled.');
-	}
-
-	//PUBLIC
-
-	module.exports = {
-
-		pluralize: function(amount, countable) {
-			if (amount != 1) {
-				countable += 's';
-			}
-			return amount + ' ' + countable;
-		},
-
-		hidden: function(selector) {
-			return $(selector).css('display') == 'none';
-		},
-
-		storage: function(key, value) {
-			if (!storageAvailable) {
-				return null; //TODO fallback
-			}
-			if (value === undefined) {
-				return window.localStorage.getItem(key);
-			}
-			if (value === null) {
-				window.localStorage.removeItem(key);
-				return;
-			}
-			window.localStorage.setItem(key, value);
-		},
-
-	};
-
-
-/***/ },
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -988,7 +988,7 @@
 
 	__webpack_require__(18);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
 	var SimpleWebRTC = __webpack_require__(20);
 
@@ -996,7 +996,7 @@
 
 	var App = __webpack_require__(21);
 
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
 	var State = __webpack_require__(22);
 
@@ -1022,7 +1022,7 @@
 			var message = data.msg;
 			var name = player.name;
 			App.playerDiv(player, '.chat').text(message);
-			var chatId = State.started ? 'overlay' : 'lobby';
+			var chatId = State.started ? 'game' : 'lobby';
 			$('#chat-container-'+chatId).append('<p><strong>' + name + ': </strong>' + message + '</p>');
 		}
 	};
@@ -1162,7 +1162,7 @@
 
 
 	// module
-	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-mat, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-container {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n", ""]);
+	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-container, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-background {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n", ""]);
 
 	// exports
 
@@ -1179,7 +1179,7 @@
 
 	'use strict';
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
 	var Data = __webpack_require__(7);
 
@@ -1289,9 +1289,9 @@
 
 	__webpack_require__(24);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
-	var CommonConsts = __webpack_require__(10);
+	var CommonConsts = __webpack_require__(12);
 
 	var App = __webpack_require__(21);
 	var Cards = __webpack_require__(26);
@@ -1469,7 +1469,7 @@
 
 	__webpack_require__(27);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
 	var Action = __webpack_require__(29);
 
@@ -1576,7 +1576,7 @@
 
 	'use strict';
 
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
 	//LOCAL
 
@@ -1606,7 +1606,7 @@
 	__webpack_require__(31);
 	__webpack_require__(33);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
 	var CommonGame = __webpack_require__(35);
 
@@ -1793,7 +1793,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-mat {\n\tposition: relative;\n\tbox-sizing: border-box;\n\theight: 100%;\n\tmin-height: 600px;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n#s-game.directive #game-mat {\n\tpadding-top: 44px;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n", ""]);
+	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-container {\n\tposition: relative;\n\tdisplay: flex;\n\n\theight: 100%;\n\toverflow: hidden;\n\tbox-sizing: border-box;\n}\n\n#s-game.directive #game-container {\n\tpadding-top: 44px;\n}\n\n#chat-container-game {\n\tflex-grow: 1;\n\tmax-width: 420px;\n\tbackground-color: #666;\n\tcolor: #fffffe;\n\tpadding-left: 8px;\n}\n\n#game-area {\n\tposition: relative;\n\theight: inherit;\n\tbox-sizing: border-box;\n}\n\n#game-mat {\n\theight: inherit;\n\tmin-height: 600px;\n\tbox-sizing: border-box;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n\n/* MEDIA */\n\n@media (max-width: 1023px) {\n\t#game-container {\n\t\tflex-direction: column-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 4;\n\t}\n\n\t#chat-container-game {\n\t\tdisplay: none;\n\t}\n}\n\n@media (min-width: 1024px) {\n\t#game-container {\n\t\tflex-direction: row-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 2;\n\t}\n}\n", ""]);
 
 	// exports
 
@@ -1897,15 +1897,15 @@
 
 	__webpack_require__(37);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
 	var CommonGame = __webpack_require__(35);
 
 	var Cards = __webpack_require__(26);
 
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
-	var Util = __webpack_require__(16);
+	var Util = __webpack_require__(8);
 
 	var Players = __webpack_require__(23);
 	var State = __webpack_require__(22);
@@ -2021,7 +2021,7 @@
 			confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
 		}
 		if (confirmed) {
-			__webpack_require__(11).quitToLobby();
+			__webpack_require__(13).quitToLobby();
 		}
 	});
 
@@ -2113,9 +2113,9 @@
 
 	'use strict';
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
-	var CommonConsts = __webpack_require__(10);
+	var CommonConsts = __webpack_require__(12);
 
 	var App = __webpack_require__(21);
 	var Cards = __webpack_require__(26);
@@ -2326,18 +2326,18 @@
 
 	__webpack_require__(41);
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
 	var CommonValidate = __webpack_require__(43);
 
 	var Config = __webpack_require__(6);
 	var Data = __webpack_require__(7);
-	var Util = __webpack_require__(16);
+	var Util = __webpack_require__(8);
 
 	var App = __webpack_require__(21);
 	var Chat = __webpack_require__(17);
 
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
 	//LOCAL
 
@@ -2581,7 +2581,7 @@
 
 	'use strict';
 
-	var CommonUtil = __webpack_require__(15);
+	var CommonUtil = __webpack_require__(16);
 
 	var preprocess = function(value) {
 		return value.trim();
@@ -2682,9 +2682,9 @@
 
 	'use strict';
 
-	var $ = __webpack_require__(14);
+	var $ = __webpack_require__(9);
 
-	var CommonConsts = __webpack_require__(10);
+	var CommonConsts = __webpack_require__(12);
 	var CommonGame = __webpack_require__(35);
 
 	var Data = __webpack_require__(7);
@@ -2841,7 +2841,7 @@
 
 	'use strict';
 
-	var Socket = __webpack_require__(8);
+	var Socket = __webpack_require__(10);
 
 	var Cards = __webpack_require__(26);
 	var Chat = __webpack_require__(17);

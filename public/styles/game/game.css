@@ -4,18 +4,40 @@
 	user-select: none;
 }
 
-#game-mat {
+#game-container {
 	position: relative;
-	box-sizing: border-box;
+	display: flex;
+
 	height: 100%;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+#s-game.directive #game-container {
+	padding-top: 44px;
+}
+
+#chat-container-game {
+	flex-grow: 1;
+	max-width: 420px;
+	background-color: #666;
+	color: #fffffe;
+	padding-left: 8px;
+}
+
+#game-area {
+	position: relative;
+	height: inherit;
+	box-sizing: border-box;
+}
+
+#game-mat {
+	height: inherit;
 	min-height: 600px;
+	box-sizing: border-box;
 
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
-}
-
-#s-game.directive #game-mat {
-	padding-top: 44px;
 }
 
 /* DIRECTIVE */
@@ -79,4 +101,30 @@
 }
 .hitler.image {
 	background-image: url(/images/hitler.png);
+}
+
+/* MEDIA */
+
+@media (max-width: 1023px) {
+	#game-container {
+		flex-direction: column-reverse;
+	}
+
+	#game-area {
+		flex-grow: 4;
+	}
+
+	#chat-container-game {
+		display: none;
+	}
+}
+
+@media (min-width: 1024px) {
+	#game-container {
+		flex-direction: row-reverse;
+	}
+
+	#game-area {
+		flex-grow: 2;
+	}
 }

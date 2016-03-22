@@ -36,7 +36,7 @@ var addChatMessage = function(data) {
 		var message = data.msg;
 		var name = player.name;
 		App.playerDiv(player, '.chat').text(message);
-		var chatId = State.started ? 'overlay' : 'lobby';
+		var chatId = State.started ? 'game' : 'lobby';
 		$('#chat-container-'+chatId).append('<p><strong>' + name + ': </strong>' + message + '</p>');
 	}
 };

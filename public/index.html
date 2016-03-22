@@ -133,7 +133,7 @@
 			<h1>Warning</h1>
 			<h3>You're about to be timed out from the lobby due to inactivity. Please click anywhere on the page to confirm you're still ready to play!</h3>
 		</div>
-		<div id="chat-container-lobby" class="chat-container">
+		<div id="chat-container-lobby" class="chat-container chat-background">
 		</div>
 		<h1>Waiting for players</h1>
 		<div id="lobby-privacy">
@@ -151,147 +151,152 @@
 </section>
 
 <section id="s-game" style="display:none;">
-	<div id="game-mat">
-		<div id="players">
-		</div>
-
-		<div id="board-container">
-			<div id="board">
-				<div id="board-policy-piles" class="board-component">
-					<div id="pile-draw" class="policy-placeholder card-pile card draw">
-						<div class="pile-cards policy"></div>
-						<div class="pile-label">DRAW</div>
-					</div>
-
-					<div id="election-tracker">
-						<div id="tracker-title">ELECTION TRACKER</div>
-						<div class="tracker-slot"></div>
-						<div class="tracker-slot"></div>
-						<div class="tracker-slot"></div>
-						<div id="tracker-description">3rd failed election:<br>reveal and pass top policy</div>
-					</div>
-
-					<div id="pile-discard" class="policy-placeholder card-pile card discard">
-						<div class="pile-cards policy"></div>
-						<div class="pile-label">DISCARD</div>
-					</div>
-				</div>
-				<div id="board-fascist" class="board-component fascist">
-					<div class="policy-placeholder card fascist"></div>
-					<div class="policy-placeholder card fascist"></div>
-					<div class="policy-placeholder card fascist"></div>
-					<div class="policy-placeholder card fascist danger"></div>
-					<div class="policy-placeholder card fascist danger"></div>
-					<div class="policy-placeholder card fascist danger victory"></div>
-				</div>
-				<div id="board-liberal" class="board-component liberal">
-					<div class="policy-placeholder card liberal"></div>
-					<div class="policy-placeholder card liberal"></div>
-					<div class="policy-placeholder card liberal"></div>
-					<div class="policy-placeholder card liberal"></div>
-					<div class="policy-placeholder card liberal danger victory"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div id="player-cards">
-		<div id="cards-position">
-			<div id="card-president" class="card" style="display:none;">President</div>
-			<div id="card-chancellor" class="card" style="display:none;">Chancellor</div>
-		</div>
-
-		<div id="cards-role">
-			<div id="card-role" class="card">
-				<div class="description">
-					Your secret role:
-				</div>
-				<h3 class="label"></h3>
-			</div>
-			<div id="card-party" class="card">
-				<div class="description">
-					Your party affiliation:
-				</div>
-				<h3 class="label"></h3>
-			</div>
-		</div>
-
-		<div id="cards-vote">
-			<div id="card-ja" class="card">
-				<h2>Ja!</h2>
-			</div>
-			<div id="card-nein" class="card">
-				<h2>Nein!</h2>
-			</div>
-		</div>
-
-		<div id="cards-veto">
-			<div id="veto-approve" class="card policy veto" data-veto="true">Approve Veto</div>
-			<div id="veto-override" class="card policy veto" data-veto="false">Override Veto</div>
-		</div>
-
-		<div id="cards-policy">
-			<div class="card policy image" data-index="0"></div>
-			<div class="card policy image" data-index="1"></div>
-			<div class="card policy image" data-index="2"></div>
-			<div id="veto-request" class="card policy veto" data-veto="true"><span>Request Veto</span></div>
-		</div>
-
-		<div id="cards-options">
-			<div id="card-call-vote" class="card">Call for a Vote</div>
-		</div>
-	</div>
-
 	<div id="directive">
 	</div>
 
-	<div id="overlay" style="display:none;">
-		<div id="chat-container-overlay" class="chat-container">
+	<div id="game-container">
+		<div id="chat-container-game" class="chat-container scrolling">
 		</div>
-		<div id="overlay-info" class="toggle-section">
-			<div class="extras"></div>
-			<div class="front info"></div>
-		</div>
-		<div id="overlay-menu" class="toggle-section front">
-			<p id="version">
-				Secret&nbsp;Hitler Online v0.2β
-			</p>
-			<button id="menu-issues" class="large">issue tracker</button>
-			<button class="menu-feedback large">feedback</button>
-			<button id="menu-about" class="large">about</button>
-			<button id="menu-quit" class="large">quit</button>
-			<hr>
-			<button id="menu-cancel" class="large">cancel</button>
-		</div>
-		<div id="overlay-feedback" class="toggle-section front">
-			<h2>Send in your feedback</h2>
-			It's much appreciated!
-			<p>
-				<button class="menu-back large">cancel</button>
-				<hr>
-			</p>
-			<label>Report type: <select id="i-feedback-type">
-				<option selected="true" disabled="true" value="default">Select one</option>
-				<option>Feedback</option>
-				<option>Bug</option>
-				<option>Other</option>
-			</select></label>
-			<textarea class="full" id="i-feedback-body" placeholder="Enter your feedback"></textarea>
-			<button id="feedback-submit" type="submit" class="large">submit</button>
-		</div>
-		<div id="overlay-about" class="toggle-section front">
-			<h4>Game design</h4>
-			Tommy Maranges
-			<br>
-			Mike Boxleiter
-			<br>
-			Max Temkin
-			<h4>Graphic design</h4>
-			Mackenzie Schubert
-			<h4>Online adaptation</h4>
-			Kyle Coburn
-			<h4><a href="https://github.com/kylecoburn/secret-hitler">Open Source on GitHub</a></h4>
-			<button class="menu-back large">back</button>
+
+		<div id="game-area">
+			<div id="game-mat">
+				<div id="players">
+				</div>
+
+				<div id="board-container">
+					<div id="board">
+						<div id="board-policy-piles" class="board-component">
+							<div id="pile-draw" class="policy-placeholder card-pile card draw">
+								<div class="pile-cards policy"></div>
+								<div class="pile-label">DRAW</div>
+							</div>
+
+							<div id="election-tracker">
+								<div id="tracker-title">ELECTION TRACKER</div>
+								<div class="tracker-slot"></div>
+								<div class="tracker-slot"></div>
+								<div class="tracker-slot"></div>
+								<div id="tracker-description">3rd failed election:<br>reveal and pass top policy</div>
+							</div>
+
+							<div id="pile-discard" class="policy-placeholder card-pile card discard">
+								<div class="pile-cards policy"></div>
+								<div class="pile-label">DISCARD</div>
+							</div>
+						</div>
+						<div id="board-fascist" class="board-component fascist">
+							<div class="policy-placeholder card fascist"></div>
+							<div class="policy-placeholder card fascist"></div>
+							<div class="policy-placeholder card fascist"></div>
+							<div class="policy-placeholder card fascist danger"></div>
+							<div class="policy-placeholder card fascist danger"></div>
+							<div class="policy-placeholder card fascist danger victory"></div>
+						</div>
+						<div id="board-liberal" class="board-component liberal">
+							<div class="policy-placeholder card liberal"></div>
+							<div class="policy-placeholder card liberal"></div>
+							<div class="policy-placeholder card liberal"></div>
+							<div class="policy-placeholder card liberal"></div>
+							<div class="policy-placeholder card liberal danger victory"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="player-cards">
+				<div id="cards-position">
+					<div id="card-president" class="card" style="display:none;">President</div>
+					<div id="card-chancellor" class="card" style="display:none;">Chancellor</div>
+				</div>
+
+				<div id="cards-role">
+					<div id="card-role" class="card">
+						<div class="description">
+							Your secret role:
+						</div>
+						<h3 class="label"></h3>
+					</div>
+					<div id="card-party" class="card">
+						<div class="description">
+							Your party affiliation:
+						</div>
+						<h3 class="label"></h3>
+					</div>
+				</div>
+
+				<div id="cards-vote">
+					<div id="card-ja" class="card">
+						<h2>Ja!</h2>
+					</div>
+					<div id="card-nein" class="card">
+						<h2>Nein!</h2>
+					</div>
+				</div>
+
+				<div id="cards-veto">
+					<div id="veto-approve" class="card policy veto" data-veto="true">Approve Veto</div>
+					<div id="veto-override" class="card policy veto" data-veto="false">Override Veto</div>
+				</div>
+
+				<div id="cards-policy">
+					<div class="card policy image" data-index="0"></div>
+					<div class="card policy image" data-index="1"></div>
+					<div class="card policy image" data-index="2"></div>
+					<div id="veto-request" class="card policy veto" data-veto="true"><span>Request Veto</span></div>
+				</div>
+
+				<div id="cards-options">
+					<div id="card-call-vote" class="card">Call for a Vote</div>
+				</div>
+			</div>
+
+			<div id="overlay" style="display:none;">
+				<div id="overlay-info" class="toggle-section">
+					<div class="extras"></div>
+					<div class="front info"></div>
+				</div>
+				<div id="overlay-menu" class="toggle-section front">
+					<p id="version">
+						Secret&nbsp;Hitler Online v0.2β
+					</p>
+					<button id="menu-issues" class="large">issue tracker</button>
+					<button class="menu-feedback large">feedback</button>
+					<button id="menu-about" class="large">about</button>
+					<button id="menu-quit" class="large">quit</button>
+					<hr>
+					<button id="menu-cancel" class="large">cancel</button>
+				</div>
+				<div id="overlay-feedback" class="toggle-section front">
+					<h2>Send in your feedback</h2>
+					It's much appreciated!
+					<p>
+						<button class="menu-back large">cancel</button>
+						<hr>
+					</p>
+					<label>Report type: <select id="i-feedback-type">
+						<option selected="true" disabled="true" value="default">Select one</option>
+						<option>Feedback</option>
+						<option>Bug</option>
+						<option>Other</option>
+					</select></label>
+					<textarea class="full" id="i-feedback-body" placeholder="Enter your feedback"></textarea>
+					<button id="feedback-submit" type="submit" class="large">submit</button>
+				</div>
+				<div id="overlay-about" class="toggle-section front">
+					<h4>Game design</h4>
+					Tommy Maranges
+					<br>
+					Mike Boxleiter
+					<br>
+					Max Temkin
+					<h4>Graphic design</h4>
+					Mackenzie Schubert
+					<h4>Online adaptation</h4>
+					Kyle Coburn
+					<h4><a href="https://github.com/kylecoburn/secret-hitler">Open Source on GitHub</a></h4>
+					<button class="menu-back large">back</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
