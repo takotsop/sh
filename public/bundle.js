@@ -1310,6 +1310,7 @@
 				return player;
 			}
 		}
+		console.error('Unable to find player', uid);
 	};
 
 	var allegianceClass = function(allegiance) {
