@@ -35,9 +35,6 @@
 	height: inherit;
 	min-height: 600px;
 	box-sizing: border-box;
-
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
 }
 
 /* DIRECTIVE */
@@ -122,5 +119,9 @@
 @media (min-width: 1024px) {
 	#game-container {
 		flex-direction: row-reverse;
+	}
+
+	#game-area {
+		flex-grow: 2;
 	}
 }

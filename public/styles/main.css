@@ -63,7 +63,7 @@ ul {
 }
 
 .scrolling {
-	overflow-y: scroll;
+	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 }
 
