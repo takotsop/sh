@@ -46,11 +46,19 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(9);
+
+	var CommonConsts = __webpack_require__(12);
+
+	//SETUP
+
 	__webpack_require__(1);
 
 	__webpack_require__(5);
 
 	__webpack_require__(45);
+
+	$('.version-name').text(CommonConsts.VERSION);
 
 
 /***/ },
