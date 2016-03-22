@@ -68,7 +68,7 @@ var killPlayer = function(player, isFuehrer, quit) {
 var abandonedPlayer = function(data) {
 	var player = getPlayer(data.uid);
 	killPlayer(player, data.hitler, true);
-	Chat.addMessage({msg: 'left the game', uid: data.uid});
+	Chat.addAction(player, 'left the game');
 
 	if (data.advance) {
 		require('game/game').advanceTurn();

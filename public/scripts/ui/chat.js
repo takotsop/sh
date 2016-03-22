@@ -30,15 +30,27 @@ var setDirective = function(directive) {
 	$('#directive').html(directive);
 };
 
+var insertMessage = function(player, message, isAction) {
+	App.playerDiv(player, '.chat').text(message);
+	var chatId = State.started ? 'game' : 'lobby';
+	var prefix;
+	if (isAction) {
+		prefix = '<p clss="detail">' + player.name + ' ';
+	} else {
+		prefix = '<p><strong>' + player.name + ': </strong>';
+	}
+	$('#chat-container-'+chatId).append(prefix + message + '</p>');
+};
+
 var addChatMessage = function(data) {
 	var player = require('game/players').get(data.uid);
 	if (player) {
-		var message = data.msg;
-		var name = player.name;
-		App.playerDiv(player, '.chat').text(message);
-		var chatId = State.started ? 'game' : 'lobby';
-		$('#chat-container-'+chatId).append('<p><strong>' + name + ': </strong>' + message + '</p>');
+		insertMessage(player, data.msg, false);
 	}
+};
+
+var addChatAction = function(player, message) {
+	insertMessage(player, message, true);
 };
 
 var setChatState = function(state) {
@@ -127,6 +139,8 @@ module.exports = {
 	setDirective: setDirective,
 
 	addMessage: addChatMessage,
+
+	addAction: addChatAction,
 
 	// Voice
 

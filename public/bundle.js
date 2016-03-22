@@ -1016,15 +1016,27 @@
 		$('#directive').html(directive);
 	};
 
+	var insertMessage = function(player, message, isAction) {
+		App.playerDiv(player, '.chat').text(message);
+		var chatId = State.started ? 'game' : 'lobby';
+		var prefix;
+		if (isAction) {
+			prefix = '<p clss="detail">' + player.name + ' ';
+		} else {
+			prefix = '<p><strong>' + player.name + ': </strong>';
+		}
+		$('#chat-container-'+chatId).append(prefix + message + '</p>');
+	};
+
 	var addChatMessage = function(data) {
 		var player = __webpack_require__(23).get(data.uid);
 		if (player) {
-			var message = data.msg;
-			var name = player.name;
-			App.playerDiv(player, '.chat').text(message);
-			var chatId = State.started ? 'game' : 'lobby';
-			$('#chat-container-'+chatId).append('<p><strong>' + name + ': </strong>' + message + '</p>');
+			insertMessage(player, data.msg, false);
 		}
+	};
+
+	var addChatAction = function(player, message) {
+		insertMessage(player, message, true);
 	};
 
 	var setChatState = function(state) {
@@ -1113,6 +1125,8 @@
 		setDirective: setDirective,
 
 		addMessage: addChatMessage,
+
+		addAction: addChatAction,
 
 		// Voice
 
@@ -1355,7 +1369,7 @@
 	var abandonedPlayer = function(data) {
 		var player = getPlayer(data.uid);
 		killPlayer(player, data.hitler, true);
-		Chat.addMessage({msg: 'left the game', uid: data.uid});
+		Chat.addAction(player, 'left the game');
 
 		if (data.advance) {
 			__webpack_require__(30).advanceTurn();
@@ -2887,7 +2901,7 @@
 					if (State.isLocalPresident()) {
 						Players.displayAvatar(target, data.secret.party);
 					}
-					Chat.addMessage({msg: 'investigated ' + target.name, uid: State.presidentElect});
+					Chat.addAction(State.getPresident(), 'investigated ' + target.name);
 				} else if (action == 'special election') {
 					State.specialPresidentIndex = target.index;
 				} else if (action == 'bullet') {
