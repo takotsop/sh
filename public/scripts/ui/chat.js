@@ -39,7 +39,10 @@ var insertMessage = function(player, message, isAction) {
 	} else {
 		prefix = '<p><strong>' + player.name + ': </strong>';
 	}
-	$('#chat-container-'+chatId).append(prefix + message + '</p>');
+
+	var chatContainer = $('#chat-container-' + chatId);
+	chatContainer.append(prefix + message + '</p>');
+	chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
 };
 
 var addChatMessage = function(data) {
