@@ -40,7 +40,9 @@ var allegianceClass = function(allegiance) {
 };
 
 var displayAvatar = function(player, allegiance) {
-	App.playerDiv(player, '.avatar').addClass(allegianceClass(allegiance));
+	var allegianceClassName = allegianceClass(allegiance);
+	player.allegiance = allegianceClassName;
+	App.playerDiv(player, '.avatar').addClass(allegianceClassName);
 };
 
 var killPlayer = function(player, isFuehrer, quit) {

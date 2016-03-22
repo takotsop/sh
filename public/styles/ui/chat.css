@@ -29,6 +29,14 @@
 	padding-bottom: 44px;
 }
 
+.chat-container .detail {
+	font-size: 0.9em;
+}
+
+.chat-container p {
+	background-color: transparent !important;
+}
+
 /* BUTTONS */
 
 .chat-button {

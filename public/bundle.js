@@ -1020,10 +1020,11 @@
 		App.playerDiv(player, '.chat').text(message);
 		var chatId = State.started ? 'game' : 'lobby';
 		var prefix;
+		var allegiance = player.allegiance || '';
 		if (isAction) {
-			prefix = '<p clss="detail">' + player.name + ' ';
+			prefix = '<p class="detail '+allegiance+' danger">' + player.name + ' ';
 		} else {
-			prefix = '<p><strong>' + player.name + ': </strong>';
+			prefix = '<p class="'+allegiance+' danger"><strong>' + player.name + ': </strong>';
 		}
 
 		var chatContainer = $('#chat-container-' + chatId);
@@ -1179,7 +1180,7 @@
 
 
 	// module
-	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-container, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-background {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n", ""]);
+	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-container, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n.chat-container .detail {\n\tfont-size: 0.9em;\n}\n\n.chat-container p {\n\tbackground-color: transparent !important;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-background {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n}\n", ""]);
 
 	// exports
 
@@ -1344,7 +1345,9 @@
 	};
 
 	var displayAvatar = function(player, allegiance) {
-		App.playerDiv(player, '.avatar').addClass(allegianceClass(allegiance));
+		var allegianceClassName = allegianceClass(allegiance);
+		player.allegiance = allegianceClassName;
+		App.playerDiv(player, '.avatar').addClass(allegianceClassName);
 	};
 
 	var killPlayer = function(player, isFuehrer, quit) {
@@ -1811,7 +1814,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-container {\n\tposition: relative;\n\tdisplay: flex;\n\n\theight: 100%;\n\toverflow: hidden;\n\tbox-sizing: border-box;\n}\n\n#s-game.directive #game-container {\n\tpadding-top: 44px;\n}\n\n#chat-container-game {\n\tflex-grow: 1;\n\tmax-width: 420px;\n\tbackground-color: #666;\n\tcolor: #fffffe;\n\tpadding-left: 8px;\n}\n\n#game-area {\n\tposition: relative;\n\theight: inherit;\n\tbox-sizing: border-box;\n}\n\n#game-mat {\n\theight: inherit;\n\tmin-height: 600px;\n\tbox-sizing: border-box;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n\n/* MEDIA */\n\n@media (max-width: 1023px) {\n\t#game-container {\n\t\tflex-direction: column-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 4;\n\t}\n\n\t#chat-container-game {\n\t\tdisplay: none;\n\t}\n}\n\n@media (min-width: 1024px) {\n\t#game-container {\n\t\tflex-direction: row-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 2;\n\t}\n}\n", ""]);
+	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-container {\n\tposition: relative;\n\tdisplay: flex;\n\n\theight: 100%;\n\toverflow: hidden;\n\tbox-sizing: border-box;\n}\n\n#s-game.directive #game-container {\n\tpadding-top: 44px;\n}\n\n#chat-container-game {\n\tflex-grow: 1;\n\tmax-width: 420px;\n\tbackground-color: #444;\n\tcolor: #fffffc;\n\tpadding: 0 8px;\n}\n\n#game-area {\n\tposition: relative;\n\theight: inherit;\n\tbox-sizing: border-box;\n\toverflow: hidden;\n}\n\n#game-mat {\n\theight: inherit;\n\tmin-height: 600px;\n\tbox-sizing: border-box;\n\n\toverflow-y: scroll;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n\n/* MEDIA */\n\n@media (max-width: 1023px) {\n\t#game-container {\n\t\tflex-direction: column-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 4;\n\t}\n\n\t#chat-container-game {\n\t\tdisplay: none;\n\t}\n}\n\n@media (min-width: 1024px) {\n\t#game-container {\n\t\tflex-direction: row-reverse;\n\t}\n}\n", ""]);
 
 	// exports
 

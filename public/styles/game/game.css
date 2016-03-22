@@ -20,9 +20,9 @@
 #chat-container-game {
 	flex-grow: 1;
 	max-width: 420px;
-	background-color: #666;
-	color: #fffffe;
-	padding-left: 8px;
+	background-color: #444;
+	color: #fffffc;
+	padding: 0 8px;
 }
 
 #game-area {
@@ -122,9 +122,5 @@
 @media (min-width: 1024px) {
 	#game-container {
 		flex-direction: row-reverse;
-	}
-
-	#game-area {
-		flex-grow: 2;
 	}
 }

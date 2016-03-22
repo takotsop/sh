@@ -34,10 +34,11 @@ var insertMessage = function(player, message, isAction) {
 	App.playerDiv(player, '.chat').text(message);
 	var chatId = State.started ? 'game' : 'lobby';
 	var prefix;
+	var allegiance = player.allegiance || '';
 	if (isAction) {
-		prefix = '<p clss="detail">' + player.name + ' ';
+		prefix = '<p class="detail '+allegiance+' danger">' + player.name + ' ';
 	} else {
-		prefix = '<p><strong>' + player.name + ': </strong>';
+		prefix = '<p class="'+allegiance+' danger"><strong>' + player.name + ': </strong>';
 	}
 
 	var chatContainer = $('#chat-container-' + chatId);
