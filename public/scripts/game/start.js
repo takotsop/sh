@@ -23,6 +23,7 @@ var State = require('game/state');
 var startGame = function(data) {
 	$('.chat-container').html('');
 	$('#chat-box').show();
+	$('.policy-placeholder').html('');
 
 	Data.gameId = data.gid;
 	App.showSection('game');
@@ -60,7 +61,7 @@ var startGame = function(data) {
 		}
 		var placeholder = fascistPlaceholders.eq(index);
 		var description = '';
-		if (fascistPower.indexOf(' veto') > -1) {
+		if (fascistPower.indexOf('veto') > -1) {
 			description = 'Veto power unlocked<br><br>';
 		}
 		if (fascistPower.indexOf('peek') > -1) {
