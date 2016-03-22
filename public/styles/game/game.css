@@ -21,7 +21,7 @@
 	flex-grow: 1;
 	max-width: 420px;
 	background-color: #444;
-	color: #fffffc;
+	color: #fffffd;
 	padding: 0 8px;
 }
 
@@ -69,6 +69,10 @@
 }
 
 /* PARTY */
+
+.unknown {
+	color: #F7E2C0;	
+}
 
 .fascist {
 	color: #9C0701;
