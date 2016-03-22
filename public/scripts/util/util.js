@@ -37,7 +37,7 @@ module.exports = {
 
 	nameSpan: function(player) {
 		var allegiance = player.allegiance || 'unknown';
-		return '<strong class="'+allegiance+'">' + player.name + '</strong>';
+		return '<strong class="player-name '+allegiance+' danger">' + player.name + '</strong>';
 	},
 
 	hidden: function(selector) {

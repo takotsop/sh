@@ -33,7 +33,7 @@
 	font-size: 1em;
 }
 
-.chat-container p, .chat-container strong {
+.chat-container p, .chat-container .player-name {
 	background-color: transparent !important;
 }
 

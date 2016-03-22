@@ -23,6 +23,6 @@
 	z-index: 9001;
 }
 
-#chat-container-lobby strong {
+#chat-container-lobby .player-name {
 	color: inherit;
 }

@@ -7,6 +7,10 @@
 	justify-content: space-between;
 }
 
+.player-name {
+	background-color: transparent !important;
+}
+
 /* PLAYERS */
 
 .player-slot {
