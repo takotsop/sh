@@ -74,7 +74,7 @@ var policyEnacted = function(data) {
 	Game.resetElectionTracker();
 
 	var policyType = data.policy;
-	Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="'+policyType+' danger">' + policyType + '</strong> policy');
+	Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="player-name '+policyType+' danger">' + policyType + '</strong> policy');
 
 	var fascistPower = enactPolicy(policyType);
 	if (State.gameOver) {

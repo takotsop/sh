@@ -71,6 +71,10 @@
 	word-wrap: break-word;
 }
 
+.chat .player-name {
+	color: inherit;
+}
+
 .player-slot h2 {
 	font-weight: 300;
 	margin: 0 8px;

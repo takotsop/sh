@@ -998,6 +998,7 @@
 	var SimpleWebRTC = __webpack_require__(20);
 
 	var Data = __webpack_require__(7);
+	var Util = __webpack_require__(8);
 
 	var App = __webpack_require__(21);
 
@@ -1024,13 +1025,13 @@
 	var insertMessage = function(player, message, isAction) {
 		var prefix;
 		if (player) {
-			App.playerDiv(player, '.chat').text(message);
+			App.playerDiv(player, '.chat').html(message);
 
 			var allegiance = player.allegiance || 'unknown';
 			if (isAction) {
-				prefix = '<p class="detail '+allegiance+'">' + player.name + ' ';
+				prefix = '<p class="detail player-name '+allegiance+' danger">' + Util.nameSpan(player) + ' ';
 			} else {
-				prefix = '<p><strong class="'+allegiance+' danger">' + player.name + ':</strong> ';
+				prefix = '<p><strong class="player-name '+allegiance+' danger">' + player.name + ':</strong> ';
 			}
 		} else {
 			prefix = '<p class="detail unknown">';
@@ -1490,7 +1491,7 @@
 
 
 	// module
-	exports.push([module.id, "#players {\n\twidth: 100%;\n\tmin-height: 100%;\n\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n}\n\n.player-name {\n\tbackground-color: transparent !important;\n}\n\n/* PLAYERS */\n\n.player-slot {\n\tdisplay: flex;\n\tbox-sizing: border-box;\n\twidth: 50%;\n\tpadding: 16px;\n\theight: 104px;\n}\n\n.player-slot.left {\n\tfloat: left;\n\ttext-align: left;\n}\n\n.player-slot.right {\n\tfloat: right;\n\tflex-direction: row-reverse;\n\ttext-align: right;\n}\n\n.player-slot.choose {\n\tborder: 1px dashed #FFD556;\n\tbackground-color: rgba(255,255,255, 0.5);\n\tcursor: pointer;\n}\n.player-slot.choose:hover {\n\tborder-style: solid;\n\tbackground-color: rgba(255,255,255, 0.25);\n}\n\n.player-slot.elect .avatar {\n\tbox-shadow: 0 0 32px #FFD556;\n}\n\n.player-slot .avatar {\n\tflex-shrink: 0;\n}\n.player-slot .contents {\n\tflex-grow: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.player-slot .title {\n\tflex-shrink: 0;\n\tfloat: inherit;\n}\n.player-slot .chat {\n\tmargin: 4px 8px;\n\tfont-style: italic;\n\n\tdisplay: -webkit-box;\n\t-webkit-line-clamp: 2;\n\t-webkit-box-orient: vertical;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\tword-wrap: break-word;\n}\n\n.player-slot h2 {\n\tfont-weight: 300;\n\tmargin: 0 8px;\n\tdisplay: inline;\n\tfont-size: 1.4em;\n}\n\n.player-slot.killed {\n\topacity: 0.5;\n\tbackground-color: #E3644F;\n}\n\n.icon {\n\tdisplay: inline-block;\n\tline-height: 0;\n}\n.typing {\n\tfont-size: 1.3em;\n}\n.talking {\n\tfont-size: 1.7em;\n}\n\n.right .title {\n\tdisplay: flex;\n\tflex-direction: row-reverse;\n}\n\n/* AVATARS */\n\n.avatar {\n\tposition: relative;\n\tbox-sizing: border-box;\n\twidth: 80px;\n\theight: 80px;\n\tborder-radius: 50%;\n\tborder: 2px solid #F7E2C0;\n\n\tbackground-image: url(/images/unknown.png);\n\tbackground-size: cover;\n}\n\n.avatar .vote {\n\tposition: absolute;\n\tbottom: -2px;\n\tleft: 0;\n\tright: 0;\n\tborder: 1px solid #383633;\n\ttext-align: center;\n\tbackground-color: #F7E2C0;\n}\n\n@media (max-width: 719px) {\n\t.player-slot {\n\t\twidth: 100%;\n\t}\n}\n", ""]);
+	exports.push([module.id, "#players {\n\twidth: 100%;\n\tmin-height: 100%;\n\n\tdisplay: flex;\n\tflex-direction: column;\n\tjustify-content: space-between;\n}\n\n.player-name {\n\tbackground-color: transparent !important;\n}\n\n/* PLAYERS */\n\n.player-slot {\n\tdisplay: flex;\n\tbox-sizing: border-box;\n\twidth: 50%;\n\tpadding: 16px;\n\theight: 104px;\n}\n\n.player-slot.left {\n\tfloat: left;\n\ttext-align: left;\n}\n\n.player-slot.right {\n\tfloat: right;\n\tflex-direction: row-reverse;\n\ttext-align: right;\n}\n\n.player-slot.choose {\n\tborder: 1px dashed #FFD556;\n\tbackground-color: rgba(255,255,255, 0.5);\n\tcursor: pointer;\n}\n.player-slot.choose:hover {\n\tborder-style: solid;\n\tbackground-color: rgba(255,255,255, 0.25);\n}\n\n.player-slot.elect .avatar {\n\tbox-shadow: 0 0 32px #FFD556;\n}\n\n.player-slot .avatar {\n\tflex-shrink: 0;\n}\n.player-slot .contents {\n\tflex-grow: 1;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.player-slot .title {\n\tflex-shrink: 0;\n\tfloat: inherit;\n}\n.player-slot .chat {\n\tmargin: 4px 8px;\n\tfont-style: italic;\n\n\tdisplay: -webkit-box;\n\t-webkit-line-clamp: 2;\n\t-webkit-box-orient: vertical;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n\tword-wrap: break-word;\n}\n\n.chat .player-name {\n\tcolor: inherit;\n}\n\n.player-slot h2 {\n\tfont-weight: 300;\n\tmargin: 0 8px;\n\tdisplay: inline;\n\tfont-size: 1.4em;\n}\n\n.player-slot.killed {\n\topacity: 0.5;\n\tbackground-color: #E3644F;\n}\n\n.icon {\n\tdisplay: inline-block;\n\tline-height: 0;\n}\n.typing {\n\tfont-size: 1.3em;\n}\n.talking {\n\tfont-size: 1.7em;\n}\n\n.right .title {\n\tdisplay: flex;\n\tflex-direction: row-reverse;\n}\n\n/* AVATARS */\n\n.avatar {\n\tposition: relative;\n\tbox-sizing: border-box;\n\twidth: 80px;\n\theight: 80px;\n\tborder-radius: 50%;\n\tborder: 2px solid #F7E2C0;\n\n\tbackground-image: url(/images/unknown.png);\n\tbackground-size: cover;\n}\n\n.avatar .vote {\n\tposition: absolute;\n\tbottom: -2px;\n\tleft: 0;\n\tright: 0;\n\tborder: 1px solid #383633;\n\ttext-align: center;\n\tbackground-color: #F7E2C0;\n}\n\n@media (max-width: 719px) {\n\t.player-slot {\n\t\twidth: 100%;\n\t}\n}\n", ""]);
 
 	// exports
 
@@ -2229,7 +2230,7 @@
 		Game.resetElectionTracker();
 
 		var policyType = data.policy;
-		Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="'+policyType+' danger">' + policyType + '</strong> policy');
+		Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="player-name '+policyType+' danger">' + policyType + '</strong> policy');
 
 		var fascistPower = enactPolicy(policyType);
 		if (State.gameOver) {

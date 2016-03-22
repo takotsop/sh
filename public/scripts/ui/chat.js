@@ -7,6 +7,7 @@ var $ = require('jquery');
 var SimpleWebRTC = require('simplewebrtc');
 
 var Data = require('util/data');
+var Util = require('util/util');
 
 var App = require('ui/app');
 
@@ -33,13 +34,13 @@ var setDirective = function(directive) {
 var insertMessage = function(player, message, isAction) {
 	var prefix;
 	if (player) {
-		App.playerDiv(player, '.chat').text(message);
+		App.playerDiv(player, '.chat').html(message);
 
 		var allegiance = player.allegiance || 'unknown';
 		if (isAction) {
-			prefix = '<p class="detail '+allegiance+'">' + player.name + ' ';
+			prefix = '<p class="detail player-name '+allegiance+' danger">' + Util.nameSpan(player) + ' ';
 		} else {
-			prefix = '<p><strong class="'+allegiance+' danger">' + player.name + ':</strong> ';
+			prefix = '<p><strong class="player-name '+allegiance+' danger">' + player.name + ':</strong> ';
 		}
 	} else {
 		prefix = '<p class="detail unknown">';
