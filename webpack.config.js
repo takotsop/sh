@@ -25,8 +25,6 @@ module.exports = {
 
 	externals: {
 		"jquery": "jQuery",
-		"simplewebrtc": "SimpleWebRTC",
-		"socket.io": "io",
 	},
 
 };

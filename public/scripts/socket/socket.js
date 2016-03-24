@@ -1,6 +1,6 @@
 'use strict';
 
-var SocketIO = require('socket.io');
+var SocketIO = require('socket.io-client');
 
 var CommonConsts = require('common/constants');
 
