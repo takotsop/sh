@@ -26944,7 +26944,7 @@
 		if (State.isLocalPresident()) {
 			directive = 'Choose your Chancellor';
 		} else {
-			directive = 'Wait for ' + Util.nameSpan(president) + ' to choose their chancellor';
+			directive = 'President ' + Util.nameSpan(president) + ' to nominate their chancellor';
 		}
 		Cards.show(null);
 		Chat.setDirective(directive);
@@ -27033,7 +27033,7 @@
 				cards = 'policy';
 				directive = 'Choose a policy to <strong>discard</strong>';
 			} else {
-				directive = 'Wait for President ' + Util.nameSpan(State.getPresident()) + ' to discard a policy';
+				directive = 'President ' + Util.nameSpan(State.getPresident()) + ' to discard a policy';
 			}
 			Chat.setDirective(directive);
 		} else {
@@ -27477,7 +27477,7 @@
 			cards = 'policy';
 		} else {
 			var chancellor = State.getChancellor();
-			directive = 'Wait for Chancellor ' + Util.nameSpan(chancellor) + ' to enact a policy';
+			directive = 'Chancellor ' + Util.nameSpan(chancellor) + ' to enact a policy';
 			cards = null;
 		}
 		Chat.setDirective(directive);
@@ -27511,21 +27511,21 @@
 				var directive;
 				if (fascistPower.indexOf('investigate') > -1) {
 					if (State.isLocalPresident()) {
-						directive = 'Choose a player to investigate their allegiance';
+						directive = 'Choose a player to investigate their party';
 					} else {
-						directive = 'Wait for the president to investigate a player';
+						directive = 'President ' + Util.nameSpan(State.getPresident()) + ' to investigate a player';
 					}
 				} else if (fascistPower.indexOf('election') > -1) {
 					if (State.isLocalPresident()) {
-						directive = 'Select the presidential candidate for the special election';
+						directive = 'Select a special election presidential candidate';
 					} else {
-						directive = 'Wait for President to select the special election candidate';
+						directive = 'President ' + Util.nameSpan(State.getPresident()) + ' to select the special election candidate';
 					}
 				} else if (fascistPower.indexOf('bullet') > -1) {
 					if (State.isLocalPresident()) {
 						directive = 'Choose a player to kill';
 					} else {
-						directive = 'Wait for President to kill a player';
+						directive = 'President ' + Util.nameSpan(State.getPresident()) + ' to kill a player';
 					}
 				}
 				Chat.setDirective(directive);
@@ -27574,7 +27574,7 @@
 			directive = 'Peek at the next 3 policies. Click one to continue';
 		} else {
 			var president = State.getPresident();
-			directive = 'Wait for President ' + Util.nameSpan(president) + ' to peek at the next 3 policies';
+			directive = 'President ' + Util.nameSpan(president) + ' to peek at the next 3 policies';
 		}
 		Chat.setDirective(directive);
 		Cards.show(cards);
