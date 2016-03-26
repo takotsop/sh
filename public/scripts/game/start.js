@@ -23,7 +23,7 @@ var State = require('game/state');
 var startGame = function(data) {
 	$('.chat-container').html('');
 	$('#chat-box').show();
-	$('.policy-placeholder').html('');
+	$('.policy-placeholder.policy-revealed').html('');
 
 	Data.gameId = data.gid;
 	App.showSection('game');
