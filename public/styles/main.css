@@ -13,11 +13,14 @@ body {
 	width: 100%;
 	height: 100%;
 	margin: 0;
-	background-color: #eaeae5;
 	font-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;
 
 	font-weight: 300;
 	color: #393734;
+}
+
+body, .background {
+	background-color: #eaeae5;
 }
 
 a {
