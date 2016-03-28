@@ -136,7 +136,11 @@ var startGame = function(data) {
 		}
 	});
 
-	Process.history(data.history);
+	if (data.history) {
+		State.rewinding = true;
+		Process.history(data.history);
+		State.rewinding = false;
+	}
 
 	if (!State.initializedPlay) {
 		Overlay.show('start');

@@ -27465,6 +27465,11 @@
 		var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
 		slot.html('<div class="policy image '+type+'"></div');
 
+		if (!State.rewinding && type == CommonConsts.FASCIST && State.enactedFascist == 3) {
+			//TODO inline alerts
+			window.alert('The third Fascist policy has been enacted D:\n\nFrom now on, if Hitler is voted in as Chancellor, the Fascists win!');
+		}
+
 		return slot.data('power');
 	};
 
@@ -28146,7 +28151,11 @@
 			}
 		});
 
-		Process.history(data.history);
+		if (data.history) {
+			State.rewinding = true;
+			Process.history(data.history);
+			State.rewinding = false;
+		}
 
 		if (!State.initializedPlay) {
 			Overlay.show('start');
@@ -28184,7 +28193,7 @@
 
 	//LOCAL
 
-	var processAction = function(data, fastForward) {
+	var processAction = function(data) {
 		var action = data.action;
 		if (action == 'abandoned') {
 			Players.abandoned(data);
@@ -28236,7 +28245,7 @@
 
 	var processHistory = function(history) {
 		history.forEach(function(action) {
-			processAction(action, true);
+			processAction(action);
 		});
 	};
 

@@ -14,7 +14,7 @@ var State = require('game/state');
 
 //LOCAL
 
-var processAction = function(data, fastForward) {
+var processAction = function(data) {
 	var action = data.action;
 	if (action == 'abandoned') {
 		Players.abandoned(data);
@@ -66,7 +66,7 @@ var processAction = function(data, fastForward) {
 
 var processHistory = function(history) {
 	history.forEach(function(action) {
-		processAction(action, true);
+		processAction(action);
 	});
 };
 
