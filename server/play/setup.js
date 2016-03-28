@@ -1,8 +1,10 @@
 'use strict';
 
 var CommonConsts = require.main.require('./common/constants');
+var CommonUtil = require.main.require('./common/util');
 
 var DB = require.main.require('./server/tools/db');
+var Utils = require.main.require('./server/tools/utils');
 
 var Socket = require.main.require('./server/connect/io');
 var Signin = require.main.require('./server/connect/signin');
@@ -17,7 +19,8 @@ DB.delete('games', 'state IS NULL');
 
 DB.update('users', 'online_count > 0', {online_count: 0});
 
-DB.fetchAll('id, start_index, player_count, player_ids, player_names, history', 'games', 'state = 1 AND compatible_version = $1', [CommonConsts.COMPATIBLE_VERSION], function(games) {
+var oneDayAgo = Utils.TESTING ? -1 : CommonUtil.now() - 60 * 60 * 24;
+DB.fetchAll('id, start_index, player_count, player_ids, player_names, history', 'games', 'state = 1 AND compatible_version = $1 AND updated_at > $2', [CommonConsts.COMPATIBLE_VERSION, oneDayAgo], function(games) {
 	if (games.length > 0) {
 		var restoredCount = 0;
 		games.forEach(function(gameData) {
