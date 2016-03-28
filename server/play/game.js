@@ -251,7 +251,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.cancelAutostart();
 
 		if (this.enoughToStart()) {
-			var startDelay = Utils.TESTING ? 3 : 30;
+			var startDelay = Utils.TESTING ? 3 : 45;
 			this.scheduledStart = CommonUtil.now() + startDelay;
 
 			this.autoTimer = setTimeout(function() {

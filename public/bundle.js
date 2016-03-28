@@ -8108,7 +8108,7 @@
 			afkInterval = null;
 		}
 		if (enabled && !State.started) {
-			var waitDuration = Util.hidden('#lobby-wait-afk') ? 59 : 29;
+			var waitDuration = Util.hidden('#lobby-wait-afk') ? 89 : 44;
 			afkInterval = setTimeout(function() {
 				if (Util.hidden('#lobby-wait')) {
 					afkInterval = null;
