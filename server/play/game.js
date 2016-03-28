@@ -413,7 +413,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	this.playerState = function(puid, key, value) {
 		var state = this.playersState[puid];
 		if (state && key) {
-			if (value == undefined) {
+			if (value === undefined) {
 				return state[key];
 			}
 			state[key] = value;

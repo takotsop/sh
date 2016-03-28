@@ -28,10 +28,14 @@ var showCards = function(showName) {
 //EVENTS
 
 $('#cards-vote').on('click', '.card', function() {
-	$('#cards-vote .card').removeClass('selected');
-	$(this).addClass('selected');
-
-	Action.emit('vote', {up: this.id == 'card-ja'});
+	var jqThis = $(this);
+	var canceling = jqThis.hasClass('selected');
+	Action.emit('vote', {up: canceling ? null : this.id == 'card-ja'}, function() {
+		$('#cards-vote .card').removeClass('selected');
+		if (!canceling) {
+			jqThis.addClass('selected');
+		}
+	});
 });
 
 $('#cards-policy').on('click', '.card', function() {

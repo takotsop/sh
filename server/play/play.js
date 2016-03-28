@@ -74,7 +74,7 @@ var chancellorAction = function(data, puid, cuid, game) {
 	return chancellorData;
 };
 
-var voteAction = function(data, puid, game) {
+var voteAction = function(data, puid, game, callback) {
 	if (game.turn.voted) {
 		game.error('Vote already complete', puid);
 		return;
@@ -86,12 +86,17 @@ var voteAction = function(data, puid, game) {
 		}
 		game.playerState(puid, 'vote', data.up);
 
-		game.players.forEach(function(puid) {
-			var playerState = game.playerState(puid);
-			if (!playerState.killed && playerState.vote == null) {
+		for (var pidx in game.players) {
+			var uid = game.players[pidx];
+			var playerState = game.playerState(uid);
+			if (playerState && !playerState.killed && playerState.vote == null) {
 				doneVoting = false;
+				break;
 			}
-		});
+		}
+	}
+	if (callback) {
+		callback();
 	}
 	if (doneVoting) {
 		game.turn.voted = true;
@@ -303,7 +308,7 @@ var Play = function(socket) {
 			recording = chancellorAction(data, puid, data.uid, game);
 		} else if (action == 'vote') {
 			data.up = rawData.up;
-			recording = voteAction(data, puid, game);
+			recording = voteAction(data, puid, game, callback);
 		} else if (action == 'policy') {
 			data.veto = rawData.veto;
 			data.policyIndex = rawData.policyIndex;
