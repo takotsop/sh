@@ -30,9 +30,12 @@ var enactPolicy = function(type) {
 	var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
 	slot.html('<div class="policy image '+type+'"></div');
 
-	if (!State.rewinding && type == CommonConsts.FASCIST && State.enactedFascist == 3) {
-		//TODO inline alerts
-		window.alert('The third Fascist policy has been enacted D:\n\nFrom now on, if Hitler is voted in as Chancellor, the Fascists win!');
+	if (type == CommonConsts.FASCIST && State.enactedFascist == 3) {
+		$('.tracker-slot').addClass('danger');
+		if (!State.rewinding) {
+			//TODO inline alerts
+			window.alert('The 3rd Fascist policy has been enacted D:\n\nFrom now on, if Hitler is voted in as Chancellor, the Fascists win!');
+		}
 	}
 
 	return slot.data('power');

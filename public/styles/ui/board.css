@@ -143,6 +143,13 @@
 	background-color: #62C2A0;
 }
 
+.tracker-slot.danger {
+	border-color: #E3644F;
+}
+.tracker-slot.danger.selected {
+	background-color: #E3644F;
+}
+
 #tracker-title, #tracker-description {
 	position: absolute;
 	left: 0;

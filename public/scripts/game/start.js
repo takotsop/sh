@@ -24,6 +24,7 @@ var startGame = function(data) {
 	$('.chat-container').html('');
 	$('#chat-box').show();
 	$('.policy-placeholder.policy-revealed').html('');
+	$('.tracker-slot').removeClass('danger');
 
 	Data.gameId = data.gid;
 	App.showSection('game');
