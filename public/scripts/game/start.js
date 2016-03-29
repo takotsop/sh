@@ -124,7 +124,7 @@ var startGame = function(data) {
 
 	// Local player
 	if (State.localPlayer) {
-		State.localRole = State.localPlayer.allegiance;
+		State.localRole = State.localPlayer.role;
 		$('#card-role .label').text(State.localRoleName());
 		$('#card-party .label').text(State.localPartyName());
 	} else {
@@ -132,8 +132,8 @@ var startGame = function(data) {
 	}
 
 	State.players.forEach(function(player) {
-		if (player.allegiance != null) {
-			Players.displayAvatar(player, player.allegiance);
+		if (player.role != null) {
+			Players.displayAvatar(player, player.role);
 		}
 	});
 

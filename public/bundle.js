@@ -578,8 +578,8 @@
 		},
 
 		nameSpan: function(player) {
-			var allegiance = player.allegiance || 'unknown';
-			return '<strong class="player-name '+allegiance+' danger">' + player.name + '</strong>';
+			var roleClass = player.roleClass || 'unknown';
+			return '<strong class="player-name '+roleClass+' danger">' + player.name + '</strong>';
 		},
 
 		hidden: function(selector) {
@@ -8454,11 +8454,11 @@
 		if (player) {
 			App.playerDiv(player, '.chat').html(message);
 
-			var allegiance = player.allegiance || 'unknown';
+			var roleClass = player.roleClass || 'unknown';
 			if (isAction) {
-				prefix = '<p class="detail player-name '+allegiance+' danger">' + Util.nameSpan(player) + ' ';
+				prefix = '<p class="detail player-name '+roleClass+' danger">' + Util.nameSpan(player) + ' ';
 			} else {
-				prefix = '<p><strong class="player-name '+allegiance+' danger">' + player.name + ':</strong> ';
+				prefix = '<p><strong class="player-name '+roleClass+' danger">' + player.name + ':</strong> ';
 			}
 		} else {
 			prefix = '<p class="detail unknown">';
@@ -26613,7 +26613,7 @@
 		console.error('Unable to find player', uid);
 	};
 
-	var allegianceClass = function(role) {
+	var roleClass = function(role) {
 		var ac;
 		if (CommonGame.isLiberal(role)) {
 			ac = CommonConsts.LIBERAL;
@@ -26627,9 +26627,9 @@
 	};
 
 	var displayAvatar = function(player, role) {
-		var allegianceClassName = allegianceClass(role);
-		player.allegiance = allegianceClassName;
-		App.playerDiv(player, '.avatar').addClass(allegianceClassName);
+		var roleClassName = roleClass(role);
+		player.roleClass = roleClassName;
+		App.playerDiv(player, '.avatar').addClass(roleClassName);
 	};
 
 	var killPlayer = function(player, isFuehrer, quit) {
@@ -26707,7 +26707,7 @@
 
 		displayAvatar: displayAvatar,
 
-		allegianceClass: allegianceClass,
+		roleClass: roleClass,
 
 		chancellorChosen: chancellorChosen,
 
@@ -27280,7 +27280,7 @@
 			extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 			inner += '<h2><em>your secret role:</em></h2>';
-			inner += '<div class="avatar image '+Players.allegianceClass(State.localRole)+'"></div>';
+			inner += '<div class="avatar image '+Players.roleClass(State.localRole)+'"></div>';
 			inner += '<h1>'+State.localRoleName()+'</h1>';
 			var fascistsCount = CommonGame.fascistsCount(State.playerCount) - 1;
 			var fascistsDescription = Util.pluralize(fascistsCount, 'Fascist') + ' + Hitler';
@@ -28161,7 +28161,7 @@
 
 		// Local player
 		if (State.localPlayer) {
-			State.localRole = State.localPlayer.allegiance;
+			State.localRole = State.localPlayer.role;
 			$('#card-role .label').text(State.localRoleName());
 			$('#card-party .label').text(State.localPartyName());
 		} else {
@@ -28169,8 +28169,8 @@
 		}
 
 		State.players.forEach(function(player) {
-			if (player.allegiance != null) {
-				Players.displayAvatar(player, player.allegiance);
+			if (player.role != null) {
+				Players.displayAvatar(player, player.role);
 			}
 		});
 

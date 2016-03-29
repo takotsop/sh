@@ -36,8 +36,8 @@ module.exports = {
 	},
 
 	nameSpan: function(player) {
-		var allegiance = player.allegiance || 'unknown';
-		return '<strong class="player-name '+allegiance+' danger">' + player.name + '</strong>';
+		var roleClass = player.roleClass || 'unknown';
+		return '<strong class="player-name '+roleClass+' danger">' + player.name + '</strong>';
 	},
 
 	hidden: function(selector) {

@@ -29,7 +29,7 @@ var getPlayer = function(uid) {
 	console.error('Unable to find player', uid);
 };
 
-var allegianceClass = function(role) {
+var roleClass = function(role) {
 	var ac;
 	if (CommonGame.isLiberal(role)) {
 		ac = CommonConsts.LIBERAL;
@@ -43,9 +43,9 @@ var allegianceClass = function(role) {
 };
 
 var displayAvatar = function(player, role) {
-	var allegianceClassName = allegianceClass(role);
-	player.allegiance = allegianceClassName;
-	App.playerDiv(player, '.avatar').addClass(allegianceClassName);
+	var roleClassName = roleClass(role);
+	player.roleClass = roleClassName;
+	App.playerDiv(player, '.avatar').addClass(roleClassName);
 };
 
 var killPlayer = function(player, isFuehrer, quit) {
@@ -123,7 +123,7 @@ module.exports = {
 
 	displayAvatar: displayAvatar,
 
-	allegianceClass: allegianceClass,
+	roleClass: roleClass,
 
 	chancellorChosen: chancellorChosen,
 

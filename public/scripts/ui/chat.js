@@ -36,11 +36,11 @@ var insertMessage = function(player, message, isAction) {
 	if (player) {
 		App.playerDiv(player, '.chat').html(message);
 
-		var allegiance = player.allegiance || 'unknown';
+		var roleClass = player.roleClass || 'unknown';
 		if (isAction) {
-			prefix = '<p class="detail player-name '+allegiance+' danger">' + Util.nameSpan(player) + ' ';
+			prefix = '<p class="detail player-name '+roleClass+' danger">' + Util.nameSpan(player) + ' ';
 		} else {
-			prefix = '<p><strong class="player-name '+allegiance+' danger">' + player.name + ':</strong> ';
+			prefix = '<p><strong class="player-name '+roleClass+' danger">' + player.name + ':</strong> ';
 		}
 	} else {
 		prefix = '<p class="detail unknown">';

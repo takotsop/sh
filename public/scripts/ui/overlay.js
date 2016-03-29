@@ -47,7 +47,7 @@ var showOverlay = function(type, data) {
 		extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 		inner += '<h2><em>your secret role:</em></h2>';
-		inner += '<div class="avatar image '+Players.allegianceClass(State.localRole)+'"></div>';
+		inner += '<div class="avatar image '+Players.roleClass(State.localRole)+'"></div>';
 		inner += '<h1>'+State.localRoleName()+'</h1>';
 		var fascistsCount = CommonGame.fascistsCount(State.playerCount) - 1;
 		var fascistsDescription = Util.pluralize(fascistsCount, 'Fascist') + ' + Hitler';

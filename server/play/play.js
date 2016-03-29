@@ -224,7 +224,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 					game.error('Already investigated', puid, [tuid]);
 					return;
 				}
-				var targetParty = CommonGame.getParty(game.playerState(tuid, 'allegiance'));
+				var targetParty = CommonGame.getParty(game.playerState(tuid, 'role'));
 				var secret = {target: game.presidentElect, party: targetParty};
 				game.playerState(tuid, 'investigated', true);
 				data = game.emitAction('investigate', data, secret);

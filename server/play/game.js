@@ -193,11 +193,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	this.emitAction = function(name, data, secret) {
 		data.action = name;
 		if (this.finished) {
-			var roles = [];
-			this.players.forEach(function(uid, index) {
-				roles[index] = game.playerState(uid, 'allegiance');
-			});
-			data.roles = roles;
+			data.roles = this.playersStateMap('role');
 		}
 		if (secret) {
 			var tuid = secret.target;
@@ -217,7 +213,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		var sendPlayers = [];
 		var showFascists;
 		if (perspectiveUid) {
-			var perspectiveRole = this.playerState(perspectiveUid, 'allegiance');
+			var perspectiveRole = this.playerState(perspectiveUid, 'role');
 			showFascists = CommonGame.isFascist(perspectiveRole) || (this.playerCount <= 6 && CommonGame.isFuehrer(perspectiveRole));
 		}
 		this.players.forEach(function(uid, index) {
@@ -227,9 +223,9 @@ var Game = function(restoreData, size, privateGame, socket) {
 				index: index,
 			};
 			if (perspectiveUid) {
-				var perspectiveRole = game.playerState(uid, 'allegiance');
+				var perspectiveRole = game.playerState(uid, 'role');
 				if (perspectiveUid == uid || (showFascists && CommonGame.isFascist(perspectiveRole))) {
-					playerData.allegiance = perspectiveRole;
+					playerData.role = perspectiveRole;
 				}
 			}
 			sendPlayers[index] = playerData;
@@ -311,7 +307,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 		fascistIndicies = this.shuffle(fascistIndicies);
 		this.players.forEach(function(puid, pidx) {
 			var role = fascistIndicies[pidx];
-			game.playerState(puid, 'allegiance', role);
+			game.playerState(puid, 'role', role);
 		});
 
 		// Emit
@@ -568,7 +564,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	};
 
 	this.isFuehrer = function(uid) {
-		var role = this.playerState(uid, 'allegiance');
+		var role = this.playerState(uid, 'role');
 		return role && CommonGame.isFuehrer(role) ? role : false;
 	};
 
