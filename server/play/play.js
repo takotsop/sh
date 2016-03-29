@@ -1,5 +1,6 @@
 'use strict';
 
+var CommonGame = require.main.require('./common/game');
 var CommonUtil = require.main.require('./common/util');
 
 var Game = require.main.require('./server/play/game');
@@ -223,7 +224,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 					game.error('Already investigated', puid, [tuid]);
 					return;
 				}
-				var targetParty = game.playerState(tuid, 'allegiance') == 0 ? 0 : 1;
+				var targetParty = CommonGame.getParty(game.playerState(tuid, 'allegiance'));
 				var secret = {target: game.presidentElect, party: targetParty};
 				game.playerState(tuid, 'investigated', true);
 				data = game.emitAction('investigate', data, secret);

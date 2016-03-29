@@ -42,4 +42,20 @@ module.exports = {
 		return Math.ceil(gameSize / 2) - 1;
 	},
 
+	getParty: function(role) {
+		return role == 0 ? 0 : 1;
+	},
+
+	isLiberal: function(role) {
+		return role == 0;
+	},
+
+	isFascist: function(role) {
+		return role != 0;
+	},
+
+	isFuehrer: function(role) {
+		return role != null && role >= 2;
+	},
+
 };

@@ -124,9 +124,9 @@ var startGame = function(data) {
 
 	// Local player
 	if (State.localPlayer) {
-		State.localAllegiance = State.localPlayer.allegiance;
-		$('#card-role .label').text(State.localRole());
-		$('#card-party .label').text(State.localParty());
+		State.localRole = State.localPlayer.allegiance;
+		$('#card-role .label').text(State.localRoleName());
+		$('#card-party .label').text(State.localPartyName());
 	} else {
 		console.error('Local player not found');
 	}

@@ -26541,9 +26541,11 @@
 
 /***/ },
 /* 154 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var CommonGame = __webpack_require__(167);
 
 	module.exports = {
 
@@ -26565,12 +26567,12 @@
 			return this.chancellorIndex == this.localIndex;
 		},
 
-		localRole: function() {
-			return this.localAllegiance == 0 ? 'Liberal' : (this.localAllegiance == 1 ? 'Fascist' : 'Hitler');
+		localRoleName: function() {
+			return CommonGame.isLiberal(this.localRole) ? 'Liberal' : (CommonGame.isFuehrer(this.localRole) ? 'Hitler' : 'Fascist');
 		},
 
-		localParty: function() {
-			return this.localAllegiance > 0 ? 'Fascist' : 'Liberal';
+		localPartyName: function() {
+			return CommonGame.isLiberal(this.localRole) ? 'Liberal' : 'Fascist';
 		},
 
 	};
@@ -26587,6 +26589,7 @@
 	var $ = __webpack_require__(1);
 
 	var CommonConsts = __webpack_require__(2);
+	var CommonGame = __webpack_require__(167);
 
 	var App = __webpack_require__(153);
 	var Cards = __webpack_require__(158);
@@ -26610,21 +26613,21 @@
 		console.error('Unable to find player', uid);
 	};
 
-	var allegianceClass = function(allegiance) {
+	var allegianceClass = function(role) {
 		var ac;
-		if (allegiance == 0) {
+		if (CommonGame.isLiberal(role)) {
 			ac = CommonConsts.LIBERAL;
 		} else {
 			ac = CommonConsts.FASCIST;
-			if (allegiance >= 2) {
+			if (CommonGame.isFuehrer(role)) {
 				ac += ' hitler';
 			}
 		}
 		return ac;
 	};
 
-	var displayAvatar = function(player, allegiance) {
-		var allegianceClassName = allegianceClass(allegiance);
+	var displayAvatar = function(player, role) {
+		var allegianceClassName = allegianceClass(role);
 		player.allegiance = allegianceClassName;
 		App.playerDiv(player, '.avatar').addClass(allegianceClassName);
 	};
@@ -26713,8 +26716,8 @@
 		abandoned: abandonedPlayer,
 
 		revealRoles: function(roles) {
-			roles.forEach(function(allegiance, index) {
-				displayAvatar(State.players[index], allegiance);
+			roles.forEach(function(role, index) {
+				displayAvatar(State.players[index], role);
 			});
 		},
 
@@ -27205,6 +27208,22 @@
 			return Math.ceil(gameSize / 2) - 1;
 		},
 
+		getParty: function(role) {
+			return role == 0 ? 0 : 1;
+		},
+
+		isLiberal: function(role) {
+			return role == 0;
+		},
+
+		isFascist: function(role) {
+			return role != 0;
+		},
+
+		isFuehrer: function(role) {
+			return role != null && role >= 2;
+		},
+
 	};
 
 
@@ -27261,17 +27280,17 @@
 			extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 			inner += '<h2><em>your secret role:</em></h2>';
-			inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
-			inner += '<h1>'+State.localRole()+'</h1>';
+			inner += '<div class="avatar image '+Players.allegianceClass(State.localRole)+'"></div>';
+			inner += '<h1>'+State.localRoleName()+'</h1>';
 			var fascistsCount = CommonGame.fascistsCount(State.playerCount) - 1;
 			var fascistsDescription = Util.pluralize(fascistsCount, 'Fascist') + ' + Hitler';
 			inner += '<h4>'+State.playerCount+' players (' + fascistsDescription + ')</h4>';
 			inner += '<p>';
 
 			inner += 'Your objective is to ';
-			if (State.localAllegiance == 0) {
+			if (CommonGame.isLiberal(State.localRole)) {
 				inner += 'work together with the other Liberals and pass 5 Liberal policies, or assassinate Hitler with one of the Fascist bullet policies.';
-			} else if (State.localAllegiance == 1) {
+			} else if (!CommonGame.isFuehrer(State.localRole)) {
 				inner += 'work together with the other Fascists to enact 6 Fascist policies, or elect Hitler as Chancellor <strong>after the third</strong> Fascist policy has been enacted.';
 			} else {
 				inner += 'discover the other Fascists, working together to enact 6 Fascist policies, or get yourself elected Chancellor <strong>after the third</strong> Fascist policy has been enacted.<br>As Hitler, you\'ll want to keep yourself out of suspicion to avoid being assassinated.';
@@ -28142,9 +28161,9 @@
 
 		// Local player
 		if (State.localPlayer) {
-			State.localAllegiance = State.localPlayer.allegiance;
-			$('#card-role .label').text(State.localRole());
-			$('#card-party .label').text(State.localParty());
+			State.localRole = State.localPlayer.allegiance;
+			$('#card-role .label').text(State.localRoleName());
+			$('#card-party .label').text(State.localPartyName());
 		} else {
 			console.error('Local player not found');
 		}

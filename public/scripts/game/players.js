@@ -5,6 +5,7 @@ require('styles/game/players');
 var $ = require('jquery');
 
 var CommonConsts = require('common/constants');
+var CommonGame = require('common/game');
 
 var App = require('ui/app');
 var Cards = require('ui/cards');
@@ -28,21 +29,21 @@ var getPlayer = function(uid) {
 	console.error('Unable to find player', uid);
 };
 
-var allegianceClass = function(allegiance) {
+var allegianceClass = function(role) {
 	var ac;
-	if (allegiance == 0) {
+	if (CommonGame.isLiberal(role)) {
 		ac = CommonConsts.LIBERAL;
 	} else {
 		ac = CommonConsts.FASCIST;
-		if (allegiance >= 2) {
+		if (CommonGame.isFuehrer(role)) {
 			ac += ' hitler';
 		}
 	}
 	return ac;
 };
 
-var displayAvatar = function(player, allegiance) {
-	var allegianceClassName = allegianceClass(allegiance);
+var displayAvatar = function(player, role) {
+	var allegianceClassName = allegianceClass(role);
 	player.allegiance = allegianceClassName;
 	App.playerDiv(player, '.avatar').addClass(allegianceClassName);
 };
@@ -131,8 +132,8 @@ module.exports = {
 	abandoned: abandonedPlayer,
 
 	revealRoles: function(roles) {
-		roles.forEach(function(allegiance, index) {
-			displayAvatar(State.players[index], allegiance);
+		roles.forEach(function(role, index) {
+			displayAvatar(State.players[index], role);
 		});
 	},
 

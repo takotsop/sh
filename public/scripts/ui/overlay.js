@@ -47,17 +47,17 @@ var showOverlay = function(type, data) {
 		extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 		inner += '<h2><em>your secret role:</em></h2>';
-		inner += '<div class="avatar image '+Players.allegianceClass(State.localAllegiance)+'"></div>';
-		inner += '<h1>'+State.localRole()+'</h1>';
+		inner += '<div class="avatar image '+Players.allegianceClass(State.localRole)+'"></div>';
+		inner += '<h1>'+State.localRoleName()+'</h1>';
 		var fascistsCount = CommonGame.fascistsCount(State.playerCount) - 1;
 		var fascistsDescription = Util.pluralize(fascistsCount, 'Fascist') + ' + Hitler';
 		inner += '<h4>'+State.playerCount+' players (' + fascistsDescription + ')</h4>';
 		inner += '<p>';
 
 		inner += 'Your objective is to ';
-		if (State.localAllegiance == 0) {
+		if (CommonGame.isLiberal(State.localRole)) {
 			inner += 'work together with the other Liberals and pass 5 Liberal policies, or assassinate Hitler with one of the Fascist bullet policies.';
-		} else if (State.localAllegiance == 1) {
+		} else if (!CommonGame.isFuehrer(State.localRole)) {
 			inner += 'work together with the other Fascists to enact 6 Fascist policies, or elect Hitler as Chancellor <strong>after the third</strong> Fascist policy has been enacted.';
 		} else {
 			inner += 'discover the other Fascists, working together to enact 6 Fascist policies, or get yourself elected Chancellor <strong>after the third</strong> Fascist policy has been enacted.<br>As Hitler, you\'ll want to keep yourself out of suspicion to avoid being assassinated.';

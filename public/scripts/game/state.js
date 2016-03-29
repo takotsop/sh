@@ -1,5 +1,7 @@
 'use strict';
 
+var CommonGame = require('common/game');
+
 module.exports = {
 
 	gameOver: true,
@@ -20,12 +22,12 @@ module.exports = {
 		return this.chancellorIndex == this.localIndex;
 	},
 
-	localRole: function() {
-		return this.localAllegiance == 0 ? 'Liberal' : (this.localAllegiance == 1 ? 'Fascist' : 'Hitler');
+	localRoleName: function() {
+		return CommonGame.isLiberal(this.localRole) ? 'Liberal' : (CommonGame.isFuehrer(this.localRole) ? 'Hitler' : 'Fascist');
 	},
 
-	localParty: function() {
-		return this.localAllegiance > 0 ? 'Fascist' : 'Liberal';
+	localPartyName: function() {
+		return CommonGame.isLiberal(this.localRole) ? 'Liberal' : 'Fascist';
 	},
 
 };
