@@ -64,12 +64,6 @@ var processAction = function(data) {
 	}
 };
 
-var processHistory = function(history) {
-	history.forEach(function(action) {
-		processAction(action);
-	});
-};
-
 //SOCKET
 
 Socket.on('game action', processAction);
@@ -82,6 +76,12 @@ Socket.on('action error', function(data) {
 
 module.exports = {
 
-	history: processHistory,
+	history: function(history) {
+		State.rewinding = true;
+		history.forEach(function(action) {
+			processAction(action);
+		});
+		State.rewinding = false;
+	},
 
 };

@@ -27112,7 +27112,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-container {\n\tposition: relative;\n\tdisplay: flex;\n\n\theight: 100%;\n\toverflow: hidden;\n\tbox-sizing: border-box;\n}\n\n#s-game.directive #game-container {\n\tpadding-top: 44px;\n}\n\n#chat-container-game {\n\tflex-grow: 1;\n\tmax-width: 420px;\n\tbackground-color: #444;\n\tcolor: #fffffd;\n\tpadding: 0 8px;\n}\n\n#game-area {\n\tposition: relative;\n\theight: inherit;\n\tbox-sizing: border-box;\n}\n\n#game-mat {\n\theight: inherit;\n\tmin-height: 600px;\n\tbox-sizing: border-box;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.unknown {\n\tcolor: #F7E2C0;\t\n}\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n\n/* MEDIA */\n\n@media (max-width: 1023px) {\n\t#game-container {\n\t\tflex-direction: column-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 4;\n\t}\n\n\t#chat-container-game {\n\t\tdisplay: none;\n\t}\n}\n\n@media (min-width: 1024px) {\n\t#game-container {\n\t\tflex-direction: row-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 2;\n\t}\n}\n", ""]);
+	exports.push([module.id, "#s-game {\n\t-webkit-touch-callout: none;\n\t-webkit-user-select: none;\n\tuser-select: none;\n}\n\n#game-container {\n\tposition: relative;\n\tdisplay: flex;\n\n\theight: 100%;\n\toverflow: hidden;\n\tbox-sizing: border-box;\n}\n\n#s-game.directive #game-container {\n\tpadding-top: 44px;\n}\n\n#chat-container-game {\n\tflex-grow: 1;\n\tmax-width: 420px;\n\tbackground-color: #444;\n\tcolor: #fffffd;\n\tpadding: 0 8px;\n}\n\n#game-area {\n\tposition: relative;\n\theight: inherit;\n\tbox-sizing: border-box;\n}\n\n#game-mat {\n\theight: inherit;\n\tmin-height: 600px;\n\tbox-sizing: border-box;\n}\n\n/* DIRECTIVE */\n\n#directive {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tz-index: 9001;\n\twidth: 100%;\n\tpadding: 0 4px;\n\tbox-sizing: border-box;\n\n\theight: 44px;\n\tline-height: 44px;\n\ttext-align: center;\n\tfont-weight: 400;\n\tfont-size: 1.3em;\n\n\tbackground-color: #393734;\n\tcolor: #F7E2C0;\n\ttext-shadow: 0 4px 16px black;\n\n\twhite-space: nowrap;\n\toverflow: hidden;\n\ttext-overflow: ellipsis;\n}\n\n#s-game:not(.directive) #directive {\n\tdisplay: none;\n}\n\n/* PARTY */\n\n.unknown {\n\tcolor: #F7E2C0;\n}\n\n.fascist {\n\tcolor: #9C0701;\n\tbackground-color: #E3644F;\n\tborder-color: #9C0701 !important;\n}\n.fascist.danger {\n\tcolor: #E3644F;\n\tbackground-color: #9C0701;\n}\n\n.liberal {\n\tcolor: #2E6C87;\n\tbackground-color: #78CAD7;\n\tborder-color: #2E6C87 !important;\n}\n.liberal.danger {\n\tcolor: #73CBD9;\n\tbackground-color: #2E6C87;\n}\n\n.liberal.image {\n\tbackground-image: url(/images/liberal.png);\n}\n.fascist.image {\n\tbackground-image: url(/images/fascist.png);\n}\n.hitler.image {\n\tbackground-image: url(/images/hitler.png);\n}\n\n/* MEDIA */\n\n@media (max-width: 1023px) {\n\t#game-container {\n\t\tflex-direction: column-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 4;\n\t}\n\n\t#chat-container-game {\n\t\tdisplay: none;\n\t}\n}\n\n@media (min-width: 1024px) {\n\t#game-container {\n\t\tflex-direction: row-reverse;\n\t}\n\n\t#game-area {\n\t\tflex-grow: 2;\n\t}\n}\n", ""]);
 
 	// exports
 
@@ -28156,9 +28156,7 @@
 		});
 
 		if (data.history) {
-			State.rewinding = true;
 			Process.history(data.history);
-			State.rewinding = false;
 		}
 
 		if (!State.initializedPlay) {
@@ -28247,12 +28245,6 @@
 		}
 	};
 
-	var processHistory = function(history) {
-		history.forEach(function(action) {
-			processAction(action);
-		});
-	};
-
 	//SOCKET
 
 	Socket.on('game action', processAction);
@@ -28265,7 +28257,13 @@
 
 	module.exports = {
 
-		history: processHistory,
+		history: function(history) {
+			State.rewinding = true;
+			history.forEach(function(action) {
+				processAction(action);
+			});
+			State.rewinding = false;
+		},
 
 	};
 

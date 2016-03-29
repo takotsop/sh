@@ -138,9 +138,7 @@ var startGame = function(data) {
 	});
 
 	if (data.history) {
-		State.rewinding = true;
 		Process.history(data.history);
-		State.rewinding = false;
 	}
 
 	if (!State.initializedPlay) {
