@@ -251,7 +251,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 	game.error('Invalid power', puid, [tuid, game.turn.president, game.power, action]);
 };
 
-//PUBLIC
+//PROCESS
 
 var processAction = function(game, data) {
 	var action = data.action;
@@ -281,65 +281,67 @@ var processAction = function(game, data) {
 	}
 };
 
-var Play = function(socket) {
+//PUBLIC
 
-	socket.on('game action', function(rawData, callback) {
-		var action = rawData.action;
-		var puid = socket.uid;
-		if (!Game.existsFor(socket) || !socket.game) {
-			console.error('\nSocket action invalid game', puid, action, Game.existsFor(socket));
-			return;
-		}
-		var game = socket.game;
-		if (game.playerState(puid) == null) {
-			game.error('Socket invalid for game', puid, [action, game.history.length, game.players, game.playersState]);
-			return;
-		}
+module.exports = {
 
-		var data = {action: action};
-		var recording, saving = true;
-		if (action == 'quit') {
-			recording = quitAction(data, puid, game, callback);
-		} else if (action == 'chat') {
-			data.msg = rawData.msg.substr(0, 255);
-			recording = chatAction(data, puid, game);
-			saving = false;
-		} else if (action == 'chancellor') {
-			data.uid = rawData.uid;
-			recording = chancellorAction(data, puid, data.uid, game);
-		} else if (action == 'vote') {
-			data.up = rawData.up;
-			recording = voteAction(data, puid, game, callback);
-		} else if (action == 'policy') {
-			data.veto = rawData.veto;
-			data.policyIndex = rawData.policyIndex;
-			recording = policyAction(data, puid, game);
-		} else {
-			data.uid = rawData.uid;
-			recording = powerAction(action, data, puid, data.uid, game);
-		}
-		if (recording && game.started) {
-			game.addToHistory(recording, saving);
-		}
-	});
+	init: function(socket) {
+		socket.on('game action', function(rawData, callback) {
+			var action = rawData.action;
+			var puid = socket.uid;
+			if (!Game.existsFor(socket) || !socket.game) {
+				console.error('\nSocket action invalid game', puid, action, Game.existsFor(socket));
+				return;
+			}
+			var game = socket.game;
+			if (game.playerState(puid) == null) {
+				game.error('Socket invalid for game', puid, [action, game.history.length, game.players, game.playersState]);
+				return;
+			}
 
-	socket.on('typing', function(data) {
-		if (!Game.existsFor(socket)) {
-			console.error('\nSocket action invalid game', socket.uid, 'typing');
-			return;
-		}
-		var game = socket.game;
-		if (game) {
-			game.emitExcept(socket, 'typing', {uid: socket.uid, on: data.on});
-		}
-	});
+			var data = {action: action};
+			var recording, saving = true;
+			if (action == 'quit') {
+				recording = quitAction(data, puid, game, callback);
+			} else if (action == 'chat') {
+				data.msg = rawData.msg.substr(0, 255);
+				recording = chatAction(data, puid, game);
+				saving = false;
+			} else if (action == 'chancellor') {
+				data.uid = rawData.uid;
+				recording = chancellorAction(data, puid, data.uid, game);
+			} else if (action == 'vote') {
+				data.up = rawData.up;
+				recording = voteAction(data, puid, game, callback);
+			} else if (action == 'policy') {
+				data.veto = rawData.veto;
+				data.policyIndex = rawData.policyIndex;
+				recording = policyAction(data, puid, game);
+			} else {
+				data.uid = rawData.uid;
+				recording = powerAction(action, data, puid, data.uid, game);
+			}
+			if (recording && game.started) {
+				game.addToHistory(recording, saving);
+			}
+		});
+
+		socket.on('typing', function(data) {
+			if (!Game.existsFor(socket)) {
+				console.error('\nSocket action invalid game', socket.uid, 'typing');
+				return;
+			}
+			var game = socket.game;
+			if (game) {
+				game.emitExcept(socket, 'typing', {uid: socket.uid, on: data.on});
+			}
+		});
+	},
+
+	process: function(game) {
+		game.history.forEach(function(item) {
+			processAction(game, item);
+		});
+	},
 
 };
-
-Play.process = function(game) {
-	game.history.forEach(function(item) {
-		processAction(game, item);
-	});
-};
-
-module.exports = Play;

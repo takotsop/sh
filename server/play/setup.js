@@ -50,7 +50,7 @@ io.use(function(socket, next) {
 });
 
 io.on('connection', function(socket) {
-	Play(socket);
+	Play.init(socket);
 
 	socket.on('disconnect', function() {
 		var uid = socket.uid;
