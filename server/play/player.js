@@ -14,8 +14,10 @@ module.exports = {
 	add: function(uid, socket) {
 		socket.join(privateRoomName(uid));
 		uniquePlayers[uid] = socket;
+
 		if (!playersData[uid]) {
 			playersData[uid] = {};
+			return true;
 		}
 	},
 

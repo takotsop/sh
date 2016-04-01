@@ -17,7 +17,9 @@ var Player = require.main.require('./server/play/player');
 var setSocket = function(socket, response, uid) {
 	socket.uid = uid;
 	socket.name = response.name;
-	Player.add(uid, socket);
+	if (Player.add(uid, socket)) {
+		Game.emitLobby();
+	}
 
 	DB.queryOne('UPDATE users SET online_at = '+CommonUtil.now()+', online_count = online_count + 1 WHERE id = '+uid+' RETURNING gid', null, function(user) {
 		var oldGame = user.gid;

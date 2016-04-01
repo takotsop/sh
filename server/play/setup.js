@@ -58,6 +58,7 @@ io.on('connection', function(socket) {
 			DB.queryOne('UPDATE users SET online_count = online_count - 1 WHERE id = '+uid+' AND online_count > 0 RETURNING online_count', null, function(user) {
 				if (user.online_count == 0) {
 					Player.remove(uid);
+					Game.emitLobby();
 				}
 			});
 		}
