@@ -1,5 +1,6 @@
 'use strict';
 
+var CommonConsts = require.main.require('./common/constants');
 var CommonGame = require.main.require('./common/game');
 var CommonUtil = require.main.require('./common/util');
 
@@ -253,7 +254,7 @@ var powerAction = function(action, data, puid, tuid, game) {
 
 //PROCESS
 
-var processAction = function(game, data) {
+var processHistoryAction = function(game, data) {
 	var action = data.action;
 	if (action == 'abandoned') {
 		quitAction(data, data.uid, game);
@@ -281,6 +282,19 @@ var processAction = function(game, data) {
 	}
 };
 
+var validateAction = function(socket, action) {
+	if (!Game.existsFor(socket) || !socket.game) {
+		socket.emit('reload', {v: CommonConsts.VERSION, error: 'Connection expired'});
+		return false;
+	}
+	var game = socket.game;
+	if (game.playerState(socket.uid) == null) {
+		game.error('Socket invalid for game', socket.uid, [action, game.history.length, game.players, game.playersState]);
+		return false;
+	}
+	return true;
+};
+
 //PUBLIC
 
 module.exports = {
@@ -288,19 +302,14 @@ module.exports = {
 	init: function(socket) {
 		socket.on('game action', function(rawData, callback) {
 			var action = rawData.action;
+			if (!validateAction(socket, action)) {
+				return;
+			}
 			var puid = socket.uid;
-			if (!Game.existsFor(socket) || !socket.game) {
-				console.error('\nSocket action invalid game', puid, action, Game.existsFor(socket));
-				return;
-			}
 			var game = socket.game;
-			if (game.playerState(puid) == null) {
-				game.error('Socket invalid for game', puid, [action, game.history.length, game.players, game.playersState]);
-				return;
-			}
-
 			var data = {action: action};
 			var recording, saving = true;
+
 			if (action == 'quit') {
 				recording = quitAction(data, puid, game, callback);
 			} else if (action == 'chat') {
@@ -327,20 +336,18 @@ module.exports = {
 		});
 
 		socket.on('typing', function(data) {
-			if (!Game.existsFor(socket)) {
-				console.error('\nSocket action invalid game', socket.uid, 'typing');
+			var action = 'typing';
+			if (!validateAction(socket, action)) {
 				return;
 			}
-			var game = socket.game;
-			if (game) {
-				game.emitExcept(socket, 'typing', {uid: socket.uid, on: data.on});
-			}
+
+			socket.game.emitExcept(socket, action, {uid: socket.uid, on: data.on});
 		});
 	},
 
 	process: function(game) {
 		game.history.forEach(function(item) {
-			processAction(game, item);
+			processHistoryAction(game, item);
 		});
 	},
 
