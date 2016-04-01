@@ -20,7 +20,8 @@ var Policies = require('game/policies');
 //FINISH
 
 var endGame = function(liberalWin, winMethod) {
-	if (!State.gameOver) {
+	if (State.inGame) {
+		State.inGame = false;
 		State.started = false;
 		State.gameOver = true;
 		Chat.setDirective('GAME OVER');

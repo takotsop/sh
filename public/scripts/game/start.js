@@ -29,6 +29,7 @@ var startGame = function(data) {
 	Data.gameId = data.gid;
 	App.showSection('game');
 
+	State.inGame = true;
 	State.started = true;
 	State.initializedPlay = false;
 	State.gameOver = false;

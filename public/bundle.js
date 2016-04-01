@@ -26950,7 +26950,8 @@
 	//FINISH
 
 	var endGame = function(liberalWin, winMethod) {
-		if (!State.gameOver) {
+		if (State.inGame) {
+			State.inGame = false;
 			State.started = false;
 			State.gameOver = true;
 			Chat.setDirective('GAME OVER');
@@ -27301,7 +27302,7 @@
 
 	$('#menu-quit').on('click', function() {
 		var confirmed = true;
-		if (!State.gameOver) {
+		if (State.inGame) {
 			confirmed = window.confirm('Are you sure you want to abandon this game?', 'Your fellow players will be sad, and you\'ll lose points :(');
 		}
 		if (confirmed) {
@@ -28009,6 +28010,7 @@
 		Data.gameId = data.gid;
 		App.showSection('game');
 
+		State.inGame = true;
 		State.started = true;
 		State.initializedPlay = false;
 		State.gameOver = false;
@@ -28308,13 +28310,13 @@
 	//WINDOW
 
 	window.onbeforeunload = function() {
-		if (!Config.TESTING && !State.gameOver) {
+		if (!Config.TESTING && State.inGame) {
 			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 		}
 	};
 
 	window.onbeforeunload = function() {
-		if (!Config.TESTING && !State.gameOver) {
+		if (!Config.TESTING && State.inGame) {
 			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
 		}
 	};
