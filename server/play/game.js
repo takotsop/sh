@@ -434,6 +434,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 		if (this.started) {
 			this.emitStartPerspective(uid);
+			emitLobby();
 		} else if (this.isFull()) {
 			this.start();
 		} else {
