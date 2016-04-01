@@ -13,6 +13,14 @@
 
 <body>
 
+<div id="overlay-disconnected" class="timeout scrolling" style="display:none;">
+	<div class="centralized">
+		<h1>Disconnected due to inactivity</h1>
+		<hr>
+		<h2>Click anywhere to reload the page and see what's new</h2>
+	</div>
+</div>
+
 <section id="s-welcome" class="scrolling" style="display:none;">
 	<div id="welcome-splash">
 		<div class="section">
@@ -130,9 +138,12 @@
 		<button id="lobby-submit-private" class="large">submit</button>
 	</div>
 	<div id="lobby-wait">
-		<div id="lobby-wait-afk">
-			<h1>Warning</h1>
-			<h3>You're about to be timed out from the lobby due to inactivity. Please click anywhere on the page to confirm you're still ready to play!</h3>
+		<div id="lobby-wait-afk" class="timeout">
+			<div class="centralized">
+				<h1>Warning</h1>
+				<hr>
+				<h3>You're about to be timed out from the lobby due to inactivity. Please click anywhere on the page to confirm you're still ready to play!</h3>
+			</div>
 		</div>
 		<div id="lobby-wait-top" class="background">
 			<h1>Waiting for players</h1>

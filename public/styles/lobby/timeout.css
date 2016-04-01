@@ -1,0 +1,20 @@
+.timeout {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	text-align: center;
+	font-size: 1.2em;
+}
+
+#overlay-disconnected {
+	background-color: rgba(247, 226, 192, 0.94);
+	z-index: 9002;
+
+}
+
+#lobby-wait-afk {
+	background-color: rgba(227, 100, 79, 0.95);
+}

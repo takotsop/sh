@@ -17,13 +17,14 @@ var Action = require('socket/action');
 var Socket = require('socket/socket');
 
 var Welcome = require('lobby/welcome');
+var Timeout = require('lobby/timeout');
 
 var Start = require('game/start');
 var State = require('game/state');
 
 //TIMERS
 
-var countdownInterval, startTime, afkInterval;
+var countdownInterval, startTime;
 
 var clearCountdown = function() {
 	if (countdownInterval) {
@@ -40,39 +41,11 @@ var updateCountdown = function() {
 		$('#lobby-countdown').text('waiting ' + secondsRemaining + ' seconds...');
 	}
 };
-
-var gameTimeout = function(enabled) {
-	if (afkInterval) {
-		clearInterval(afkInterval);
-		afkInterval = null;
-	}
-	if (enabled && !State.started) {
-		var waitDuration = Util.hidden('#lobby-wait-afk') ? 89 : 44;
-		afkInterval = setTimeout(function() {
-			if (Util.hidden('#lobby-wait')) {
-				afkInterval = null;
-				return;
-			}
-			if (Util.hidden('#lobby-wait-afk')) {
-				$('#lobby-wait-afk').show();
-				Socket.emit('lobby afk');
-				gameTimeout(true);
-			} else {
-				$('#lobby-wait-afk').hide();
-				connectToStart();
-				window.alert('You\'ve been taken back to the main lobby due to inactivity.');
-			}
-		}, waitDuration * 1000);
-	} else {
-		$('#lobby-wait-afk').hide();
-	}
-};
-
 //LOCAL
 
 var updateLobby = function(data) {
 	if (data.started) {
-		gameTimeout(false);
+		Timeout.reset(false);
 		Start.play(data);
 		return;
 	}
@@ -117,7 +90,7 @@ var showLobbySection = function(subsection, forced) {
 
 	var isGameLobby = subsection == 'wait';
 	Chat.toggle(isGameLobby);
-	gameTimeout(isGameLobby);
+	Timeout.reset(isGameLobby);
 };
 
 var connectToStart = function(ifShowing) {
@@ -138,7 +111,7 @@ var connectToStart = function(ifShowing) {
 };
 
 var showLobby = function() {
-	State.gameOver = true;
+	State.inGame = false;
 	Chat.voiceDisconnect();
 	App.showSection('lobby');
 	connectToStart();
@@ -215,11 +188,6 @@ $('#lobby-open-games').on('click', 'li', function() {
 	joinGame($(this).data('gid'), 'start');
 });
 
-$('#lobby-wait-afk').on('click', function() {
-	gameTimeout(false);
-	gameTimeout(true);
-});
-
 //SOCKET
 
 Socket.on('lobby games stats', function(data) {
@@ -246,38 +214,6 @@ Socket.on('lobby games stats', function(data) {
 });
 
 Socket.on('lobby game data', updateLobby);
-
-//WINDOW
-
-window.onbeforeunload = function() {
-	if (!Config.TESTING && !State.gameOver) {
-		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-	}
-};
-
-window.onbeforeunload = function() {
-	if (!Config.TESTING && !State.gameOver) {
-		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-	}
-};
-
-window.focus = function() {
-	if (afkInterval) {
-		gameTimeout(true);
-	}
-};
-
-$(window.document).on('click', function() {
-	if (afkInterval) {
-		gameTimeout(true);
-	}
-});
-
-$(window.document).on('keypress', function() {
-	if (afkInterval) {
-		gameTimeout(true);
-	}
-});
 
 //PUBLIC
 

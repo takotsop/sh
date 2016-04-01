@@ -128,7 +128,7 @@
 
 
 	// module
-	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\nbody, .background {\n\tbackground-color: #eaeae5;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n.scrolling {\n\toverflow-y: auto;\n\t-webkit-overflow-scrolling: touch;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
+	exports.push([module.id, "/* Beige\t#F7E2C0 */\n/* Gold\t\t#FFD556 */\n/* GreyD\t#383633 */\n/* Liberal\t#78CAD7 #2E6C87 */\n/* Fascist\t#E3644F #9C0701 */\n\nhtml {\n\twidth: 100%;\n\theight: 100%;\n}\n\nbody {\n\twidth: 100%;\n\theight: 100%;\n\tmargin: 0;\n\tfont-family: system-font, -webkit-system-font, 'Helvetica Neue', Helvetica, sans-serif;\n\n\tfont-weight: 300;\n\tcolor: #393734;\n}\n\nbody, .background {\n\tbackground-color: #eaeae5;\n}\n\na {\n\tcolor: #9C0701;\n\ttext-decoration: none;\n}\na:hover {\n\tcolor: #E3644F;\n\ttext-decoration: underline;\n}\n\n.clear {\n\tclear: both;\n\tmargin-left: 1px;\n}\n\nh1 {\n\tfont-size: 3em;\n}\n\nsection {\n\twidth: inherit;\n\theight: inherit;\n\toverflow: hidden;\n}\n\n.detail {\n\tfont-size: 0.8em;\n\tfont-style: italic;\n}\n\n.faint {\n\tcolor: #666;\n}\n\n.error, .input-error {\n\tcolor: #E3644F !important;\n}\n\nul {\n\tlist-style: none;\n\tpadding: 0;\n}\n\n.scrolling {\n\toverflow-y: auto;\n\t-webkit-overflow-scrolling: touch;\n}\n\n.centralized {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\theight: 640px;\n\tmax-height: 100%;\n\tmargin: auto;\n}\n\n/* FORMS */\n\ninput.full {\n\tdisplay: block;\n\tfont-family: inherit;\n\ttext-align: center;\n\tfont-size: 2em;\n\tfont-weight: 300;\n\tpadding: 8px 4px;\n\tmargin: auto;\n\twidth: 480px;\n\tmax-width: 100%;\n}\n\nbutton.large {\n\theight: 44px;\n\twidth: 480px;\n\tmax-width: 100%;\n\tmargin: 8px 0;\n\n\tfont-size: 1.3em;\n\tcolor: #393734;\n}\n\ninput {\n\tfont-family: inherit;\n}\n\ntextarea {\n\tbox-sizing: border-box;\n\tdisplay: block;\n\n\twidth: 420px;\n\theight: 128px;\n\tmax-width: 100%;\n\n\tmargin: 12px auto;\n\tfont-size: 1em;\n}\n\nselect {\n\tfont-size: 1em;\n}\n", ""]);
 
 	// exports
 
@@ -499,36 +499,11 @@
 
 /***/ },
 /* 8 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	//SETUP
-
-	var pageLoad = window.location;
-
-	var pathItems = pageLoad.pathname.split('/');
-
-	//PUBLIC
-
-	module.exports = {
-
-		TESTING: pageLoad.hostname == 'localhost',
-
-		pageAction: pathItems[1],
-
-		pageTarget: pathItems[2],
-
-	};
-
-
-/***/ },
-/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Util = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
 	//PUBLIC
 
@@ -544,14 +519,14 @@
 
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var $ = __webpack_require__(1);
 
-	var Config = __webpack_require__(8);
+	var Config = __webpack_require__(10);
 
 	//SETUP
 
@@ -611,6 +586,31 @@
 
 
 /***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	//SETUP
+
+	var pageLoad = window.location;
+
+	var pathItems = pageLoad.pathname.split('/');
+
+	//PUBLIC
+
+	module.exports = {
+
+		TESTING: pageLoad.hostname == 'localhost',
+
+		pageAction: pathItems[1],
+
+		pageTarget: pathItems[2],
+
+	};
+
+
+/***/ },
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -620,8 +620,8 @@
 
 	var CommonConsts = __webpack_require__(2);
 
-	var Config = __webpack_require__(8);
-	var Data = __webpack_require__(9);
+	var Config = __webpack_require__(10);
+	var Data = __webpack_require__(8);
 
 	//LOCAL
 
@@ -8074,24 +8074,25 @@
 
 	var CommonUtil = __webpack_require__(62);
 
-	var Config = __webpack_require__(8);
-	var Util = __webpack_require__(10);
+	var Config = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
 	var Chat = __webpack_require__(63);
 
 	var App = __webpack_require__(153);
 
-	var Action = __webpack_require__(161);
+	var Action = __webpack_require__(162);
 	var Socket = __webpack_require__(11);
 
 	var Welcome = __webpack_require__(172);
+	var Timeout = __webpack_require__(178);
 
 	var Start = __webpack_require__(176);
 	var State = __webpack_require__(154);
 
 	//TIMERS
 
-	var countdownInterval, startTime, afkInterval;
+	var countdownInterval, startTime;
 
 	var clearCountdown = function() {
 		if (countdownInterval) {
@@ -8108,39 +8109,11 @@
 			$('#lobby-countdown').text('waiting ' + secondsRemaining + ' seconds...');
 		}
 	};
-
-	var gameTimeout = function(enabled) {
-		if (afkInterval) {
-			clearInterval(afkInterval);
-			afkInterval = null;
-		}
-		if (enabled && !State.started) {
-			var waitDuration = Util.hidden('#lobby-wait-afk') ? 89 : 44;
-			afkInterval = setTimeout(function() {
-				if (Util.hidden('#lobby-wait')) {
-					afkInterval = null;
-					return;
-				}
-				if (Util.hidden('#lobby-wait-afk')) {
-					$('#lobby-wait-afk').show();
-					Socket.emit('lobby afk');
-					gameTimeout(true);
-				} else {
-					$('#lobby-wait-afk').hide();
-					connectToStart();
-					window.alert('You\'ve been taken back to the main lobby due to inactivity.');
-				}
-			}, waitDuration * 1000);
-		} else {
-			$('#lobby-wait-afk').hide();
-		}
-	};
-
 	//LOCAL
 
 	var updateLobby = function(data) {
 		if (data.started) {
-			gameTimeout(false);
+			Timeout.reset(false);
 			Start.play(data);
 			return;
 		}
@@ -8185,7 +8158,7 @@
 
 		var isGameLobby = subsection == 'wait';
 		Chat.toggle(isGameLobby);
-		gameTimeout(isGameLobby);
+		Timeout.reset(isGameLobby);
 	};
 
 	var connectToStart = function(ifShowing) {
@@ -8206,7 +8179,7 @@
 	};
 
 	var showLobby = function() {
-		State.gameOver = true;
+		State.inGame = false;
 		Chat.voiceDisconnect();
 		App.showSection('lobby');
 		connectToStart();
@@ -8283,11 +8256,6 @@
 		joinGame($(this).data('gid'), 'start');
 	});
 
-	$('#lobby-wait-afk').on('click', function() {
-		gameTimeout(false);
-		gameTimeout(true);
-	});
-
 	//SOCKET
 
 	Socket.on('lobby games stats', function(data) {
@@ -8314,38 +8282,6 @@
 	});
 
 	Socket.on('lobby game data', updateLobby);
-
-	//WINDOW
-
-	window.onbeforeunload = function() {
-		if (!Config.TESTING && !State.gameOver) {
-			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-		}
-	};
-
-	window.onbeforeunload = function() {
-		if (!Config.TESTING && !State.gameOver) {
-			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-		}
-	};
-
-	window.focus = function() {
-		if (afkInterval) {
-			gameTimeout(true);
-		}
-	};
-
-	$(window.document).on('click', function() {
-		if (afkInterval) {
-			gameTimeout(true);
-		}
-	});
-
-	$(window.document).on('keypress', function() {
-		if (afkInterval) {
-			gameTimeout(true);
-		}
-	});
 
 	//PUBLIC
 
@@ -8395,7 +8331,7 @@
 
 
 	// module
-	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: rgba(156, 7, 1, 0.1);;\n\tcursor: pointer;\n}\n\n#lobby-wait-afk {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tbackground-color: rgba(227, 100, 79, 0.95);\n\tz-index: 9001;\n}\n\n#chat-container-lobby .player-name {\n\tcolor: inherit;\n}\n", ""]);
+	exports.push([module.id, "#s-lobby {\n\ttext-align: center;\n}\n\n#lobby-open-games li {\n\tmargin: 16px;\n\tpadding: 8px 0;\n\tbackground-color: #eee;\n}\n\n#lobby-open-games li:hover {\n\tbackground-color: rgba(156, 7, 1, 0.1);;\n\tcursor: pointer;\n}\n\n#chat-container-lobby .player-name {\n\tcolor: inherit;\n}\n", ""]);
 
 	// exports
 
@@ -8431,8 +8367,8 @@
 
 	var SimpleWebRTC = __webpack_require__(66);
 
-	var Data = __webpack_require__(9);
-	var Util = __webpack_require__(10);
+	var Data = __webpack_require__(8);
+	var Util = __webpack_require__(9);
 
 	var App = __webpack_require__(153);
 
@@ -8479,7 +8415,7 @@
 	};
 
 	var addChatMessage = function(data) {
-		var player = __webpack_require__(155).get(data.uid);
+		var player = __webpack_require__(156).get(data.uid);
 		if (player) {
 			insertMessage(player, data.msg, false);
 		}
@@ -8505,7 +8441,7 @@
 	$('#i-chat').on('keydown', function(event) {
 		var key = event.which || event.keyCode || event.charCode;
 		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(161).emit('chat', {msg: this.value});
+			__webpack_require__(162).emit('chat', {msg: this.value});
 			this.value = '';
 			setChatState(false);
 		}
@@ -26483,7 +26419,7 @@
 
 	var $ = __webpack_require__(1);
 
-	var Data = __webpack_require__(9);
+	var Data = __webpack_require__(8);
 
 	var State = __webpack_require__(154);
 
@@ -26552,7 +26488,7 @@
 
 	'use strict';
 
-	var CommonGame = __webpack_require__(167);
+	var CommonGame = __webpack_require__(155);
 
 	module.exports = {
 
@@ -26587,24 +26523,91 @@
 
 /***/ },
 /* 155 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+
+		getFascistPower: function(enactedFascist, gameSize) {
+			if (enactedFascist == 1) {
+				// return 'investigate'; //SAMPLE
+				return gameSize >= 9 ? 'investigate' : null;
+			}
+			if (enactedFascist == 2) {
+				return gameSize >= 7 ? 'investigate' : null;
+			}
+			if (enactedFascist == 3) {
+				return gameSize >= 7 ? 'special election' : 'peek';
+			}
+			if (enactedFascist == 4) {
+				return gameSize != 4 ? 'bullet' : null;
+			}
+			if (enactedFascist == 5) {
+				return gameSize >= 4 ? 'bullet veto' : null;
+			}
+		},
+
+		getNextPresident: function(gameSize, players, startIndex, playersState) {
+			for (var attempts = 0; attempts < gameSize; ++attempts) {
+				++startIndex;
+				if (startIndex >= gameSize) {
+					startIndex = 0;
+				}
+				var player = players[startIndex];
+				if (playersState) {
+					player = playersState[player];
+				}
+				if (!player.killed) {
+					break;
+				}
+			}
+			return startIndex;
+		},
+
+		fascistsCount: function(gameSize) {
+			return Math.ceil(gameSize / 2) - 1;
+		},
+
+		getParty: function(role) {
+			return role == 0 ? 0 : 1;
+		},
+
+		isLiberal: function(role) {
+			return role == 0;
+		},
+
+		isFascist: function(role) {
+			return role != 0;
+		},
+
+		isFuehrer: function(role) {
+			return role != null && role >= 2;
+		},
+
+	};
+
+
+/***/ },
+/* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(156);
+	__webpack_require__(157);
 
 	var $ = __webpack_require__(1);
 
 	var CommonConsts = __webpack_require__(2);
-	var CommonGame = __webpack_require__(167);
+	var CommonGame = __webpack_require__(155);
 
 	var App = __webpack_require__(153);
-	var Cards = __webpack_require__(158);
+	var Cards = __webpack_require__(159);
 	var Chat = __webpack_require__(63);
 
-	var Util = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
-	var Action = __webpack_require__(161);
+	var Action = __webpack_require__(162);
 
 	var State = __webpack_require__(154);
 
@@ -26647,7 +26650,7 @@
 			State.currentCount -= 1;
 
 			if (!State.gameOver) {
-				var Game = __webpack_require__(162);
+				var Game = __webpack_require__(163);
 				if (isFuehrer) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
 				} else if (State.currentCount <= 2) {
@@ -26667,7 +26670,7 @@
 		Chat.addAction('left the game', player);
 
 		if (data.advance) {
-			__webpack_require__(162).advanceTurn();
+			__webpack_require__(163).advanceTurn();
 		}
 	};
 
@@ -26732,13 +26735,13 @@
 
 
 /***/ },
-/* 156 */
+/* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(157);
+	var content = __webpack_require__(158);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -26758,7 +26761,7 @@
 	}
 
 /***/ },
-/* 157 */
+/* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(5)();
@@ -26772,16 +26775,16 @@
 
 
 /***/ },
-/* 158 */
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(159);
+	__webpack_require__(160);
 
 	var $ = __webpack_require__(1);
 
-	var Action = __webpack_require__(161);
+	var Action = __webpack_require__(162);
 
 	var State = __webpack_require__(154);
 
@@ -26845,13 +26848,13 @@
 
 
 /***/ },
-/* 159 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(160);
+	var content = __webpack_require__(161);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -26871,7 +26874,7 @@
 	}
 
 /***/ },
-/* 160 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(5)();
@@ -26885,7 +26888,7 @@
 
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26922,24 +26925,24 @@
 
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(163);
-	__webpack_require__(165);
+	__webpack_require__(164);
+	__webpack_require__(166);
 
 	var $ = __webpack_require__(1);
 
-	var CommonGame = __webpack_require__(167);
+	var CommonGame = __webpack_require__(155);
 
 	var App = __webpack_require__(153);
-	var Cards = __webpack_require__(158);
+	var Cards = __webpack_require__(159);
 	var Chat = __webpack_require__(63);
 	var Overlay = __webpack_require__(168);
 
-	var Util = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
 	var State = __webpack_require__(154);
 	var Policies = __webpack_require__(171);
@@ -27088,13 +27091,13 @@
 
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(164);
+	var content = __webpack_require__(165);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -27114,7 +27117,7 @@
 	}
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(5)();
@@ -27128,13 +27131,13 @@
 
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(166);
+	var content = __webpack_require__(167);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(6)(content, {});
@@ -27154,7 +27157,7 @@
 	}
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(5)();
@@ -27168,73 +27171,6 @@
 
 
 /***/ },
-/* 167 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = {
-
-		getFascistPower: function(enactedFascist, gameSize) {
-			if (enactedFascist == 1) {
-				// return 'investigate'; //SAMPLE
-				return gameSize >= 9 ? 'investigate' : null;
-			}
-			if (enactedFascist == 2) {
-				return gameSize >= 7 ? 'investigate' : null;
-			}
-			if (enactedFascist == 3) {
-				return gameSize >= 7 ? 'special election' : 'peek';
-			}
-			if (enactedFascist == 4) {
-				return gameSize != 4 ? 'bullet' : null;
-			}
-			if (enactedFascist == 5) {
-				return gameSize >= 4 ? 'bullet veto' : null;
-			}
-		},
-
-		getNextPresident: function(gameSize, players, startIndex, playersState) {
-			for (var attempts = 0; attempts < gameSize; ++attempts) {
-				++startIndex;
-				if (startIndex >= gameSize) {
-					startIndex = 0;
-				}
-				var player = players[startIndex];
-				if (playersState) {
-					player = playersState[player];
-				}
-				if (!player.killed) {
-					break;
-				}
-			}
-			return startIndex;
-		},
-
-		fascistsCount: function(gameSize) {
-			return Math.ceil(gameSize / 2) - 1;
-		},
-
-		getParty: function(role) {
-			return role == 0 ? 0 : 1;
-		},
-
-		isLiberal: function(role) {
-			return role == 0;
-		},
-
-		isFascist: function(role) {
-			return role != 0;
-		},
-
-		isFuehrer: function(role) {
-			return role != null && role >= 2;
-		},
-
-	};
-
-
-/***/ },
 /* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -27244,16 +27180,16 @@
 
 	var $ = __webpack_require__(1);
 
-	var CommonGame = __webpack_require__(167);
+	var CommonGame = __webpack_require__(155);
 
-	var Cards = __webpack_require__(158);
+	var Cards = __webpack_require__(159);
 	var Chat = __webpack_require__(63);
 
 	var Socket = __webpack_require__(11);
 
-	var Util = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
-	var Players = __webpack_require__(155);
+	var Players = __webpack_require__(156);
 	var State = __webpack_require__(154);
 
 	//LOCAL
@@ -27466,10 +27402,10 @@
 	var CommonConsts = __webpack_require__(2);
 
 	var App = __webpack_require__(153);
-	var Cards = __webpack_require__(158);
+	var Cards = __webpack_require__(159);
 	var Chat = __webpack_require__(63);
 
-	var Util = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
 	var State = __webpack_require__(154);
 
@@ -27480,12 +27416,12 @@
 		if (type == CommonConsts.LIBERAL) {
 			enacted = ++State.enactedLiberal;
 			if (State.enactedLiberal >= CommonConsts.LIBERAL_POLICIES_REQUIRED) {
-				__webpack_require__(162).end(true, 'policies');
+				__webpack_require__(163).end(true, 'policies');
 			}
 		} else {
 			enacted = ++State.enactedFascist;
 			if (State.enactedFascist >= CommonConsts.FASCIST_POLICIES_REQUIRED) {
-				__webpack_require__(162).end(false, 'policies');
+				__webpack_require__(163).end(false, 'policies');
 			}
 		}
 		var slot = $('#board-'+type+' .policy-placeholder').eq(enacted - 1);
@@ -27534,7 +27470,7 @@
 	};
 
 	var policyEnacted = function(data) {
-		var Game = __webpack_require__(162);
+		var Game = __webpack_require__(163);
 
 		discardPolicyCards(1);
 
@@ -27692,9 +27628,9 @@
 
 	var CommonValidate = __webpack_require__(175);
 
-	var Config = __webpack_require__(8);
-	var Data = __webpack_require__(9);
-	var Util = __webpack_require__(10);
+	var Config = __webpack_require__(10);
+	var Data = __webpack_require__(8);
+	var Util = __webpack_require__(9);
 
 	var App = __webpack_require__(153);
 	var Chat = __webpack_require__(63);
@@ -28047,18 +27983,18 @@
 	var $ = __webpack_require__(1);
 
 	var CommonConsts = __webpack_require__(2);
-	var CommonGame = __webpack_require__(167);
+	var CommonGame = __webpack_require__(155);
 
-	var Data = __webpack_require__(9);
+	var Data = __webpack_require__(8);
 
 	var App = __webpack_require__(153);
-	var Cards = __webpack_require__(158);
+	var Cards = __webpack_require__(159);
 	var Overlay = __webpack_require__(168);
 
 	var Process = __webpack_require__(177);
 
-	var Game = __webpack_require__(162);
-	var Players = __webpack_require__(155);
+	var Game = __webpack_require__(163);
+	var Players = __webpack_require__(156);
 	var Policies = __webpack_require__(171);
 	var State = __webpack_require__(154);
 
@@ -28209,13 +28145,13 @@
 
 	var Socket = __webpack_require__(11);
 
-	var Cards = __webpack_require__(158);
+	var Cards = __webpack_require__(159);
 	var Chat = __webpack_require__(63);
 
-	var Util = __webpack_require__(10);
+	var Util = __webpack_require__(9);
 
-	var Game = __webpack_require__(162);
-	var Players = __webpack_require__(155);
+	var Game = __webpack_require__(163);
+	var Players = __webpack_require__(156);
 	var Policies = __webpack_require__(171);
 	var State = __webpack_require__(154);
 
@@ -28292,6 +28228,146 @@
 		},
 
 	};
+
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(179);
+
+	var $ = __webpack_require__(1);
+
+	var Config = __webpack_require__(10);
+	var Util = __webpack_require__(9);
+
+	var Socket = __webpack_require__(11);
+
+	var State = __webpack_require__(154);
+
+	//TIMERS
+
+	var lobbyInterval, socketInterval;
+	var inGameLobby;
+
+	var resetTimeout = function(waiting) {
+		if (typeof waiting === 'boolean') {
+			inGameLobby = waiting;
+		}
+
+		if (lobbyInterval) {
+			clearInterval(lobbyInterval);
+			lobbyInterval = null;
+		}
+		if (inGameLobby) {
+			var waitDuration = Util.hidden('#lobby-wait-afk') ? 89 : 44;
+			lobbyInterval = setTimeout(function() {
+				if (Util.hidden('#lobby-wait')) {
+					lobbyInterval = null;
+					return;
+				}
+				$('#lobby-wait-afk').toggle();
+				if (!Util.hidden('#lobby-wait-afk')) {
+					Socket.emit('lobby afk');
+					resetTimeout();
+				} else {
+					__webpack_require__(59).connectToStart();
+					window.alert('You\'ve been taken back to the main lobby due to inactivity.');
+				}
+			}, waitDuration * 1000);
+		}
+
+		if (socketInterval) {
+			clearInterval(socketInterval);
+			lobbyInterval = null;
+		}
+		lobbyInterval = setTimeout(function() {
+			Socket.close();
+			$('#lobby-wait-afk').hide();
+			$('#overlay-disconnected').show();
+		}, 10 * 60000);
+	};
+
+	//EVENTS
+
+	$('#lobby-wait-afk').on('click', function() {
+		$('#lobby-wait-afk').hide();
+		resetTimeout();
+	});
+
+	$('#overlay-disconnected').on('click', function() {
+		window.location.reload();
+	});
+
+	$(window.document).on('click', resetTimeout);
+
+	$(window.document).on('keypress', resetTimeout);
+
+	//WINDOW
+
+	window.onbeforeunload = function() {
+		if (!Config.TESTING && !State.gameOver) {
+			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
+		}
+	};
+
+	window.onbeforeunload = function() {
+		if (!Config.TESTING && !State.gameOver) {
+			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
+		}
+	};
+
+	window.focus = resetTimeout;
+
+	//PUBLIC
+
+	module.exports = {
+
+		reset: resetTimeout,
+
+	};
+
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(180);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(6)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./timeout.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./timeout.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(5)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".timeout {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\n\ttext-align: center;\n\tfont-size: 1.2em;\n}\n\n#overlay-disconnected {\n\tbackground-color: rgba(247, 226, 192, 0.94);\n\tz-index: 9002;\n\n}\n\n#lobby-wait-afk {\n\tbackground-color: rgba(227, 100, 79, 0.95);\n}\n", ""]);
+
+	// exports
 
 
 /***/ }

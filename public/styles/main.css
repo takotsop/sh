@@ -70,6 +70,19 @@ ul {
 	-webkit-overflow-scrolling: touch;
 }
 
+.centralized {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 640px;
+	max-width: 100%;
+	height: 640px;
+	max-height: 100%;
+	margin: auto;
+}
+
 /* FORMS */
 
 input.full {
