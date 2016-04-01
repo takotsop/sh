@@ -86,7 +86,6 @@
 
 		LIBERAL: 'liberal',
 		FASCIST: 'fascist',
-		NONE: 'none',
 
 		FASCIST_POLICIES_REQUIRED: 6,
 		LIBERAL_POLICIES_REQUIRED: 5,
@@ -8550,7 +8549,7 @@
 	});
 
 	$('#menu-button').on('click', function() {
-		if ($('#overlay').css('display') == 'none') {
+		if (Util.hidden('#overlay')) {
 			__webpack_require__(168).show('menu');
 		} else {
 			__webpack_require__(168).hide();

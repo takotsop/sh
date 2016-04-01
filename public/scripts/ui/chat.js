@@ -132,7 +132,7 @@ $('#voice-button').on('click', function() {
 });
 
 $('#menu-button').on('click', function() {
-	if ($('#overlay').css('display') == 'none') {
+	if (Util.hidden('#overlay')) {
 		require('ui/overlay').show('menu');
 	} else {
 		require('ui/overlay').hide();
