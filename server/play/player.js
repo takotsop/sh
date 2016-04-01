@@ -5,10 +5,14 @@ var Socket = require.main.require('./server/connect/io');
 var uniquePlayers = {};
 var playersData = {};
 
+var privateRoomName = function(uid) {
+	return 'pr' + uid;
+};
+
 module.exports = {
 
 	add: function(uid, socket) {
-		socket.join('player' + uid);
+		socket.join(privateRoomName(uid));
 		uniquePlayers[uid] = socket;
 		if (!playersData[uid]) {
 			playersData[uid] = {};
@@ -25,7 +29,7 @@ module.exports = {
 	},
 
 	emitTo: function(uid, name, data) {
-		Socket.to('player' + uid).emit(name, data);
+		Socket.to(privateRoomName(uid)).emit(name, data);
 	},
 
 	data: function(uid, key, value) {
