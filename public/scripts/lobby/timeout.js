@@ -41,6 +41,8 @@ var resetTimeout = function(waiting) {
 				window.alert('You\'ve been taken back to the main lobby due to inactivity.');
 			}
 		}, waitDuration * 1000);
+	} else {
+		$('#lobby-wait-afk').hide();
 	}
 
 	if (socketInterval) {
