@@ -214,7 +214,11 @@ var Game = function(restoreData, size, privateGame, socket) {
 		var showFascists;
 		if (perspectiveUid) {
 			var perspectiveRole = this.playerState(perspectiveUid, 'role');
-			showFascists = CommonGame.isFascist(perspectiveRole) || (this.playerCount <= 6 && CommonGame.isFuehrer(perspectiveRole));
+			if (CommonGame.isFuehrer(perspectiveRole)) {
+				showFascists = this.playerCount <= 6;
+			} else {
+				showFascists = CommonGame.isFascist(perspectiveRole);
+			}
 		}
 		this.players.forEach(function(uid, index) {
 			var playerData = {
@@ -223,9 +227,9 @@ var Game = function(restoreData, size, privateGame, socket) {
 				index: index,
 			};
 			if (perspectiveUid) {
-				var perspectiveRole = game.playerState(uid, 'role');
-				if (perspectiveUid == uid || (showFascists && CommonGame.isFascist(perspectiveRole))) {
-					playerData.role = perspectiveRole;
+				var playerRole = game.playerState(uid, 'role');
+				if (perspectiveUid == uid || (showFascists && CommonGame.isFascist(playerRole))) {
+					playerData.role = playerRole;
 				}
 			}
 			sendPlayers[index] = playerData;
