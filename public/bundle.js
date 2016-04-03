@@ -28264,7 +28264,7 @@
 			lobbyInterval = null;
 		}
 		if (inGameLobby) {
-			var waitDuration = Util.hidden('#lobby-wait-afk') ? 89 : 44;
+			var waitDuration = Util.hidden('#lobby-wait-afk') ? 119 : 44;
 			lobbyInterval = setTimeout(function() {
 				if (Util.hidden('#lobby-wait')) {
 					lobbyInterval = null;
