@@ -56,7 +56,7 @@
 
 	__webpack_require__(7);
 
-	__webpack_require__(177);
+	__webpack_require__(180);
 
 	$('.version-name').text(CommonConsts.VERSION);
 
@@ -449,6 +449,8 @@
 
 	'use strict';
 
+	var $ = __webpack_require__(1);
+
 	var CommonConsts = __webpack_require__(2);
 
 	var Data = __webpack_require__(8);
@@ -467,9 +469,8 @@
 	});
 
 	Socket.on('disconnect', function() {
-		if (Lobby.connectToStart(true)) {
-			window.alert('Disconnected from server, please try joining a game again.');
-		}
+		$('#lobby-wait-afk').hide();
+		$('#overlay-disconnected').show();
 	});
 
 	Socket.on('auth', function(data) {
@@ -8085,9 +8086,9 @@
 	var Socket = __webpack_require__(11);
 
 	var Welcome = __webpack_require__(172);
-	var Timeout = __webpack_require__(178);
+	var Timeout = __webpack_require__(176);
 
-	var Start = __webpack_require__(176);
+	var Start = __webpack_require__(179);
 	var State = __webpack_require__(154);
 
 	//TIMERS
@@ -8113,10 +8114,11 @@
 
 	var updateLobby = function(data) {
 		if (data.started) {
-			Timeout.reset(false);
+			Timeout.setGameLobby(false);
 			Start.play(data);
 			return;
 		}
+
 		showLobbySection('wait');
 
 		clearCountdown();
@@ -8158,13 +8160,10 @@
 
 		var isGameLobby = subsection == 'wait';
 		Chat.toggle(isGameLobby);
-		Timeout.reset(isGameLobby);
+		Timeout.setGameLobby(isGameLobby);
 	};
 
-	var connectToStart = function(ifShowing) {
-		if (ifShowing && (Util.hidden('#s-lobby') || !Util.hidden('#lobby-start'))) {
-			return;
-		}
+	var connectToStart = function() {
 		$('.chat-container').html('');
 
 		showLobbySection('start', true);
@@ -8175,7 +8174,6 @@
 			Config.pageAction = null;
 		}
 		Socket.emit('lobby join', connectData);
-		return true;
 	};
 
 	var showLobby = function() {
@@ -27981,6 +27979,142 @@
 
 	'use strict';
 
+	__webpack_require__(177);
+
+	var $ = __webpack_require__(1);
+
+	var Config = __webpack_require__(10);
+	var Util = __webpack_require__(9);
+
+	var Socket = __webpack_require__(11);
+
+	var State = __webpack_require__(154);
+
+	//TIMERS
+
+	var lobbyInterval, socketInterval;
+	var inGameLobby;
+
+	var resetLobbyTimeout = function() {
+		if (lobbyInterval) {
+			clearInterval(lobbyInterval);
+			lobbyInterval = null;
+		}
+		if (inGameLobby) {
+			var waitDuration = Util.hidden('#lobby-wait-afk') ? 119 : 44;
+			lobbyInterval = setTimeout(function() {
+				if (Util.hidden('#lobby-wait')) {
+					lobbyInterval = null;
+					return;
+				}
+				$('#lobby-wait-afk').toggle();
+				if (!Util.hidden('#lobby-wait-afk')) {
+					Socket.emit('lobby afk');
+					resetLobbyTimeout();
+				} else {
+					__webpack_require__(59).connectToStart();
+					window.alert('You\'ve been taken back to the main lobby due to inactivity.');
+				}
+			}, waitDuration * 1000);
+		}
+	};
+
+	var resetDisconnectTimeout = function() {
+		if (socketInterval) {
+			clearInterval(socketInterval);
+			socketInterval = null;
+		}
+		socketInterval = setTimeout(function() {
+			Socket.close();
+		}, 10 * 60000);
+	};
+
+	var refreshTimers = function() {
+		$('#lobby-wait-afk').hide();
+		resetLobbyTimeout();
+		resetDisconnectTimeout();
+	};
+
+	//EVENTS
+
+	$('#lobby-wait-afk').on('click', refreshTimers);
+
+	$('#overlay-disconnected').on('click', function() {
+		window.location.reload();
+	});
+
+	$(window.document).on('click', refreshTimers);
+
+	$(window.document).on('keypress', refreshTimers);
+
+	//WINDOW
+
+	window.onbeforeunload = function() {
+		if (!Config.TESTING && State.inGame) {
+			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
+		}
+	};
+
+	window.onfocus = refreshTimers;
+
+	//PUBLIC
+
+	module.exports = {
+
+		setGameLobby: function(waiting) {
+			inGameLobby = waiting;
+			refreshTimers();
+		},
+
+	};
+
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(178);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(6)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./timeout.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./timeout.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(5)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".timeout {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\n\ttext-align: center;\n\tfont-size: 1.2em;\n}\n\n#overlay-disconnected {\n\tbackground-color: rgba(247, 226, 192, 0.94);\n\tz-index: 9002;\n\n}\n\n#lobby-wait-afk {\n\tbackground-color: rgba(227, 100, 79, 0.95);\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	var $ = __webpack_require__(1);
 
 	var CommonConsts = __webpack_require__(2);
@@ -27992,7 +28126,7 @@
 	var Cards = __webpack_require__(159);
 	var Overlay = __webpack_require__(168);
 
-	var Process = __webpack_require__(177);
+	var Process = __webpack_require__(180);
 
 	var Game = __webpack_require__(163);
 	var Players = __webpack_require__(156);
@@ -28140,7 +28274,7 @@
 
 
 /***/ },
-/* 177 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28230,148 +28364,6 @@
 		},
 
 	};
-
-
-/***/ },
-/* 178 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	__webpack_require__(179);
-
-	var $ = __webpack_require__(1);
-
-	var Config = __webpack_require__(10);
-	var Util = __webpack_require__(9);
-
-	var Socket = __webpack_require__(11);
-
-	var State = __webpack_require__(154);
-
-	//TIMERS
-
-	var lobbyInterval, socketInterval;
-	var inGameLobby;
-
-	var resetTimeout = function(waiting) {
-		if (typeof waiting === 'boolean') {
-			inGameLobby = waiting;
-		}
-
-		if (lobbyInterval) {
-			clearInterval(lobbyInterval);
-			lobbyInterval = null;
-		}
-		if (inGameLobby) {
-			var waitDuration = Util.hidden('#lobby-wait-afk') ? 119 : 44;
-			lobbyInterval = setTimeout(function() {
-				if (Util.hidden('#lobby-wait')) {
-					lobbyInterval = null;
-					return;
-				}
-				$('#lobby-wait-afk').toggle();
-				if (!Util.hidden('#lobby-wait-afk')) {
-					Socket.emit('lobby afk');
-					resetTimeout();
-				} else {
-					__webpack_require__(59).connectToStart();
-					window.alert('You\'ve been taken back to the main lobby due to inactivity.');
-				}
-			}, waitDuration * 1000);
-		} else {
-			$('#lobby-wait-afk').hide();
-		}
-
-		if (socketInterval) {
-			clearInterval(socketInterval);
-			lobbyInterval = null;
-		}
-		lobbyInterval = setTimeout(function() {
-			Socket.close();
-			$('#lobby-wait-afk').hide();
-			$('#overlay-disconnected').show();
-		}, 10 * 60000);
-	};
-
-	//EVENTS
-
-	$('#lobby-wait-afk').on('click', function() {
-		$('#lobby-wait-afk').hide();
-		resetTimeout();
-	});
-
-	$('#overlay-disconnected').on('click', function() {
-		window.location.reload();
-	});
-
-	$(window.document).on('click', resetTimeout);
-
-	$(window.document).on('keypress', resetTimeout);
-
-	//WINDOW
-
-	window.onbeforeunload = function() {
-		if (!Config.TESTING && State.inGame) {
-			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-		}
-	};
-
-	window.onbeforeunload = function() {
-		if (!Config.TESTING && State.inGame) {
-			return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-		}
-	};
-
-	window.focus = resetTimeout;
-
-	//PUBLIC
-
-	module.exports = {
-
-		reset: resetTimeout,
-
-	};
-
-
-/***/ },
-/* 179 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(180);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(6)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./timeout.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./timeout.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 180 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(5)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".timeout {\n\tposition: fixed;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\n\ttext-align: center;\n\tfont-size: 1.2em;\n}\n\n#overlay-disconnected {\n\tbackground-color: rgba(247, 226, 192, 0.94);\n\tz-index: 9002;\n\n}\n\n#lobby-wait-afk {\n\tbackground-color: rgba(227, 100, 79, 0.95);\n}\n", ""]);
-
-	// exports
 
 
 /***/ }

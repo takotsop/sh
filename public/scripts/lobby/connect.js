@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var CommonConsts = require('common/constants');
 
 var Data = require('util/data');
@@ -18,9 +20,8 @@ Socket.on('connect', function() {
 });
 
 Socket.on('disconnect', function() {
-	if (Lobby.connectToStart(true)) {
-		window.alert('Disconnected from server, please try joining a game again.');
-	}
+	$('#lobby-wait-afk').hide();
+	$('#overlay-disconnected').show();
 });
 
 Socket.on('auth', function(data) {

@@ -45,10 +45,11 @@ var updateCountdown = function() {
 
 var updateLobby = function(data) {
 	if (data.started) {
-		Timeout.reset(false);
+		Timeout.setGameLobby(false);
 		Start.play(data);
 		return;
 	}
+
 	showLobbySection('wait');
 
 	clearCountdown();
@@ -90,13 +91,10 @@ var showLobbySection = function(subsection, forced) {
 
 	var isGameLobby = subsection == 'wait';
 	Chat.toggle(isGameLobby);
-	Timeout.reset(isGameLobby);
+	Timeout.setGameLobby(isGameLobby);
 };
 
-var connectToStart = function(ifShowing) {
-	if (ifShowing && (Util.hidden('#s-lobby') || !Util.hidden('#lobby-start'))) {
-		return;
-	}
+var connectToStart = function() {
 	$('.chat-container').html('');
 
 	showLobbySection('start', true);
@@ -107,7 +105,6 @@ var connectToStart = function(ifShowing) {
 		Config.pageAction = null;
 	}
 	Socket.emit('lobby join', connectData);
-	return true;
 };
 
 var showLobby = function() {

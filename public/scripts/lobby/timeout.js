@@ -16,11 +16,7 @@ var State = require('game/state');
 var lobbyInterval, socketInterval;
 var inGameLobby;
 
-var resetTimeout = function(waiting) {
-	if (typeof waiting === 'boolean') {
-		inGameLobby = waiting;
-	}
-
+var resetLobbyTimeout = function() {
 	if (lobbyInterval) {
 		clearInterval(lobbyInterval);
 		lobbyInterval = null;
@@ -35,41 +31,42 @@ var resetTimeout = function(waiting) {
 			$('#lobby-wait-afk').toggle();
 			if (!Util.hidden('#lobby-wait-afk')) {
 				Socket.emit('lobby afk');
-				resetTimeout();
+				resetLobbyTimeout();
 			} else {
 				require('lobby/lobby').connectToStart();
 				window.alert('You\'ve been taken back to the main lobby due to inactivity.');
 			}
 		}, waitDuration * 1000);
-	} else {
-		$('#lobby-wait-afk').hide();
 	}
+};
 
+var resetDisconnectTimeout = function() {
 	if (socketInterval) {
 		clearInterval(socketInterval);
-		lobbyInterval = null;
+		socketInterval = null;
 	}
-	lobbyInterval = setTimeout(function() {
+	socketInterval = setTimeout(function() {
 		Socket.close();
-		$('#lobby-wait-afk').hide();
-		$('#overlay-disconnected').show();
 	}, 10 * 60000);
+};
+
+var refreshTimers = function() {
+	$('#lobby-wait-afk').hide();
+	resetLobbyTimeout();
+	resetDisconnectTimeout();
 };
 
 //EVENTS
 
-$('#lobby-wait-afk').on('click', function() {
-	$('#lobby-wait-afk').hide();
-	resetTimeout();
-});
+$('#lobby-wait-afk').on('click', refreshTimers);
 
 $('#overlay-disconnected').on('click', function() {
 	window.location.reload();
 });
 
-$(window.document).on('click', resetTimeout);
+$(window.document).on('click', refreshTimers);
 
-$(window.document).on('keypress', resetTimeout);
+$(window.document).on('keypress', refreshTimers);
 
 //WINDOW
 
@@ -79,18 +76,15 @@ window.onbeforeunload = function() {
 	}
 };
 
-window.onbeforeunload = function() {
-	if (!Config.TESTING && State.inGame) {
-		return "You WILL NOT be removed from the game. If you'd like to leave permanently, please quit from the menu first so your fellow players know you will not return. Thank you!";
-	}
-};
-
-window.focus = resetTimeout;
+window.onfocus = refreshTimers;
 
 //PUBLIC
 
 module.exports = {
 
-	reset: resetTimeout,
+	setGameLobby: function(waiting) {
+		inGameLobby = waiting;
+		refreshTimers();
+	},
 
 };
