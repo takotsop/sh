@@ -75,7 +75,7 @@
 
 	var MAJOR_VERSION = 1;
 	var MINOR_VERSION = 1;
-	var PATCH_VERSION = 14;
+	var PATCH_VERSION = 15;
 
 	//PUBLIC
 
@@ -27879,6 +27879,8 @@
 	'use strict';
 
 	var CommonUtil = __webpack_require__(62);
+
+	//LOCAL
 
 	var preprocess = function(value) {
 		return value.trim();
