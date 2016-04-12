@@ -2,7 +2,7 @@
 
 var MAJOR_VERSION = 1;
 var MINOR_VERSION = 1;
-var PATCH_VERSION = 15;
+var PATCH_VERSION = 16;
 
 //PUBLIC
 
