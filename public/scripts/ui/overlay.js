@@ -43,7 +43,7 @@ var showOverlay = function(type, data) {
 	// Start
 	if (type == 'start') {
 		extras += '<div class="tip top">game status ⤴︎</div>';
-		extras += '<div class="tip bottom">⤹ chat box</div>';
+		extras += '<div class="tip bottom left">⤹ chat box</div>';
 		extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 		inner += '<h2><em>your secret role:</em></h2>';

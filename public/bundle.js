@@ -27218,7 +27218,7 @@
 		// Start
 		if (type == 'start') {
 			extras += '<div class="tip top">game status ⤴︎</div>';
-			extras += '<div class="tip bottom">⤹ chat box</div>';
+			extras += '<div class="tip bottom left">⤹ chat box</div>';
 			extras += '<div class="tip bottom right">menu⤵︎</div>';
 
 			inner += '<h2><em>your secret role:</em></h2>';
@@ -27385,7 +27385,7 @@
 
 
 	// module
-	exports.push([module.id, "#overlay {\n\tposition: fixed;\n\ttop: 44px;\n\tleft: 0;\n\tright: 0;\n\tbottom: 44px;\n\tbackground: rgba(0, 0, 0, 0.5);\n\n\tcolor: #eaeae5;\n\ttext-align: center;\n\ttext-shadow: 0 2px 8px #393734;\n}\n\n#overlay h1 {\n\tfont-size: 4em;\n\tmargin-top: 0;\n}\n\n#overlay h2 {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n#overlay h3 {\n\tfont-size: 1.6em;\n\tfont-weight: 500;\n}\n\n#overlay h4 {\n\tmargin-bottom: 8px;\n\ttext-transform: uppercase;\n\tletter-spacing: 0.2em;\n}\n\n#version {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n/* MENU */\n\n#overlay .front {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\theight: 640px;\n\tmax-height: 100%;\n\tmargin: auto;\n}\n\n#overlay-menu button {\n\ttext-transform: uppercase;\n\tletter-spacing: 0.1em;\n}\n\n#overlay .info h1 {\n\tcolor: #F7E2C0;\n}\n\n#game-mat.overlay {\n\t-webkit-filter: blur(25px);\n\tfilter: blur(25px);\n/* \tfilter: blur(20px); */\n\t-webkit-transition: 0.4s all linear;\n}\n\n.avatar {\n\tmargin: auto;\n\twidth: 72px !important;\n\theight: 72px !important;\n}\n\n/* TIPS */\n\n.tip {\n\tposition: absolute;\n\tfont-size: 1.5em;\n\tfont-weight: 200;\n\tfont-style: italic;\n\tcolor: #FFD556;\n}\n.tip.top {\n\ttop: 0;\n\tleft: 20%;\n}\n.tip.bottom {\n\tbottom: 0;\n\tleft: 8%;\n}\n.tip.bottom.right {\n\tbottom: 0;\n\tright: 14px;\n}\n", ""]);
+	exports.push([module.id, "#overlay {\n\tposition: fixed;\n\ttop: 44px;\n\tleft: 0;\n\tright: 0;\n\tbottom: 44px;\n\tbackground: rgba(0, 0, 0, 0.5);\n\n\tcolor: #eaeae5;\n\ttext-align: center;\n\ttext-shadow: 0 2px 8px #393734;\n}\n\n#overlay h1 {\n\tfont-size: 4em;\n\tmargin-top: 0;\n}\n\n#overlay h2 {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n#overlay h3 {\n\tfont-size: 1.6em;\n\tfont-weight: 500;\n}\n\n#overlay h4 {\n\tmargin-bottom: 8px;\n\ttext-transform: uppercase;\n\tletter-spacing: 0.2em;\n}\n\n#version {\n\tfont-size: 2em;\n\tfont-weight: 300;\n}\n\n/* MENU */\n\n#overlay .front {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\theight: 640px;\n\tmax-height: 100%;\n\tmargin: auto;\n}\n\n#overlay-menu button {\n\ttext-transform: uppercase;\n\tletter-spacing: 0.1em;\n}\n\n#overlay .info h1 {\n\tcolor: #F7E2C0;\n}\n\n#game-mat.overlay {\n\t-webkit-filter: blur(25px);\n\tfilter: blur(25px);\n/* \tfilter: blur(20px); */\n\t-webkit-transition: 0.4s all linear;\n}\n\n.avatar {\n\tmargin: auto;\n\twidth: 72px !important;\n\theight: 72px !important;\n}\n\n/* TIPS */\n\n.tip {\n\tposition: absolute;\n\tfont-size: 1.5em;\n\tfont-weight: 200;\n\tfont-style: italic;\n\tcolor: #FFD556;\n}\n\n.tip.top {\n\ttop: 0;\n\tleft: 20%;\n}\n.tip.bottom {\n\tbottom: 0;\n}\n.tip.bottom.left {\n\tleft: 25%;\n}\n.tip.bottom.right {\n\tbottom: 0;\n\tright: 16px;\n}\n", ""]);
 
 	// exports
 
