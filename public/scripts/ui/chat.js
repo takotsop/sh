@@ -50,7 +50,8 @@ var insertMessage = function(player, message, isAction) {
 	var chatId = State.started ? 'game' : 'lobby';
 	var chatContainer = $('#chat-container-' + chatId);
 	chatContainer.append(messageHtml);
-	chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
+
+	chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
 };
 
 var addChatMessage = function(data) {
