@@ -28262,7 +28262,7 @@
 		if (!State.initializedPlay) {
 			Overlay.show('start');
 			Game.playTurn();
-			Cards.show('role');
+			// Cards.show('role');
 		}
 	};
 
