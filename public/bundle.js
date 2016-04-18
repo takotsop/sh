@@ -28070,6 +28070,8 @@
 			socketInterval = null;
 		}
 		socketInterval = setTimeout(function() {
+			$('#disconnect-reason').text('Disconnected due to inactivity');
+			$('#disconnect-description').text("Click anywhere to reload the page and see what you've missed");
 			Socket.close();
 		}, 10 * 60000);
 	};
