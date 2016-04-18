@@ -192,7 +192,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 	this.emitAction = function(name, data, secret) {
 		data.action = name;
-		if (this.finished) {
+		if (this.finished && name != 'chat') {
 			data.roles = this.playersStateMap('role');
 		}
 		if (secret) {
