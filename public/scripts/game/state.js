@@ -4,7 +4,7 @@ var CommonGame = require('common/game');
 
 module.exports = {
 
-	gameOver: true,
+	finished: true,
 
 	getPresident: function() {
 		return this.players[this.presidentIndex];
@@ -28,6 +28,10 @@ module.exports = {
 
 	localPartyName: function() {
 		return CommonGame.isLiberal(this.localRole) ? 'Liberal' : 'Fascist';
+	},
+
+	isLocal: function(player) {
+		return this.localPlayer.uid == player.uid;
 	},
 
 };

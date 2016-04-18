@@ -79,10 +79,29 @@ var setChatState = function(state) {
 	}
 };
 
+var chatEnabled = function() {
+	return !State.finished && State.localPlayer.killed;
+};
+
+var toggleMute = function(muting) {
+	if (webrtc) {
+		if (!chatEnabled()) {
+			muting = true;
+		}
+		$(this).toggleClass('muted', muting);
+		if ($(this).hasClass('muted')) {
+			webrtc.mute();
+		} else {
+			webrtc.unmute();
+		}
+		return true;
+	}
+};
+
 //EVENTS
 
 $('#i-chat').on('input', function(event) {
-	if (State.localPlayer.killed) {
+	if (!chatEnabled()) {
 		return;
 	}
 
@@ -90,7 +109,7 @@ $('#i-chat').on('input', function(event) {
 });
 
 $('#i-chat').on('keydown', function(event) {
-	if (State.localPlayer.killed) {
+	if (!chatEnabled()) {
 		return;
 	}
 
@@ -116,13 +135,7 @@ $('#voice-button').on('click', function() {
 		window.alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
 		return;
 	}
-	if (webrtc) {
-		$(this).toggleClass('muted');
-		if ($(this).hasClass('muted')) {
-			webrtc.mute();
-		} else {
-			webrtc.unmute();
-		}
+	if (toggleMute()) {
 		return;
 	}
 
@@ -175,6 +188,8 @@ module.exports = {
 	// Voice
 
 	supportsVoice: supportsVoiceChat,
+
+	toggleMute: toggleMute,
 
 	voiceDisconnect: function() {
 		if (webrtc) {

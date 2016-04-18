@@ -8378,6 +8378,7 @@
 
 	var inputState;
 	var webrtc;
+	var scrollTimeout;
 
 	var supportsVoiceChat = function() {
 		return window.RTCPeerConnection != null || window.mozRTCPeerConnection != null || window.webkitRTCPeerConnection != null;
@@ -8410,7 +8411,13 @@
 		var chatContainer = $('#chat-container-' + chatId);
 		chatContainer.append(messageHtml);
 
-		chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
+		if (scrollTimeout) {
+			clearTimeout(scrollTimeout);
+		}
+		scrollTimeout = setTimeout(function() {
+			chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
+			scrollTimeout = null;
+		}, 200);
 	};
 
 	var addChatMessage = function(data) {
@@ -8431,18 +8438,48 @@
 		}
 	};
 
+	var chatEnabled = function() {
+		return !State.finished && State.localPlayer.killed;
+	};
+
+	var toggleMute = function(muting) {
+		if (webrtc) {
+			if (!chatEnabled()) {
+				muting = true;
+			}
+			$(this).toggleClass('muted', muting);
+			if ($(this).hasClass('muted')) {
+				webrtc.mute();
+			} else {
+				webrtc.unmute();
+			}
+			return true;
+		}
+	};
+
 	//EVENTS
 
 	$('#i-chat').on('input', function(event) {
-		setChatState(this.value.length > 0);
+		if (!chatEnabled()) {
+			return;
+		}
+
+		setChatState(this.value.trim().length > 0);
 	});
 
 	$('#i-chat').on('keydown', function(event) {
+		if (!chatEnabled()) {
+			return;
+		}
+
 		var key = event.which || event.keyCode || event.charCode;
-		if (key == 13 && this.value.length > 1) {
-			__webpack_require__(162).emit('chat', {msg: this.value});
-			this.value = '';
-			setChatState(false);
+		if (key == 13) {
+			var simplified = $(this.value).text().trim();
+			if (simplified.length > 1) {
+				__webpack_require__(162).emit('chat', {msg: simplified});
+				this.value = '';
+				setChatState(false);
+			}
 		}
 	});
 
@@ -8457,13 +8494,7 @@
 			window.alert('Sorry, voice chat is not available through this browser. Please try using another, such as Google Chrome, if you\'d like to play with voice chat.');
 			return;
 		}
-		if (webrtc) {
-			$(this).toggleClass('muted');
-			if ($(this).hasClass('muted')) {
-				webrtc.mute();
-			} else {
-				webrtc.unmute();
-			}
+		if (toggleMute()) {
 			return;
 		}
 
@@ -8516,6 +8547,8 @@
 		// Voice
 
 		supportsVoice: supportsVoiceChat,
+
+		toggleMute: toggleMute,
 
 		voiceDisconnect: function() {
 			if (webrtc) {
@@ -26491,7 +26524,7 @@
 
 	module.exports = {
 
-		gameOver: true,
+		finished: true,
 
 		getPresident: function() {
 			return this.players[this.presidentIndex];
@@ -26515,6 +26548,10 @@
 
 		localPartyName: function() {
 			return CommonGame.isLiberal(this.localRole) ? 'Liberal' : 'Fascist';
+		},
+
+		isLocal: function(player) {
+			return this.localPlayer.uid == player.uid;
 		},
 
 	};
@@ -26645,10 +26682,14 @@
 		if (!player.killed) {
 			player.killed = true;
 			App.playerDiv(player).removeClass('choose');
-			App.playerDiv(player).addClass(State.gameOver ? 'quit' : 'killed');
+			App.playerDiv(player).addClass(State.finished ? 'quit' : 'killed');
+
+			if (State.isLocal(player)) {
+				Chat.toggleMute(true);
+			}
 			State.currentCount -= 1;
 
-			if (!State.gameOver) {
+			if (!State.finished) {
 				var Game = __webpack_require__(163);
 				if (isFuehrer) {
 					Game.end(true, quit ? 'hitler quit' : 'hitler');
@@ -26952,7 +26993,8 @@
 		if (State.inGame) {
 			State.inGame = false;
 			State.started = false;
-			State.gameOver = true;
+			State.finished = true;
+			Chat.toggleMute(false);
 			Chat.setDirective('GAME OVER');
 			Overlay.show('victory', {liberals: liberalWin, method: winMethod});
 		}
@@ -26978,7 +27020,7 @@
 	};
 
 	var advanceTurn = function() {
-		if (State.gameOver) {
+		if (State.finished) {
 			return;
 		}
 		if (State.specialPresidentIndex != null) {
@@ -27482,7 +27524,7 @@
 		Chat.addAction('President ' + Util.nameSpan(State.getPresident()) + ' and Chancellor ' + Util.nameSpan(State.getChancellor()) + ' enacted <strong class="player-name '+policyType+' danger">' + policyType + '</strong> policy');
 
 		var fascistPower = enactPolicy(policyType);
-		if (State.gameOver) {
+		if (State.finished) {
 			return;
 		}
 		checkRemainingPolicies();
@@ -28150,7 +28192,7 @@
 		State.inGame = true;
 		State.started = true;
 		State.initializedPlay = false;
-		State.gameOver = false;
+		State.finished = false;
 		State.positionIndex = data.startIndex;
 		State.presidentIndex = State.positionIndex;
 		State.chancellorIndex = null;

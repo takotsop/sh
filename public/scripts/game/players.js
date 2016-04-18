@@ -52,10 +52,14 @@ var killPlayer = function(player, isFuehrer, quit) {
 	if (!player.killed) {
 		player.killed = true;
 		App.playerDiv(player).removeClass('choose');
-		App.playerDiv(player).addClass(State.gameOver ? 'quit' : 'killed');
+		App.playerDiv(player).addClass(State.finished ? 'quit' : 'killed');
+
+		if (State.isLocal(player)) {
+			Chat.toggleMute(true);
+		}
 		State.currentCount -= 1;
 
-		if (!State.gameOver) {
+		if (!State.finished) {
 			var Game = require('game/game');
 			if (isFuehrer) {
 				Game.end(true, quit ? 'hitler quit' : 'hitler');

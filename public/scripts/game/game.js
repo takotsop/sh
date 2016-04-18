@@ -23,7 +23,8 @@ var endGame = function(liberalWin, winMethod) {
 	if (State.inGame) {
 		State.inGame = false;
 		State.started = false;
-		State.gameOver = true;
+		State.finished = true;
+		Chat.toggleMute(false);
 		Chat.setDirective('GAME OVER');
 		Overlay.show('victory', {liberals: liberalWin, method: winMethod});
 	}
@@ -49,7 +50,7 @@ var playTurn = function() {
 };
 
 var advanceTurn = function() {
-	if (State.gameOver) {
+	if (State.finished) {
 		return;
 	}
 	if (State.specialPresidentIndex != null) {
