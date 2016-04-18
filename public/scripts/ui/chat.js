@@ -75,10 +75,18 @@ var setChatState = function(state) {
 //EVENTS
 
 $('#i-chat').on('input', function(event) {
+	if (State.localPlayer.killed) {
+		return;
+	}
+
 	setChatState(this.value.trim().length > 0);
 });
 
 $('#i-chat').on('keydown', function(event) {
+	if (State.localPlayer.killed) {
+		return;
+	}
+
 	var key = event.which || event.keyCode || event.charCode;
 	if (key == 13) {
 		var simplified = $(this.value).text().trim();

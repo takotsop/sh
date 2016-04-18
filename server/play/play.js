@@ -315,12 +315,14 @@ module.exports = {
 			if (action == 'quit') {
 				recording = quitAction(data, puid, game, callback);
 			} else if (action == 'chat') {
-				var rawMessage = rawData.msg;
-				if (rawMessage) {
-					data.msg = StripTags(rawMessage.substr(0, 255));
-					recording = chatAction(data, puid, game);
+				if (!game.playerState(puid, 'killed')) {
+					var rawMessage = rawData.msg;
+					if (rawMessage) {
+						data.msg = StripTags(rawMessage.substr(0, 255));
+						recording = chatAction(data, puid, game);
+						saving = false;
+					}
 				}
-				saving = false;
 			} else if (action == 'chancellor') {
 				data.uid = rawData.uid;
 				recording = chancellorAction(data, puid, data.uid, game);
