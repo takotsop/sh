@@ -1,5 +1,7 @@
 'use strict';
 
+var StripTags = require('striptags');
+
 var CommonConsts = require.main.require('./common/constants');
 var CommonGame = require.main.require('./common/game');
 var CommonUtil = require.main.require('./common/util');
@@ -313,8 +315,11 @@ module.exports = {
 			if (action == 'quit') {
 				recording = quitAction(data, puid, game, callback);
 			} else if (action == 'chat') {
-				data.msg = rawData.msg.substr(0, 255);
-				recording = chatAction(data, puid, game);
+				var rawMessage = rawData.msg;
+				if (rawMessage) {
+					data.msg = StripTags(rawMessage.substr(0, 255));
+					recording = chatAction(data, puid, game);
+				}
 				saving = false;
 			} else if (action == 'chancellor') {
 				data.uid = rawData.uid;
