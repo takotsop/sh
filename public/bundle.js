@@ -8545,7 +8545,7 @@
 
 		setEnacting: function(enacting) {
 			enactingPolicy = enacting;
-			toggleMute(enacting, true);
+			toggleMute(enacting);
 		},
 
 		setDirective: setDirective,
@@ -26564,6 +26564,10 @@
 			return this.localPlayer.uid == player.uid;
 		},
 
+		inGovernment: function() {
+			return this.presidentIndex == this.localIndex || this.chancellorIndex == this.localIndex;
+		},
+
 	};
 
 
@@ -27103,7 +27107,7 @@
 			State.presidentElect = State.getPresident().uid;
 			State.chancellorElect = State.getChancellor().uid;
 
-			Chat.setEnacting(true);
+			Chat.setEnacting(State.inGovernment());
 			Policies.draw(3);
 
 			if (State.isLocalPresident()) {

@@ -123,7 +123,7 @@ var voteCompleted = function(data) {
 		State.presidentElect = State.getPresident().uid;
 		State.chancellorElect = State.getChancellor().uid;
 
-		Chat.setEnacting(true);
+		Chat.setEnacting(State.inGovernment());
 		Policies.draw(3);
 
 		if (State.isLocalPresident()) {

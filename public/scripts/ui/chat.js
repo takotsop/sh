@@ -186,7 +186,7 @@ module.exports = {
 
 	setEnacting: function(enacting) {
 		enactingPolicy = enacting;
-		toggleMute(enacting, true);
+		toggleMute(enacting);
 	},
 
 	setDirective: setDirective,

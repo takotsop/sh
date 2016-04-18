@@ -34,4 +34,8 @@ module.exports = {
 		return this.localPlayer.uid == player.uid;
 	},
 
+	inGovernment: function() {
+		return this.presidentIndex == this.localIndex || this.chancellorIndex == this.localIndex;
+	},
+
 };
