@@ -19,6 +19,7 @@ var State = require('game/state');
 
 var inputState;
 var webrtc;
+var scrollTimeout;
 
 var supportsVoiceChat = function() {
 	return window.RTCPeerConnection != null || window.mozRTCPeerConnection != null || window.webkitRTCPeerConnection != null;
@@ -51,7 +52,13 @@ var insertMessage = function(player, message, isAction) {
 	var chatContainer = $('#chat-container-' + chatId);
 	chatContainer.append(messageHtml);
 
-	chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
+	if (scrollTimeout) {
+		clearTimeout(scrollTimeout);
+	}
+	scrollTimeout = setTimeout(function() {
+		chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
+		scrollTimeout = null;
+	}, 200);
 };
 
 var addChatMessage = function(data) {
