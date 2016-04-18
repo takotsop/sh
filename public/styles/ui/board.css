@@ -55,8 +55,6 @@
 .policy-placeholder .policy {
 	width: 100%;
 	height: 100%;
-	background-size: contain;
-	background-position: center;
 	box-sizing: border-box;
 	border: 1px solid;
 }

@@ -36,10 +36,12 @@
 #player-cards .policy {
 	width: 128px;
 	font-size: 1.4em;
-	background-size: contain;
 }
-div.policy {
+
+.policy {
 	border-radius: 12%/9%;
+	background-size: contain;
+	background-position: center;
 }
 
 #cards-vote .card, #player-cards .policy {
