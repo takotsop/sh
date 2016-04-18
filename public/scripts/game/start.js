@@ -8,7 +8,7 @@ var CommonGame = require('common/game');
 var Data = require('util/data');
 
 var App = require('ui/app');
-var Cards = require('ui/cards');
+var Chat = require('ui/chat');
 var Overlay = require('ui/overlay');
 
 var Process = require('socket/process');
@@ -39,8 +39,8 @@ var startGame = function(data) {
 	State.players = data.players;
 	State.playerCount = State.players.length;
 	State.currentCount = State.playerCount;
-	State.chatDisabled = false;
 	State.canVeto = false;
+	Chat.setEnacting(false);
 
 	// Election tracker
 	State.presidentPower = null;

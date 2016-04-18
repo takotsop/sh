@@ -8376,7 +8376,7 @@
 
 	//LOCAL
 
-	var inputState;
+	var inputState, enactingPolicy;
 	var webrtc;
 	var scrollTimeout;
 
@@ -8439,19 +8439,24 @@
 	};
 
 	var chatEnabled = function() {
-		return State.finished || !State.localPlayer.killed;
+		return !State.started || State.finished || (!enactingPolicy && !State.localPlayer.killed);
 	};
 
-	var toggleMute = function(muting) {
+	var toggleMute = function(muting, globally) {
+		if (muting === undefined) {
+			muting = !chatEnabled();
+		}
+		$('.chat-mutable').toggleClass('disabled', muting);
+
 		if (webrtc) {
-			if (!chatEnabled()) {
-				muting = true;
-			}
 			$(this).toggleClass('muted', muting);
 			if ($(this).hasClass('muted')) {
 				webrtc.mute();
 			} else {
 				webrtc.unmute();
+			}
+			if (globally !== undefined) {
+				webrtc.setVolumeForAll(muting ? 0 : 1);
 			}
 			return true;
 		}
@@ -8538,6 +8543,11 @@
 			$('#chat-box').toggle(show);
 		},
 
+		setEnacting: function(enacting) {
+			enactingPolicy = enacting;
+			toggleMute(enacting, true);
+		},
+
 		setDirective: setDirective,
 
 		addMessage: addChatMessage,
@@ -8594,7 +8604,7 @@
 
 
 	// module
-	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-container, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n.chat-container .detail {\n\tfont-size: 1em;\n}\n\n.chat-container p, .chat-container .player-name {\n\tbackground-color: transparent !important;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-background {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n\tz-index: -1;\n}\n", ""]);
+	exports.push([module.id, "#chat-box {\n\tposition: fixed;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n\theight: 44px;\n\twidth: 100vw;\n\tz-index: 9001;\n\toverflow: hidden;\n\tbackground-color: #393734;\n}\n\n.chat-mutable.disabled {\n\topacity: 0.5;\n}\n\n#chat-box input {\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 100%;\n\ttext-align: center;\n\tfont-size: 1.4em;\n\tfont-weight: 300;\n\tborder-radius: 0;\n\tbackground-color: transparent;\n\n\tborder: none;\n\tcolor: #F7E2C0;\n}\n\n#game-container, #lobby-wait, #chat-container-lobby { /*TODO remove extra*/\n\tpadding-bottom: 44px;\n}\n\n.chat-container .detail {\n\tfont-size: 1em;\n}\n\n.chat-container p, .chat-container .player-name {\n\tbackground-color: transparent !important;\n}\n\n/* BUTTONS */\n\n.chat-button {\n\tposition: fixed;\n\tbottom: 0;\n\twidth: 44px;\n\theight: 44px;\n\tz-index: 9002;\n\tcolor: #fff;\n\tline-height: 44px;\n\ttext-align: center;\n\tcursor: pointer;\n\tfont-size: 2em;\n\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#voice-button {\n\tleft: 0;\n}\n#voice-button.muted {\n\topacity: 0.5;\n}\n\n#menu-button {\n\tright: 0;\n\tbackground-image: url(/images/menu.png);\n}\n\n.chat-background {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 640px;\n\tmax-width: 100%;\n\tmargin: auto;\n\tz-index: -1;\n}\n", ""]);
 
 	// exports
 
@@ -26922,7 +26932,7 @@
 
 
 	// module
-	exports.push([module.id, ".card {\n\tborder-radius: 3px;\n\tbox-sizing: border-box;\n\toverflow: hidden;\n}\n\n#player-cards {\n\tposition: fixed;\n\tbottom: 44px;\n\tleft: 0;\n\tright: 0;\n\ttext-align: center;\n\tz-index: 900;\n}\n\n#player-cards .card {\n\tposition: relative;\n\tbottom: -96px;\n\tpadding-top: 24px;\n\tdisplay: inline-block;\n\twidth: 192px;\n\theight: 192px;\n\n\tmargin: 0 4px;\n\tborder: 1px dashed rgba(0,0,0, 0.1);\n\n\tmax-width: 45%;\n\tbackground-color: #F7E2C0;\n\tbox-shadow: 0 8px 16px rgba(0,0,0, 0.75);\n}\n\n#player-cards .description {\n\tfont-size: 0.75em;\n}\n\n#player-cards .policy {\n\twidth: 128px;\n\tfont-size: 1.4em;\n\tbackground-size: contain;\n}\ndiv.policy {\n\tborder-radius: 12%/9%;\n}\n\n#cards-vote .card, #player-cards .policy {\n\tcursor: pointer;\n}\n\n.card.selected {\n\tbottom: -46px !important;\n\tz-index: 9000;\n}\n\n#veto-request span {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tmargin-top: 16px;\n}\n", ""]);
+	exports.push([module.id, ".card {\n\tborder-radius: 3px;\n\tbox-sizing: border-box;\n\toverflow: hidden;\n}\n\n#player-cards {\n\tposition: fixed;\n\tbottom: 44px;\n\tleft: 0;\n\tright: 0;\n\ttext-align: center;\n\tz-index: 900;\n}\n\n#player-cards .card {\n\tposition: relative;\n\tbottom: -96px;\n\tpadding-top: 24px;\n\tdisplay: inline-block;\n\twidth: 192px;\n\theight: 192px;\n\n\tmargin: 0 4px;\n\tborder: 1px dashed rgba(0,0,0, 0.1);\n\n\tmax-width: 45%;\n\tbackground-color: #F7E2C0;\n\tbox-shadow: 0 8px 16px rgba(0,0,0, 0.75);\n}\n\n#player-cards .description {\n\tfont-size: 0.75em;\n}\n\n#player-cards .policy {\n\twidth: 128px;\n\tfont-size: 1.4em;\n\tbackground-size: contain;\n}\ndiv.policy {\n\tborder-radius: 12%/9%;\n\tbackground-size: contain;\n\tbackground-position: center;\n}\n\n#cards-vote .card, #player-cards .policy {\n\tcursor: pointer;\n}\n\n.card.selected {\n\tbottom: -46px !important;\n\tz-index: 9000;\n}\n\n#veto-request span {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tmargin-top: 16px;\n}\n", ""]);
 
 	// exports
 
@@ -27093,7 +27103,7 @@
 			State.presidentElect = State.getPresident().uid;
 			State.chancellorElect = State.getChancellor().uid;
 
-			State.chatDisabled = true;
+			Chat.setEnacting(true);
 			Policies.draw(3);
 
 			if (State.isLocalPresident()) {
@@ -27206,7 +27216,7 @@
 
 
 	// module
-	exports.push([module.id, "#board-container {\n\tposition: absolute;\n\tz-index: -1;\n\tleft: 0;\n\tright: 0;\n\ttop: 0;\n\tbottom: 0;\n\tmargin: auto;\n\n\twidth: 720px;\n\tmax-width: 100vmin;\n\theight: 480px;\n\tmax-height: 67vmin;\n}\n\n#board {\n\twidth: 100%;\n\theight: 100%;\n\tbox-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);\n\tborder-radius: 4px;\n\toverflow: hidden;\n}\n\n.board-component {\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 33.34%;\n\tpadding: 8px 3px;\n\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-around;\n\talign-items: stretch;\n}\n\n/* PLACEHOLDERS */\n\n.policy-placeholder {\n\tbox-sizing: border-box;\n\tposition: relative;\n\theight: 100%;\n\twidth: 15%;\n\tborder: 2px solid;\n\tpadding: 1%;\n\ttext-align: center;\n}\n\n.policy-placeholder .detail {\n\tposition: absolute;\n\tbottom: 6px;\n\tleft: 6px;\n\tright: 6px;\n}\n\n.policy-placeholder .policy {\n\twidth: 100%;\n\theight: 100%;\n\tbackground-size: contain;\n\tbackground-position: center;\n\tbox-sizing: border-box;\n\tborder: 1px solid;\n}\n\n.policy-placeholder.victory {\n\tbackground-size: contain;\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n}\n\n.policy-placeholder.victory.liberal {\n\tbackground-image: url(/images/liberal-victory.png);\n}\n.policy-placeholder.victory.fascist {\n\tbackground-image: url(/images/fascist-victory.png);\n}\n\n/* POLICIES */\n\n#board-policy-piles .policy {\n\tbox-shadow: 2px -1px 4px rgba(0, 0, 0, 0.5);\n}\n\n#board-policy-piles {\n\tmargin: auto;\n\tjustify-content: center;\n\tpadding: 8px 4px;\n\tbackground-color: #9E927C;\n}\n\n.card-pile {\n\tbackground-color: #383633;\n\tpadding-bottom: 2%;\n}\n\n.pile-label {\n\tcolor: #F7E2C0;\n\tfont-size: 0.5em;\n\tfont-weight: 100;\n\tletter-spacing: 3px;\n\tposition: absolute;\n\tbottom: 1px;\n\tleft: 0;\n\tright: 0;\n}\n\n.pile-cards {\n\tfont-size: 3em;\n\tfont-weight: 200;\n\tbackground-color: #F7E2C0;\n\twidth: 100%;\n\theight: 100%;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n}\n\n/* TRACKER */\n\n#election-tracker {\n\tposition: relative;\n\twidth: 50%;\n\tmargin: 0 16px;\n\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-around;\n\talign-items: center;\n}\n\n.tracker-slot {\n\twidth: 72px;\n\theight: 72px;\n\tmax-width: 8vw;\n\tmax-height: 8vw;\n\n\tbox-sizing: border-box;\n/* \tmargin: 20px; */\n\tborder-radius: 50%;\n\tborder: 4px solid #62C2A0;\n}\n\n.tracker-slot.selected {\n\tbackground-color: #62C2A0;\n}\n\n.tracker-slot.danger {\n\tborder-color: #E3644F;\n}\n.tracker-slot.danger.selected {\n\tbackground-color: #E3644F;\n}\n\n#tracker-title, #tracker-description {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\twidth: 100%;\n\ttext-align: center;\n}\n\n#tracker-title {\n\ttop: 0;\n\tfont-size: 1.4em;\n\tfont-weight: 100;\n\tletter-spacing: 0.15vw;\n}\n\n#tracker-description {\n\tbottom: 0;\n\tfont-size: 0.7em;\n}\n", ""]);
+	exports.push([module.id, "#board-container {\n\tposition: absolute;\n\tz-index: -1;\n\tleft: 0;\n\tright: 0;\n\ttop: 0;\n\tbottom: 0;\n\tmargin: auto;\n\n\twidth: 720px;\n\tmax-width: 100vmin;\n\theight: 480px;\n\tmax-height: 67vmin;\n}\n\n#board {\n\twidth: 100%;\n\theight: 100%;\n\tbox-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);\n\tborder-radius: 4px;\n\toverflow: hidden;\n}\n\n.board-component {\n\tbox-sizing: border-box;\n\twidth: 100%;\n\theight: 33.34%;\n\tpadding: 8px 3px;\n\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-around;\n\talign-items: stretch;\n}\n\n/* PLACEHOLDERS */\n\n.policy-placeholder {\n\tbox-sizing: border-box;\n\tposition: relative;\n\theight: 100%;\n\twidth: 15%;\n\tborder: 2px solid;\n\tpadding: 1%;\n\ttext-align: center;\n}\n\n.policy-placeholder .detail {\n\tposition: absolute;\n\tbottom: 6px;\n\tleft: 6px;\n\tright: 6px;\n}\n\n.policy-placeholder .policy {\n\twidth: 100%;\n\theight: 100%;\n\tbox-sizing: border-box;\n\tborder: 1px solid;\n}\n\n.policy-placeholder.victory {\n\tbackground-size: contain;\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n}\n\n.policy-placeholder.victory.liberal {\n\tbackground-image: url(/images/liberal-victory.png);\n}\n.policy-placeholder.victory.fascist {\n\tbackground-image: url(/images/fascist-victory.png);\n}\n\n/* POLICIES */\n\n#board-policy-piles .policy {\n\tbox-shadow: 2px -1px 4px rgba(0, 0, 0, 0.5);\n}\n\n#board-policy-piles {\n\tmargin: auto;\n\tjustify-content: center;\n\tpadding: 8px 4px;\n\tbackground-color: #9E927C;\n}\n\n.card-pile {\n\tbackground-color: #383633;\n\tpadding-bottom: 2%;\n}\n\n.pile-label {\n\tcolor: #F7E2C0;\n\tfont-size: 0.5em;\n\tfont-weight: 100;\n\tletter-spacing: 3px;\n\tposition: absolute;\n\tbottom: 1px;\n\tleft: 0;\n\tright: 0;\n}\n\n.pile-cards {\n\tfont-size: 3em;\n\tfont-weight: 200;\n\tbackground-color: #F7E2C0;\n\twidth: 100%;\n\theight: 100%;\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n}\n\n/* TRACKER */\n\n#election-tracker {\n\tposition: relative;\n\twidth: 50%;\n\tmargin: 0 16px;\n\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-around;\n\talign-items: center;\n}\n\n.tracker-slot {\n\twidth: 72px;\n\theight: 72px;\n\tmax-width: 8vw;\n\tmax-height: 8vw;\n\n\tbox-sizing: border-box;\n/* \tmargin: 20px; */\n\tborder-radius: 50%;\n\tborder: 4px solid #62C2A0;\n}\n\n.tracker-slot.selected {\n\tbackground-color: #62C2A0;\n}\n\n.tracker-slot.danger {\n\tborder-color: #E3644F;\n}\n.tracker-slot.danger.selected {\n\tbackground-color: #E3644F;\n}\n\n#tracker-title, #tracker-description {\n\tposition: absolute;\n\tleft: 0;\n\tright: 0;\n\twidth: 100%;\n\ttext-align: center;\n}\n\n#tracker-title {\n\ttop: 0;\n\tfont-size: 1.4em;\n\tfont-weight: 100;\n\tletter-spacing: 0.15vw;\n}\n\n#tracker-description {\n\tbottom: 0;\n\tfont-size: 0.7em;\n}\n", ""]);
 
 	// exports
 
@@ -27453,6 +27463,8 @@
 	//LOCAL
 
 	var enactPolicy = function(type) {
+		Chat.setEnacting(false);
+
 		var enacted;
 		if (type == CommonConsts.LIBERAL) {
 			enacted = ++State.enactedLiberal;
@@ -27516,7 +27528,6 @@
 		discardPolicyCards(1);
 
 		Cards.show(null);
-		State.chatDisabled = false;
 		Game.resetElectionTracker();
 
 		var policyType = data.policy;
@@ -28169,7 +28180,7 @@
 	var Data = __webpack_require__(8);
 
 	var App = __webpack_require__(153);
-	var Cards = __webpack_require__(159);
+	var Chat = __webpack_require__(63);
 	var Overlay = __webpack_require__(168);
 
 	var Process = __webpack_require__(180);
@@ -28200,8 +28211,8 @@
 		State.players = data.players;
 		State.playerCount = State.players.length;
 		State.currentCount = State.playerCount;
-		State.chatDisabled = false;
 		State.canVeto = false;
+		Chat.setEnacting(false);
 
 		// Election tracker
 		State.presidentPower = null;

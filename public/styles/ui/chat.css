@@ -10,6 +10,10 @@
 	background-color: #393734;
 }
 
+.chat-mutable.disabled {
+	opacity: 0.5;
+}
+
 #chat-box input {
 	display: inline-block;
 	box-sizing: border-box;

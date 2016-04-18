@@ -17,7 +17,7 @@ var State = require('game/state');
 
 //LOCAL
 
-var inputState;
+var inputState, enactingPolicy;
 var webrtc;
 var scrollTimeout;
 
@@ -80,19 +80,24 @@ var setChatState = function(state) {
 };
 
 var chatEnabled = function() {
-	return State.finished || !State.localPlayer.killed;
+	return !State.started || State.finished || (!enactingPolicy && !State.localPlayer.killed);
 };
 
-var toggleMute = function(muting) {
+var toggleMute = function(muting, globally) {
+	if (muting === undefined) {
+		muting = !chatEnabled();
+	}
+	$('.chat-mutable').toggleClass('disabled', muting);
+
 	if (webrtc) {
-		if (!chatEnabled()) {
-			muting = true;
-		}
 		$(this).toggleClass('muted', muting);
 		if ($(this).hasClass('muted')) {
 			webrtc.mute();
 		} else {
 			webrtc.unmute();
+		}
+		if (globally !== undefined) {
+			webrtc.setVolumeForAll(muting ? 0 : 1);
 		}
 		return true;
 	}
@@ -177,6 +182,11 @@ module.exports = {
 
 	toggle: function(show) {
 		$('#chat-box').toggle(show);
+	},
+
+	setEnacting: function(enacting) {
+		enactingPolicy = enacting;
+		toggleMute(enacting, true);
 	},
 
 	setDirective: setDirective,

@@ -15,6 +15,8 @@ var State = require('game/state');
 //LOCAL
 
 var enactPolicy = function(type) {
+	Chat.setEnacting(false);
+
 	var enacted;
 	if (type == CommonConsts.LIBERAL) {
 		enacted = ++State.enactedLiberal;
@@ -78,7 +80,6 @@ var policyEnacted = function(data) {
 	discardPolicyCards(1);
 
 	Cards.show(null);
-	State.chatDisabled = false;
 	Game.resetElectionTracker();
 
 	var policyType = data.policy;
