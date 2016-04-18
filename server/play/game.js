@@ -562,7 +562,7 @@ var Game = function(restoreData, size, privateGame, socket) {
 	this.fuehrerRemaining = function() {
 		for (var pidx in this.players) {
 			var puid = this.players[pidx];
-			if (this.isFuehrer(puid) && !this.playerState(puid)) {
+			if (this.isFuehrer(puid) && !this.playerState(puid, 'killed')) {
 				return true;
 			}
 		}

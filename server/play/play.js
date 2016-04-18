@@ -43,7 +43,7 @@ var quitAction = function(data, puid, game, callback) {
 			callback();
 		}
 		var fuehrerRemaining = game.fuehrerRemaining();
-		return game.emitAction('abandoned', {uid: puid, hitler: fuehrerRemaining, advance: advance});
+		return game.emitAction('abandoned', {uid: puid, hitler: !fuehrerRemaining, advance: advance});
 	}
 };
 
