@@ -75,15 +75,18 @@ var setChatState = function(state) {
 //EVENTS
 
 $('#i-chat').on('input', function(event) {
-	setChatState(this.value.length > 0);
+	setChatState(this.value.trim().length > 0);
 });
 
 $('#i-chat').on('keydown', function(event) {
 	var key = event.which || event.keyCode || event.charCode;
-	if (key == 13 && this.value.length > 1) {
-		require('socket/action').emit('chat', {msg: this.value});
-		this.value = '';
-		setChatState(false);
+	if (key == 13) {
+		var simplified = $(this.value).text().trim();
+		if (simplified.length > 1) {
+			require('socket/action').emit('chat', {msg: simplified});
+			this.value = '';
+			setChatState(false);
+		}
 	}
 });
 
