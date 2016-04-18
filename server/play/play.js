@@ -315,7 +315,7 @@ module.exports = {
 			if (action == 'quit') {
 				recording = quitAction(data, puid, game, callback);
 			} else if (action == 'chat') {
-				if (!game.playerState(puid, 'killed')) {
+				if (game.finished || !game.playerState(puid, 'killed')) {
 					var rawMessage = rawData.msg;
 					if (rawMessage) {
 						data.msg = StripTags(rawMessage.substr(0, 255));

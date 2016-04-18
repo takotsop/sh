@@ -80,7 +80,7 @@ var setChatState = function(state) {
 };
 
 var chatEnabled = function() {
-	return !State.finished && State.localPlayer.killed;
+	return State.finished || !State.localPlayer.killed;
 };
 
 var toggleMute = function(muting) {
@@ -115,7 +115,7 @@ $('#i-chat').on('keydown', function(event) {
 
 	var key = event.which || event.keyCode || event.charCode;
 	if (key == 13) {
-		var simplified = $(this.value).text().trim();
+		var simplified = $('<span>'+this.value+'</span>').text().trim();
 		if (simplified.length > 1) {
 			require('socket/action').emit('chat', {msg: simplified});
 			this.value = '';

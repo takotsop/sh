@@ -80,7 +80,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 		this.history = restoreData.history || [];
 		this.startIndex = restoreData.start_index;
 		this.playerCount = restoreData.player_count;
-		this.finished = false;
 
 		conpleteSetup(this, restoreData.id, socket);
 	} else {
@@ -377,7 +376,6 @@ var Game = function(restoreData, size, privateGame, socket) {
 
 			this.finished = true;
 			DB.update('games', "id = '"+this.gid+"'", {state: 2, finished_at: CommonUtil.now(), history: JSON.stringify(this.history), history_count: this.history.length, enacted_liberal: this.enactedLiberal, enacted_fascist: this.enactedFascist, liberal_victory: liberals, win_method: method});
-			this.removeSelf();
 		}
 	};
 

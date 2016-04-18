@@ -8439,7 +8439,7 @@
 	};
 
 	var chatEnabled = function() {
-		return !State.finished && State.localPlayer.killed;
+		return State.finished || !State.localPlayer.killed;
 	};
 
 	var toggleMute = function(muting) {
@@ -8474,7 +8474,7 @@
 
 		var key = event.which || event.keyCode || event.charCode;
 		if (key == 13) {
-			var simplified = $(this.value).text().trim();
+			var simplified = $('<span>'+this.value+'</span>').text().trim();
 			if (simplified.length > 1) {
 				__webpack_require__(162).emit('chat', {msg: simplified});
 				this.value = '';
@@ -26992,7 +26992,6 @@
 	var endGame = function(liberalWin, winMethod) {
 		if (State.inGame) {
 			State.inGame = false;
-			State.started = false;
 			State.finished = true;
 			Chat.toggleMute(false);
 			Chat.setDirective('GAME OVER');
