@@ -49,6 +49,7 @@ var playTurn = function() {
 };
 
 var advanceTurn = function() {
+	Chat.setEnacting(false);
 	if (State.finished) {
 		return;
 	}

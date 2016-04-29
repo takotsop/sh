@@ -80,13 +80,11 @@ var setChatState = function(state) {
 };
 
 var chatEnabled = function() {
-	return !State.started || State.finished || (!enactingPolicy && !State.localPlayer.killed);
+	return !State.started || State.finished || (!enactingPolicy && (!State.localPlayer || !State.localPlayer.killed));
 };
 
-var toggleMute = function(muting, globally) {
-	if (muting === undefined) {
-		muting = !chatEnabled();
-	}
+var toggleMute = function(forced, globally) {
+	var muting = forced !== undefined ? forced : !chatEnabled();
 	$('.chat-mutable').toggleClass('disabled', muting);
 
 	if (webrtc) {
@@ -186,7 +184,7 @@ module.exports = {
 
 	setEnacting: function(enacting) {
 		enactingPolicy = enacting;
-		toggleMute(enacting);
+		toggleMute();
 	},
 
 	setDirective: setDirective,
