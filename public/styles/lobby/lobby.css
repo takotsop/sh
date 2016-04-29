@@ -1,5 +1,10 @@
 #s-lobby {
 	text-align: center;
+	overflow-y: auto;
+}
+
+#lobby-wait {
+	margin-bottom: 48px;
 }
 
 #lobby-open-games li {
