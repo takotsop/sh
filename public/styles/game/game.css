@@ -18,7 +18,9 @@
 }
 
 #chat-container-game {
-	flex-grow: 1;
+	flex-grow: 0;
+	flex-shrink: 0;
+	flex-basis: 25%;
 	max-width: 420px;
 	background-color: #444;
 	color: #fffffd;
