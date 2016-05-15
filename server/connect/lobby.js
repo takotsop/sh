@@ -42,8 +42,8 @@ var joinOngoingGame = function(socket) {
 
 var joinAvailableGame = function(socket) {
 	var games = Game.games();
-	for (var gidx in games) {
-		var game = games[gidx];
+	for (var idx = 0; idx < games.length; idx += 1) {
+		var game = games[idx];
 		if (game.isOpenPublic()) {
 			game.addPlayer(socket);
 			return true;

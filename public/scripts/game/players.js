@@ -20,8 +20,8 @@ var State = require('game/state');
 //HELPERS
 
 var getPlayer = function(uid) {
-	for (var pidx in State.players) {
-		var player = State.players[pidx];
+	for (var idx = 0; idx < State.players.length; idx += 1) {
+		var player = State.players[idx];
 		if (player.uid == uid) {
 			return player;
 		}

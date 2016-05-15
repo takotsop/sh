@@ -90,8 +90,8 @@ var voteAction = function(data, puid, game, callback) {
 		}
 		game.playerState(puid, 'vote', data.up);
 
-		for (var pidx in game.players) {
-			var uid = game.players[pidx];
+		for (var idx = 0; idx < game.players.length; idx += 1) {
+			var uid = game.players[idx];
 			var playerState = game.playerState(uid);
 			if (playerState && !playerState.killed && playerState.vote == null) {
 				doneVoting = false;

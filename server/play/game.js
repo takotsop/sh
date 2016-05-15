@@ -558,8 +558,8 @@ var Game = function(restoreData, size, privateGame, socket) {
 	};
 
 	this.fuehrerRemaining = function() {
-		for (var pidx in this.players) {
-			var puid = this.players[pidx];
+		for (var idx = 0; idx < this.players.length; idx += 1) {
+			var puid = this.players[idx];
 			if (this.isFuehrer(puid) && !this.playerState(puid, 'killed')) {
 				return true;
 			}
@@ -595,8 +595,8 @@ Game.games = function() {
 };
 
 Game.get = function(gid) {
-	for (var gidx in games) {
-		var game = games[gidx];
+	for (var idx = 0; idx < games.length; idx += 1) {
+		var game = games[idx];
 		if (game.gid == gid) {
 			return game;
 		}
