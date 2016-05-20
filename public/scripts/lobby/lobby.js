@@ -41,6 +41,7 @@ var updateCountdown = function() {
 		$('#lobby-countdown').text('waiting ' + secondsRemaining + ' seconds...');
 	}
 };
+
 //LOCAL
 
 var updateLobby = function(data) {
