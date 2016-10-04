@@ -1,0 +1,23 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.5
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./.data/db:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: secrethitler
+      POSTGRES_USER: secrets
+      POSTGRES_PASSWORD: n3v3rw1nfr1ends
+
+  webapp:
+    depends_on:
+      - db
+    build: .
+    links:
+      - db
+    ports:
+      - "8004:8004"
+    environment:
+      DATABASE_URL: postgresql://secrets:n3v3rw1nfr1ends@172.18.0.1/secrethitler?connect_timeout=10&application_name=webapp

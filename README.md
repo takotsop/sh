@@ -3,6 +3,18 @@ An online implementation of the tabletop game [Secret Hitler](http://secrethitle
 
 Supports 5-10 players, text or voice (beta) chat, and the game's core rule set. Game data is persisted to allow features like stat aggregation, or game replays in future.
 
+### Docker Version
+
+Run sql_import.sh to create the Postgres DB and import the SQL dump within the repo.
+```
+./sql_import.sh
+```
+Then start the application via docker-compose.
+```
+docker-compose up -d
+```
+I highly suggest changing the database credentials in the files above before running this anywhere publically.
+
 # Development
 
 The app is written in vanilla HTML5, CSS3, and JS ES5. Files in `/server` run on the node.js server, files in `/public` are served statically when users load the page, while files in `/common` are shared for both.
